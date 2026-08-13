@@ -46,6 +46,11 @@ public class AssetViewService {
 			assets.add(toAssetView(assetState));
 		}
 
+		if (assets.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+					"No stored state for any asset — TelemetryProcessor has not published its state yet");
+		}
+
 		FleetResponse response = new FleetResponse();
 		response.setGeneratedAt(Instant.now());
 		response.setAssets(assets);
@@ -56,9 +61,9 @@ public class AssetViewService {
 	public AssetView getAsset(String assetId) {
 		AssetId knownAssetId = requireKnownAsset(assetId);
 		AssetState assetState = assetStateRepository.findById(knownAssetId.name())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
 						"No stored state for asset " + knownAssetId.name()
-								+ " — TelemetryProcessor has not written its baselines yet"));
+								+ " — TelemetryProcessor has not published its state yet"));
 		return toAssetView(assetState);
 	}
 
