@@ -14,11 +14,6 @@ import com.mariolagger.simulator.dto.WorkingStatus;
 @Component
 public class TelemetryGenerator {
 
-	// IMPLEMENTATION-PLAN §1.2: an excursion chance per minute of working time, scaled
-	// to each message's own delta so backfill (60 s) and live (~7.5 s) fire at one rate.
-	private static final double THERMAL_EXCURSION_CHANCE_PER_MINUTE = 0.05;
-	private static final double VIBRATION_EXCURSION_CHANCE_PER_MINUTE = 0.03;
-
 	// Not fixed by SPEC §3.2: how fast temperatureC closes the gap to its target band.
 	private static final double TEMPERATURE_DRIFT_C_PER_SECOND = 0.4;
 
@@ -38,7 +33,7 @@ public class TelemetryGenerator {
 
 		WorkingStatus workingStatus = state.getWorkingStatus();
 		double groundSpeedKmh = groundSpeedKmh(state.getAssetId(), workingStatus);
-		double loadFactor = loadFactor(workingStatus);
+		double loadFactor = loadFactor(state.getAssetId(), workingStatus);
 		double temperatureC = driftedTemperatureC(state, deltaSeconds);
 
 		state.setTemperatureC(temperatureC);
@@ -109,12 +104,41 @@ public class TelemetryGenerator {
 		};
 	}
 
-	private double loadFactor(WorkingStatus workingStatus) {
-		// SPEC §3.2
+	/**
+	 * SPEC §3.2. The working band is per asset — it is the only per-asset difference any
+	 * §4.1 counter reads, and therefore the whole reason the four machines rank differently.
+	 * Only TRACTOR reaches 0.85, so only TRACTOR reports ELEVATED from load alone.
+	 */
+	private double loadFactor(AssetId assetId, WorkingStatus workingStatus) {
 		return switch (workingStatus) {
-			case WORKING -> randomBetween(0.45, 0.95);
+			case WORKING -> switch (assetId) {
+				case TRACTOR -> randomBetween(0.30, 0.90);
+				case BALER -> randomBetween(0.25, 0.81);
+				case MOWER -> randomBetween(0.25, 0.78);
+				case MIXER -> randomBetween(0.25, 0.72);
+			};
 			case TRANSPORT -> randomBetween(0.15, 0.35);
 			case IDLE -> randomBetween(0.05, 0.15);
+		};
+	}
+
+	/** SPEC §3.2, per asset, per minute of working time. */
+	private double thermalExcursionChancePerMinute(AssetId assetId) {
+		return switch (assetId) {
+			case TRACTOR -> 0.015;
+			case BALER -> 0.0015;
+			case MOWER -> 0.0015;
+			case MIXER -> 0.0015;
+		};
+	}
+
+	/** SPEC §3.2, per asset, per minute of working time. */
+	private double vibrationExcursionChancePerMinute(AssetId assetId) {
+		return switch (assetId) {
+			case TRACTOR -> 0.010;
+			case BALER -> 0.0015;
+			case MOWER -> 0.008;
+			case MIXER -> 0.0015;
 		};
 	}
 
@@ -160,16 +184,19 @@ public class TelemetryGenerator {
 	}
 
 	private void maybeStartExcursions(AssetSimulationState state, Instant timestamp, double deltaSeconds) {
-		// IMPLEMENTATION-PLAN §1.2: only while WORKING and not already inside one of that kind.
+		// SPEC §3.2: only while WORKING and not already inside one of that kind. The rate is
+		// per minute of working time, so it is scaled to this message's own delta — the burst
+		// steps 60 s and the live phase ~7.5 s, and both must wear the machine at one speed.
 		if (state.getWorkingStatus() != WorkingStatus.WORKING) {
 			return;
 		}
+		AssetId assetId = state.getAssetId();
 		if (state.getThermalExcursionEndsAt() == null
-				&& random.nextDouble() < THERMAL_EXCURSION_CHANCE_PER_MINUTE * deltaSeconds / 60.0) {
+				&& random.nextDouble() < thermalExcursionChancePerMinute(assetId) * deltaSeconds / 60.0) {
 			state.setThermalExcursionEndsAt(timestamp.plusSeconds(excursionSeconds()));
 		}
 		if (state.getVibrationExcursionEndsAt() == null
-				&& random.nextDouble() < VIBRATION_EXCURSION_CHANCE_PER_MINUTE * deltaSeconds / 60.0) {
+				&& random.nextDouble() < vibrationExcursionChancePerMinute(assetId) * deltaSeconds / 60.0) {
 			state.setVibrationExcursionEndsAt(timestamp.plusSeconds(excursionSeconds()));
 		}
 	}
