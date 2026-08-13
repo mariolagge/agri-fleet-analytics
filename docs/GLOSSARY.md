@@ -16,7 +16,7 @@ Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol
 
 Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
 
-A module's package is `com.mariolagger.` plus its module name lowercased, so `TelemetryProcessor` lives in `com.mariolagger.telemetryprocessor`. Module directories and Maven artifactIds keep their `PascalCase` form and are listed in `ARCHITECTURE.md` §2; only the package segment is lowercased, because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules.
+A module's name is `PascalCase` and is carried by its Maven `artifactId` and `<name>`; the modules are listed in `ARCHITECTURE.md` §2. Its package and its directory are that name lowercased, words concatenated, so `TelemetryProcessor` lives in the `telemetryprocessor/` directory under the package `com.mariolagger.telemetryprocessor`. The package segment is lowercased because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules; the directory follows it so that one lowercase spelling works on a case-sensitive filesystem. `frontend/` is a static asset directory rather than a module and is lowercase for the same reason.
 
 ---
 
@@ -197,6 +197,6 @@ Rules: `SPEC.md` §6. Structure: `ARCHITECTURE.md` §6.
 | **Fleet ranking** | The ordered list of all four assets with status and flags. |
 | **Asset detail** | The single-machine view with counters and flag reasons. |
 | **Live telemetry strip** | The polled row of current readings per asset. |
-| **History chart** | The hourly-aggregate view over a chosen period. |
+| **Hourly history** | The hourly-aggregate table over a chosen period. |
 
 Names retired with the AI layer (`SPEC.md` §8): *AI Strategy card*, *AI Insights cards*, *Native chat*, *Telemetry-strip explanation*. Do not reintroduce them without a SPEC change.

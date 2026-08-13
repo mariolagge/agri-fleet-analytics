@@ -27,11 +27,9 @@ The rewrite from the earlier "farm energy optimizer" portfolio project into the 
 
 What is *not* done:
 
-- **Per-service unit tests.** The coding-style section below mandates JUnit 5 + Mockito classes per service and consumer; only the three `contextLoads()` smoke tests exist so far. Keep those green.
+- **Per-service unit tests.** The coding-style section below mandates JUnit 5 + Mockito classes per service and consumer, and four of them exist: `CounterAccumulationServiceTest`, `AssetAssessmentServiceTest` and `AssetStatePublisherTest` in `TelemetryProcessor`, and `AssetViewServiceTest` in `OperatorApi`. Still uncovered: `FlagEvaluationService`, `FleetRankingService` and `TelemetryConsumer` in `TelemetryProcessor`, `HistoryService` in `OperatorApi`, and every `Simulator` service. Keep the existing tests and the three `contextLoads()` smoke tests green.
 
 The system is three modules, not four. `FleetDataService` and `FleetRuleEngine` were merged into a single consumer, `TelemetryProcessor`, because `SPEC.md` §4.3 derives the rolling window from the same hourly buckets as the historical record — see `ARCHITECTURE.md` §2. Both old names are gone; don't reintroduce them.
-
-One wrinkle to know about before moving files: the working tree shows the Java module directories lowercased, while git, the build files and `docker-compose.yml` all use the `PascalCase` form that `GLOSSARY.md` §1 defines. Windows resolves either, so it goes unnoticed; a Linux checkout would not. `frontend/` is not one of those: it is lowercase everywhere, including in git and in the `docker-compose.yml` bind mount, because it is a static asset directory and not a Maven module.
 
 ## Coding style (established, follow it)
 
@@ -64,7 +62,7 @@ The visual language in `frontend/css/app.css` was carried over from the previous
 
 **Depth and shape.** Shadows are warm-tinted, multi-layered and barely there (`--shadow-sm` / `--shadow` / `--shadow-lg`); radii are 14 / 10 / 6px (`--radius` / `-sm` / `-xs`). A fixed, almost imperceptible radial-gradient wash sits behind everything via `body::before`.
 
-**Layout.** A max-width `.app` column, a `.card` > `.card-header` > `.card-title` pattern for every panel, and a single breakpoint at 960px where the main row becomes a 3fr/2fr grid and the detail row a three-column grid. Below that everything stacks. Transitions are 0.15–0.2s ease on colour, shadow and border only.
+**Layout.** A max-width `.app` column, a `.card` > `.card-header` > `.card-title` pattern for every panel, and a primary breakpoint at 960px where the main row becomes a 3fr/2fr grid and the detail row a three-column grid. Below that everything stacks. Three narrower steps exist for components that need them — 640px and 480px for the metric and history forms, 1100px for a wide-screen refinement — but 960px is the default: reach for another one only when a component genuinely breaks at it. Transitions are 0.15–0.2s ease on colour, shadow and border only.
 
 **Frontend code conventions.** Plain HTML, CSS and vanilla JS with no framework, no bundler, no package manager and no dependencies — scripts are ordinary `<script>` tags loaded in dependency order, communicating through globals, exactly as `icons.js` already does. One file per screen component, named after it. Values from the API are escaped before being interpolated into markup, and a missing or `null` value renders as an em dash, never as `0`.
 
@@ -75,8 +73,8 @@ Module layout, ports, messaging, and persistence are documented in `docs/ARCHITE
 Notes not covered there:
 
 - The old `energy_amount`/`battery_state`/`battery_command`/`controller_command` queues from the previous domain are gone — no battery concept exists in the new SPEC.
-- The queue wiring matches `ARCHITECTURE.md` §3: `SimulatorApplication` and `TelemetryProcessorApplication` each declare the same `Queue("telemetry", true)` bean, and nothing else. There is no exchange and no binding, because there is only one consumer.
-- **Mind the `/api` prefix.** `docker/nginx-conf/nginx.conf` proxies `/api/` through without stripping it, and per `ARCHITECTURE.md` §5 no module sets a servlet context path — so controllers map the full `/api/...` paths from SPEC.md §6 verbatim. Adding a context path instead would turn `@RequestMapping("/api/assets")` into `/api/api/assets`.
+- **Queue wiring.** Each module declares the beans its own role needs, in its `*Application.java`. What those beans are is `ARCHITECTURE.md` §3.
+- **Mind the `/api` prefix.** Controllers map the full `/api/...` paths from `SPEC.md` §6 verbatim, and no module sets a servlet context path — adding one would turn `@RequestMapping("/api/assets")` into `/api/api/assets`. Why the prefix arrives unstripped is `ARCHITECTURE.md` §5.
 
 ## Common commands
 
