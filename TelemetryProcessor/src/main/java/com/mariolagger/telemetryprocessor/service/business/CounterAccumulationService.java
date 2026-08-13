@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -186,22 +187,38 @@ public class CounterAccumulationService {
 	}
 
 	/**
-	 * The buckets whose Vienna hour has completed and that have not been handed over yet,
-	 * oldest first. Each sealed hour is returned exactly once, so the caller writes it once;
-	 * the bucket itself stays in memory until it falls out of the rolling window.
+	 * The buckets that can no longer grow and have not been handed over yet, oldest first, as
+	 * copies. A pure read: the caller decides when the hand-over actually happened by calling
+	 * markSealed afterwards.
+	 *
+	 * SPEC §4.2: message timestamps are strictly increasing per asset — step 1 discards
+	 * anything else — so once a message for a later hour has been processed, no later message
+	 * can land in an earlier hour. The asset's own stream, not wall-clock, is therefore the
+	 * boundary between "may still grow" and "final".
 	 */
-	public synchronized Map<Instant, CounterSet> takeSealedBuckets(AssetId assetId) {
+	public synchronized Map<Instant, CounterSet> sealableBuckets(AssetId assetId) {
 		AssetAccumulator accumulator = accumulators.get(assetId);
-		Instant currentHourStart = hourStartOf(Instant.now());
-		Map<Instant, CounterSet> sealed = new LinkedHashMap<>();
+		Map<Instant, CounterSet> sealable = new LinkedHashMap<>();
+		if (accumulator.getLastProcessedTimestamp() == null) {
+			return sealable;
+		}
+		Instant openHourStart = hourStartOf(accumulator.getLastProcessedTimestamp());
 		for (Map.Entry<Instant, CounterSet> bucket : accumulator.getBuckets().entrySet()) {
-			if (bucket.getKey().isBefore(currentHourStart) && !accumulator.getSealedHours().contains(bucket.getKey())) {
-				sealed.put(bucket.getKey(), bucket.getValue());
-				accumulator.getSealedHours().add(bucket.getKey());
+			if (bucket.getKey().isBefore(openHourStart) && !accumulator.getSealedHours().contains(bucket.getKey())) {
+				sealable.put(bucket.getKey(), bucket.getValue().copy());
 			}
 		}
+		return sealable;
+	}
+
+	/**
+	 * Records that these hours reached hourly_aggregate, so they are never handed over again.
+	 * The only place sealedHours grows and the only place buckets are pruned.
+	 */
+	public synchronized void markSealed(AssetId assetId, Set<Instant> hourStarts) {
+		AssetAccumulator accumulator = accumulators.get(assetId);
+		accumulator.getSealedHours().addAll(hourStarts);
 		pruneBuckets(accumulator);
-		return sealed;
 	}
 
 	/**

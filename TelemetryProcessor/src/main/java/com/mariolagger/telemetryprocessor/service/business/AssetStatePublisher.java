@@ -123,15 +123,19 @@ public class AssetStatePublisher {
 
 	/** A sealed hour is written once and never updated (IMPLEMENTATION-PLAN.md §1.4). */
 	private void flushSealedBuckets() {
-		List<HourlyAggregate> rows = new ArrayList<>();
 		for (AssetId assetId : AssetId.values()) {
-			for (Map.Entry<Instant, CounterSet> sealedBucket : counterAccumulationService.takeSealedBuckets(assetId)
-					.entrySet()) {
-				rows.add(toHourlyAggregate(assetId, sealedBucket.getKey(), sealedBucket.getValue()));
+			Map<Instant, CounterSet> sealableBuckets = counterAccumulationService.sealableBuckets(assetId);
+			if (sealableBuckets.isEmpty()) {
+				continue;
 			}
-		}
-		if (!rows.isEmpty()) {
+			List<HourlyAggregate> rows = new ArrayList<>();
+			for (Map.Entry<Instant, CounterSet> sealableBucket : sealableBuckets.entrySet()) {
+				rows.add(toHourlyAggregate(assetId, sealableBucket.getKey(), sealableBucket.getValue()));
+			}
+			// The hours are marked only after their write returns, so a failed write is retried
+			// on the next cycle instead of being lost.
 			hourlyAggregateRepository.saveAll(rows);
+			counterAccumulationService.markSealed(assetId, sealableBuckets.keySet());
 		}
 	}
 

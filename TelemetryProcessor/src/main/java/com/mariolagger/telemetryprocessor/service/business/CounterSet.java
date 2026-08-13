@@ -31,6 +31,11 @@ public class CounterSet {
 		this.vibrationAlertHours = vibrationAlertHours;
 	}
 
+	public CounterSet copy() {
+		return new CounterSet(engineHours, totalWorkingHours, transportHours, idleHours, loadedHours, highLoadHours,
+				tempExcursionHours, vibrationAlertHours);
+	}
+
 	public void add(CounterSet other) {
 		this.engineHours += other.engineHours;
 		this.totalWorkingHours += other.totalWorkingHours;
