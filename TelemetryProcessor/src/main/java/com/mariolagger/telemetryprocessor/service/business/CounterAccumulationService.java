@@ -128,16 +128,30 @@ public class CounterAccumulationService {
 		return contribution;
 	}
 
+	/**
+	 * Everything one asset_state row needs, computed from the single now it is handed under a
+	 * single lock acquisition. Reading the six values one call at a time let an hour boundary
+	 * fall between them, so a published percentage need not have been the quotient of the
+	 * counters published beside it.
+	 */
+	public synchronized AssetSnapshot snapshotOf(AssetId assetId, Instant now) {
+		CounterSet rolling24hCounters = rolling24hCounters(assetId, now);
+		double windowCoverageHours = windowCoverageHours(assetId, now);
+		return new AssetSnapshot(lifetimeCounters(assetId), rolling24hCounters, windowCoverageHours,
+				utilizationPercent(rolling24hCounters, windowCoverageHours),
+				productiveSharePercent(rolling24hCounters), latestMessage(assetId));
+	}
+
 	/** SPEC §4.4 baseline plus this run. */
-	public synchronized CounterSet lifetimeCounters(AssetId assetId) {
+	private CounterSet lifetimeCounters(AssetId assetId) {
 		CounterSet copy = new CounterSet();
 		copy.add(accumulators.get(assetId).getLifetime());
 		return copy;
 	}
 
 	/** SPEC §4.3 — the open bucket plus the 23 completed before it, summed. */
-	public synchronized CounterSet rolling24hCounters(AssetId assetId) {
-		Instant windowStart = rollingWindowStart(Instant.now());
+	private CounterSet rolling24hCounters(AssetId assetId, Instant now) {
+		Instant windowStart = rollingWindowStart(now);
 		CounterSet rolling = new CounterSet();
 		for (Map.Entry<Instant, CounterSet> bucket : accumulators.get(assetId).getBuckets().entrySet()) {
 			if (!bucket.getKey().isBefore(windowStart)) {
@@ -151,9 +165,8 @@ public class CounterAccumulationService {
 	 * SPEC §4.5 — from the later of (start of the oldest included bucket) and (the asset's
 	 * first message in this run) up to now. 0 for an asset that has not reported.
 	 */
-	public synchronized double windowCoverageHours(AssetId assetId) {
+	private double windowCoverageHours(AssetId assetId, Instant now) {
 		AssetAccumulator accumulator = accumulators.get(assetId);
-		Instant now = Instant.now();
 		Instant oldestIncludedBucketStart = oldestIncludedBucketStart(accumulator, rollingWindowStart(now));
 		if (oldestIncludedBucketStart == null || accumulator.getFirstMessageTimestamp() == null) {
 			return 0.0;
@@ -164,25 +177,27 @@ public class CounterAccumulationService {
 		return Math.max(secondsBetween(coverageStart, now) / SECONDS_PER_HOUR, 0.0);
 	}
 
-	/** SPEC §4.5 — null, not 0.0, when the denominator is 0. */
-	public synchronized Double utilizationPercent(AssetId assetId) {
-		double windowCoverageHours = windowCoverageHours(assetId);
+	/**
+	 * SPEC §4.5 — null, not 0.0, when the denominator is 0. Both values are handed in rather
+	 * than recomputed, so the published percentage is exactly the quotient of the counters
+	 * published beside it.
+	 */
+	private Double utilizationPercent(CounterSet rolling24hCounters, double windowCoverageHours) {
 		if (windowCoverageHours == 0.0) {
 			return null;
 		}
-		return rolling24hCounters(assetId).getTotalWorkingHours() / windowCoverageHours * 100.0;
+		return rolling24hCounters.getTotalWorkingHours() / windowCoverageHours * 100.0;
 	}
 
 	/** SPEC §4.5 — null, not 0.0, when the denominator is 0. */
-	public synchronized Double productiveSharePercent(AssetId assetId) {
-		CounterSet rolling = rolling24hCounters(assetId);
-		if (rolling.getEngineHours() == 0.0) {
+	private Double productiveSharePercent(CounterSet rolling24hCounters) {
+		if (rolling24hCounters.getEngineHours() == 0.0) {
 			return null;
 		}
-		return rolling.getTotalWorkingHours() / rolling.getEngineHours() * 100.0;
+		return rolling24hCounters.getTotalWorkingHours() / rolling24hCounters.getEngineHours() * 100.0;
 	}
 
-	public synchronized TelemetryMessage latestMessage(AssetId assetId) {
+	private TelemetryMessage latestMessage(AssetId assetId) {
 		return accumulators.get(assetId).getLatestMessage();
 	}
 

@@ -76,8 +76,9 @@ public class AssetStatePublisher {
 		Map<AssetId, CounterSet> rolling24hCountersByAsset = new EnumMap<>(AssetId.class);
 
 		for (AssetId assetId : AssetId.values()) {
-			CounterSet lifetimeCounters = counterAccumulationService.lifetimeCounters(assetId);
-			CounterSet rolling24hCounters = counterAccumulationService.rolling24hCounters(assetId);
+			AssetSnapshot snapshot = counterAccumulationService.snapshotOf(assetId, Instant.now());
+			CounterSet lifetimeCounters = snapshot.getLifetimeCounters();
+			CounterSet rolling24hCounters = snapshot.getRolling24hCounters();
 
 			FlagEvaluation heavyRecentUse = flagEvaluationService.heavyRecentUse(rolling24hCounters);
 			FlagEvaluation thermalLoad = flagEvaluationService.thermalLoad(rolling24hCounters);
@@ -87,21 +88,21 @@ public class AssetStatePublisher {
 					highCumulativeLoad);
 
 			AssetStatus status = assetAssessmentService.status(flags);
-			LiveCondition liveCondition = assetAssessmentService.liveCondition(
-					counterAccumulationService.latestMessage(assetId), Instant.now());
+			LiveCondition liveCondition = assetAssessmentService.liveCondition(snapshot.getLatestMessage(),
+					Instant.now());
 
 			AssetState row = new AssetState();
 			row.setAssetId(assetId.name());
 			applyLifetimeCounters(row, lifetimeCounters);
 			applyRolling24hCounters(row, rolling24hCounters);
-			row.setWindowCoverageHours(counterAccumulationService.windowCoverageHours(assetId));
-			row.setUtilizationPercent(counterAccumulationService.utilizationPercent(assetId));
-			row.setProductiveSharePercent(counterAccumulationService.productiveSharePercent(assetId));
+			row.setWindowCoverageHours(snapshot.getWindowCoverageHours());
+			row.setUtilizationPercent(snapshot.getUtilizationPercent());
+			row.setProductiveSharePercent(snapshot.getProductiveSharePercent());
 			row.setStatus(status);
 			row.setLiveCondition(liveCondition);
 			row.setRecommendation(assetAssessmentService.recommendation(status));
 			applyFlags(row, heavyRecentUse, thermalLoad, mechanicalAttention, highCumulativeLoad);
-			applyLatestMessage(row, counterAccumulationService.latestMessage(assetId));
+			applyLatestMessage(row, snapshot.getLatestMessage());
 			row.setUpdatedAt(Instant.now());
 
 			rowsByAsset.put(assetId, row);
