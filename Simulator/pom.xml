@@ -42,6 +42,13 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
+		<!-- Jackson is not pulled in by the amqp starter, and there is no web starter
+		     here; the JSON message converter needs it. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
