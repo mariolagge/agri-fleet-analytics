@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.AssetStatus;
@@ -21,8 +20,8 @@ import com.mariolagger.telemetryprocessor.repository.HourlyAggregateRepository;
 import jakarta.annotation.PostConstruct;
 
 /**
- * Assembles the four asset_state rows from the in-memory accumulators and writes them in
- * one transaction, and flushes sealed hourly buckets to hourly_aggregate. Values are
+ * Assembles the four asset_state rows from the in-memory accumulators, writes them, then
+ * flushes sealed hourly buckets to hourly_aggregate (ARCHITECTURE.md §4). Values are
  * stored exactly as computed — rounding is the API's job, not the database's.
  */
 @Component
@@ -55,6 +54,10 @@ public class AssetStatePublisher {
 	 * This must stay a @PostConstruct. Rabbit listener containers are SmartLifecycle beans
 	 * started inside finishRefresh(), which runs before any CommandLineRunner or
 	 * ApplicationRunner — a runner-based reset could delete messages already accumulated.
+	 *
+	 * The direct publish() call is a plain in-class call with no proxy behind it, and it needs
+	 * none: publish() carries no transactional annotation. The two deletes and the write are
+	 * separate transactions, so the API answers 503 while the table is briefly empty.
 	 */
 	@PostConstruct
 	public void resetOnStartup() {
@@ -66,17 +69,23 @@ public class AssetStatePublisher {
 
 	/**
 	 * Synchronized because the Rabbit listener thread and the 5 s refresh scheduler both
-	 * call this; serialising them keeps the four rows internally consistent and keeps two
-	 * transactions from updating the same rows at once.
+	 * call this; serialising them keeps the four rows internally consistent. The monitor is
+	 * held across both writes, which is why the method is not annotated for a surrounding
+	 * transaction: the proxy would commit after the monitor had already been released, letting
+	 * a second caller rewrite the same rows against an uncommitted write. Each saveAll is
+	 * atomic on its own (ARCHITECTURE.md §4).
 	 */
-	@Transactional
 	public synchronized void publish() {
+		Instant now = Instant.now();
+
 		Map<AssetId, AssetState> rowsByAsset = new EnumMap<>(AssetId.class);
 		Map<AssetId, List<FlagEvaluation>> flagsByAsset = new EnumMap<>(AssetId.class);
 		Map<AssetId, CounterSet> rolling24hCountersByAsset = new EnumMap<>(AssetId.class);
+		Map<AssetId, Map<Instant, CounterSet>> sealableBucketsByAsset = new EnumMap<>(AssetId.class);
 
 		for (AssetId assetId : AssetId.values()) {
-			AssetSnapshot snapshot = counterAccumulationService.snapshotOf(assetId, Instant.now());
+			AssetSnapshot snapshot = counterAccumulationService.snapshotOf(assetId, now);
+			Map<Instant, CounterSet> sealableBuckets = counterAccumulationService.sealableBuckets(assetId);
 			CounterSet lifetimeCounters = snapshot.getLifetimeCounters();
 			CounterSet rolling24hCounters = snapshot.getRolling24hCounters();
 
@@ -88,8 +97,7 @@ public class AssetStatePublisher {
 					highCumulativeLoad);
 
 			AssetStatus status = assetAssessmentService.status(flags);
-			LiveCondition liveCondition = assetAssessmentService.liveCondition(snapshot.getLatestMessage(),
-					Instant.now());
+			LiveCondition liveCondition = assetAssessmentService.liveCondition(snapshot.getLatestMessage(), now);
 
 			AssetState row = new AssetState();
 			row.setAssetId(assetId.name());
@@ -103,11 +111,12 @@ public class AssetStatePublisher {
 			row.setRecommendation(assetAssessmentService.recommendation(status));
 			applyFlags(row, heavyRecentUse, thermalLoad, mechanicalAttention, highCumulativeLoad);
 			applyLatestMessage(row, snapshot.getLatestMessage());
-			row.setUpdatedAt(Instant.now());
+			row.setUpdatedAt(now);
 
 			rowsByAsset.put(assetId, row);
 			flagsByAsset.put(assetId, flags);
 			rolling24hCountersByAsset.put(assetId, rolling24hCounters);
+			sealableBucketsByAsset.put(assetId, sealableBuckets);
 		}
 
 		// SPEC §5.4 is cross-asset, so the rank is only known once all four rows exist —
@@ -119,25 +128,29 @@ public class AssetStatePublisher {
 		}
 		assetStateRepository.saveAll(rowsByAsset.values());
 
-		flushSealedBuckets();
+		List<HourlyAggregate> hourRows = toHourlyAggregates(sealableBucketsByAsset);
+		if (!hourRows.isEmpty()) {
+			hourlyAggregateRepository.saveAll(hourRows);
+		}
+
+		// Both writes have returned, so these hours really did reach the database. A throw from
+		// either saveAll leaves them sealable and the next cycle retries them.
+		for (Map.Entry<AssetId, Map<Instant, CounterSet>> sealedBuckets : sealableBucketsByAsset.entrySet()) {
+			counterAccumulationService.markSealed(sealedBuckets.getKey(), sealedBuckets.getValue().keySet());
+		}
 	}
 
 	/** A sealed hour is written once and never updated (IMPLEMENTATION-PLAN.md §1.4). */
-	private void flushSealedBuckets() {
-		for (AssetId assetId : AssetId.values()) {
-			Map<Instant, CounterSet> sealableBuckets = counterAccumulationService.sealableBuckets(assetId);
-			if (sealableBuckets.isEmpty()) {
-				continue;
+	private List<HourlyAggregate> toHourlyAggregates(
+			Map<AssetId, Map<Instant, CounterSet>> sealableBucketsByAsset) {
+		List<HourlyAggregate> rows = new ArrayList<>();
+		for (Map.Entry<AssetId, Map<Instant, CounterSet>> assetBuckets : sealableBucketsByAsset.entrySet()) {
+			for (Map.Entry<Instant, CounterSet> sealableBucket : assetBuckets.getValue().entrySet()) {
+				rows.add(toHourlyAggregate(assetBuckets.getKey(), sealableBucket.getKey(),
+						sealableBucket.getValue()));
 			}
-			List<HourlyAggregate> rows = new ArrayList<>();
-			for (Map.Entry<Instant, CounterSet> sealableBucket : sealableBuckets.entrySet()) {
-				rows.add(toHourlyAggregate(assetId, sealableBucket.getKey(), sealableBucket.getValue()));
-			}
-			// The hours are marked only after their write returns, so a failed write is retried
-			// on the next cycle instead of being lost.
-			hourlyAggregateRepository.saveAll(rows);
-			counterAccumulationService.markSealed(assetId, sealableBuckets.keySet());
 		}
+		return rows;
 	}
 
 	private HourlyAggregate toHourlyAggregate(AssetId assetId, Instant hourStart, CounterSet counters) {
