@@ -59,7 +59,9 @@ Raw telemetry is not persisted; only the latest message per asset survives, insi
 
 `asset_state` carries every value the `SPEC.md` §6.1 response needs, including the reason behind each active flag. This is what keeps `OperatorApi` free of product rules: it never re-derives a threshold, a percentage or a recommendation, it only reads them.
 
-**Write cadence.** `asset_state` is upserted on every processed message, and refreshed on a fixed interval as well. The interval is required because three groups of values move with wall-clock time rather than with message arrival — the rolling window edge (`SPEC.md` §4.3), window coverage and the utilization percentages (§4.5), and staleness of the live condition (§5.3) — and an asset that stops reporting would otherwise stay frozen at its last message forever.
+**Write cadence.** `asset_state` is upserted on every processed message that is roughly current, and refreshed on a fixed interval as well. The interval is required because three groups of values move with wall-clock time rather than with message arrival — the rolling window edge (`SPEC.md` §4.3), window coverage and the utilization percentages (§4.5), and staleness of the live condition (§5.3) — and an asset that stops reporting would otherwise stay frozen at its last message forever.
+
+**Catch-up.** A message whose timestamp is well behind wall-clock is accumulated into the in-memory buckets but triggers no write; the fixed-interval refresh then publishes the result. The rule is general, not a special case for the `SPEC.md` §3.2 startup burst, and it is what keeps that burst from turning thousands of messages into thousands of four-row transactions before the API can answer at all. Nothing is lost by skipping the write, because the refresh publishes whatever the accumulators hold.
 
 Priority rank is a cross-asset value, so all four rows are rewritten in one transaction; upserting a single asset's rank on its own would transiently leave two rows claiming the same rank.
 

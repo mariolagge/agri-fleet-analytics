@@ -64,7 +64,7 @@ The fleet is fixed at four assets. There is no asset registration or discovery.
 
 ### 3.1 Message
 
-Each asset publishes one telemetry message every 5–10 seconds, independently of the other assets.
+Each asset publishes one telemetry message every 5–10 seconds, independently of the other assets. That is the steady cadence; a run opens with a denser startup burst instead, described in §3.2.
 
 ```json
 {
@@ -108,15 +108,34 @@ Field values per state:
 
 | State | `ptoEngaged` | `groundSpeedKmh` | `loadFactor` |
 |-------|--------------|------------------|--------------|
-| `WORKING` | `true` | `TRACTOR` 6–14, `MOWER` 8–13, `BALER` 6–10, `MIXER` 3–5 | 0.45–0.95 |
+| `WORKING` | `true` | `TRACTOR` 6–14, `MOWER` 8–13, `BALER` 6–10, `MIXER` 3–5 | per asset, see below |
 | `TRANSPORT` | `false` | 12–30 (`MIXER` 8–18) | 0.15–0.35 |
 | `IDLE` | `false` | 0 | 0.05–0.15 |
 
-`temperatureC` drifts smoothly: 70–85 °C while `WORKING`, cooling towards 45–60 °C while `IDLE`. Independently of the state cycle, each asset enters a **thermal excursion** (temperature 91–98 °C) with roughly a 5 % chance per working interval, lasting 2–15 minutes.
+The four machines do not wear alike, so the working `loadFactor` band and the two excursion rates are **per asset**. These are the only per-asset differences that any §4.1 counter reads — `groundSpeedKmh` above differs too, but no counter or threshold uses it — so this table is what makes the §5.4 ranking separate one machine from another rather than rank four identical ones by noise:
 
-`vibrationLevel` is `NORMAL` by default, `ELEVATED` while `loadFactor ≥ 0.85`, and enters a **vibration excursion** (`HIGH`) with roughly a 3 % chance per working interval, lasting 2–15 minutes.
+| Asset | working `loadFactor` | thermal excursion chance | vibration excursion chance |
+|-------|----------------------|--------------------------|----------------------------|
+| `TRACTOR` | 0.30–0.90 | 1.5 % | 1.0 % |
+| `BALER` | 0.25–0.81 | 0.15 % | 0.15 % |
+| `MOWER` | 0.25–0.78 | 0.15 % | 0.8 % |
+| `MIXER` | 0.25–0.72 | 0.15 % | 0.15 % |
 
-Simulator state is in-memory only and starts fresh on every run.
+Over a full window these values are intended to give three stable anchors and one machine that moves: `TRACTOR` `CRITICAL` on the rolling flags, `BALER` `WATCH` on `HEAVY_RECENT_USE` alone, `MIXER` `GOOD`, and `MOWER` drifting between `GOOD`, `WATCH` and `CRITICAL` as its `MECHANICAL_ATTENTION` flag comes and goes.
+
+`MOWER` moves because its only flag driver is the vibration excursion, and a window holds fewer than ten excursions of 2–15 minutes each — too few to average out. This is a property of the design, not a value that can be tuned away: the `ELEVATED` path is the only low-variance route to `vibrationAlertHours`, and it cannot be reached without also pushing `highLoadHours` past its own `SEVERE` bar, because both read the same `loadFactor` and 0.85 > 0.75. The three anchors are what make the §5.4 ranking meaningful; `MOWER` is what makes it visibly live.
+
+`temperatureC` drifts smoothly: 70–85 °C while `WORKING`, cooling towards 45–60 °C while `IDLE`. Independently of the state cycle, each asset enters a **thermal excursion** (temperature 91–98 °C) at its rate above per minute of working time, lasting 2–15 minutes.
+
+`vibrationLevel` is `NORMAL` by default, `ELEVATED` while `loadFactor ≥ 0.85`, and enters a **vibration excursion** (`HIGH`) at its rate above per minute of working time, lasting 2–15 minutes.
+
+Both rates are **per minute of working time**, not per emitted message: the message cadence differs between the startup burst and the live phase, and a per-message rate would make the same machine wear at two different speeds. Only `TRACTOR`'s band reaches 0.85, so it is the only asset that reports `ELEVATED` from load alone; the other three reach `vibrationAlertHours` through excursions only.
+
+**Startup burst.** Counters accrue wall-clock time at 1:1, so a run that began at zero would need hours of real time before any §5.1 rolling flag could appear — which the "reachable within a demo session" requirement above forbids. Each asset therefore opens its run by publishing one message per simulated minute across a configurable window of the immediately preceding hours, ending at the present moment, and only then switches to the §3.1 cadence. The step is exactly 60 seconds, which §4.2 credits rather than discards, so the burst fills the rolling window and the hourly history in the time it takes to publish. Message timestamps stay true wall-clock instants throughout; nothing is backdated beyond the window itself.
+
+The window defaults to the full 24 hours. It is a calibration knob, not a threshold: shortening it only moves a run's starting point along the same ramp, and at 24 hours the rates above put each machine at its intended status.
+
+Simulator state is in-memory only and starts fresh on every run, burst included.
 
 ---
 
@@ -178,7 +197,9 @@ Real machines arrive with a service history, and `loadedHours` thresholds in the
 | `BALER` | 1480 | 1010 | 300 | 170 | 620 | 240 | 11 | 46 |
 | `MIXER` | 1120 | 860 | 60 | 200 | 415 | 130 | 7 | 19 |
 
-Every row satisfies the §4.1 invariant. With these values `TRACTOR` starts at `WATCH` (one Moderate flag) and the other three at `GOOD`, so the priority ranking is meaningful on first load without any asset being permanently `CRITICAL`.
+Every row satisfies the §4.1 invariant. On the baselines alone — before any telemetry — `TRACTOR` sits at `WATCH` on its single lifetime flag and the other three at `GOOD`, so the fleet is already ranked and readable the moment the system starts, with no asset pinned to `CRITICAL` by its history.
+
+The §3.2 startup burst then fills the rolling window within seconds of that, and the statuses it produces are the ones §3.2 describes. The baselines above are what make the *lifetime* flag reachable at all; they are not the whole of what the first screen shows.
 
 Baselines apply to the **lifetime** scope only. The rolling 24-hour window always starts empty.
 
