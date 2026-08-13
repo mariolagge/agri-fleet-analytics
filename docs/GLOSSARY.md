@@ -10,10 +10,13 @@ Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol
 |------|------------|---------|
 | Enum values (JSON and Java) | `UPPER_SNAKE_CASE` | `HIGH_CUMULATIVE_LOAD` |
 | JSON fields and Java fields | `camelCase` | `vibrationAlertHours` |
+| Java types | `PascalCase` | `TelemetryProcessorApplication` |
 | Database columns | `snake_case` | `vibration_alert_hours` |
-| Java packages | `com.mariolagger.*` | — |
+| Java packages | all lowercase, words concatenated, no underscores | `com.mariolagger.telemetryprocessor` |
 
 Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
+
+A module's package is `com.mariolagger.` plus its module name lowercased, so `TelemetryProcessor` lives in `com.mariolagger.telemetryprocessor`. Module directories and Maven artifactIds keep their `PascalCase` form and are listed in `ARCHITECTURE.md` §2; only the package segment is lowercased, because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules.
 
 ---
 

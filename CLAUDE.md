@@ -13,7 +13,7 @@ This file sits at rank 0 and owns working conventions only: coding style, build 
 Informatics student portfolio project for agriculture-tech job applications. The student must be able to explain every part of the codebase in an interview. Optimize for clarity and teachability, not cleverness — see `.cursorrules` for the full rule set. In short:
 
 - Prefer simple, readable, whiteboard-explainable code over clever abstractions.
-- Match existing package style (`com.mariolagger.*`) and constructor injection.
+- Match existing package style (`com.mariolagger.*`, cased per `GLOSSARY.md` §1) and constructor injection.
 - Don't add layers for "enterprise best practice" (extra interfaces, factories, event buses, DI beyond Spring's defaults).
 - Don't add new languages, frameworks, brokers, or databases beyond what's already in use
 - Make the smallest change that completes the requested task; don't implement anything listed under SPEC.md §8 Future work.
@@ -22,6 +22,8 @@ Informatics student portfolio project for agriculture-tech job applications. The
 ## Repo status: skeleton mid-rewrite
 
 This repo is being rewritten from an earlier "farm energy optimizer" portfolio project into the AgriFleet Analytics system described in `docs/SPEC.md`/`ARCHITECTURE.md`/`GLOSSARY.md`. The module layout, package names, Maven artifacts, and infra naming have already been renamed to fit the new domain, but **no SPEC business logic has been implemented yet** — the simulator's telemetry generation, the counters, the flags and ranking, the database schema, and every REST endpoint body are all still to be built from scratch. Don't assume any of that logic exists; check the actual module contents before referencing behavior.
+
+The system is three modules, not four. `FleetDataService` and `FleetRuleEngine` were merged into a single consumer, `TelemetryProcessor`, because `SPEC.md` §4.3 derives the rolling window from the same hourly buckets as the historical record — see `ARCHITECTURE.md` §2. Both old names are gone; don't reintroduce them.
 
 ## Coding style (established, follow it)
 
@@ -33,7 +35,7 @@ Derived from the surviving scaffolding — match it for any new code:
 - **JPA entities**: explicit `@Entity`/`@Table(name = ...)`/`@Column(name = ...)` mappings; `spring.jpa.hibernate.ddl-auto=none` — schema is managed by hand-written SQL, not Hibernate auto-DDL.
 - **REST error handling**: throw `ResponseStatusException` with an `HttpStatus` and message directly from the service layer; no `@ControllerAdvice`.
 - **Verbose, self-explanatory names** over abbreviations, even for locals (e.g. `totalWorkingHours`, not `workHrs`) — the point is a reviewer/interviewer can read the code without extra context. Field and counter names come from `docs/GLOSSARY.md`; don't invent variants.
-- **RabbitMQ wiring**: each module declares the exchange, queue and binding beans its own role needs (see `ARCHITECTURE.md` §3) in its `*Application.java`. Idempotent re-declaration by several modules is expected, not a bug to fix.
+- **RabbitMQ wiring**: each module declares the beans its own role needs (see `ARCHITECTURE.md` §3) in its `*Application.java`. Idempotent re-declaration by both modules is expected, not a bug to fix.
 - **Timezone**: farm-local logic is pinned to `Europe/Vienna` via a `private static final ZoneId FARM_ZONE = ZoneId.of("Europe/Vienna");` on the class that needs it. Keep new time-based logic consistent with that.
 - **Tests**: JUnit 5 + Mockito (`@ExtendWith(MockitoExtension.class)`, `@Mock`, `ArgumentCaptor`), one test class per service/consumer, plain `assertEquals`/`assertTrue`. Every module also keeps a trivial `@SpringBootTest` `contextLoads()` smoke test.
 - **Comments are rare**; when present they cite the SPEC section they encode (e.g. `// SPEC §4.2`) rather than explaining what the code does.
@@ -45,10 +47,10 @@ Module layout, ports, messaging, and persistence are documented in `docs/ARCHITE
 Notes not covered there:
 
 - The old `energy_amount`/`battery_state`/`battery_command`/`controller_command` queues from the previous domain are gone — no battery concept exists in the new SPEC.
-- **The existing RabbitMQ wiring is stale.** `SimulatorApplication` and `FleetDataServiceApplication` each still declare a plain `Queue("telemetry", true)` bean, which predates the fanout design in `ARCHITECTURE.md` §3 and would make the two consumers compete for messages. Replace both with the exchange/queue/binding beans that document requires; `FleetRuleEngine` has no messaging wiring at all yet.
-- `docker/database-script.sql` does not exist (the old solar-domain schema was deleted). Both tables in `ARCHITECTURE.md` §4 still need to be written, and `docker/docker-compose.yml` currently mounts no init script — the file has to be mounted into `/docker-entrypoint-initdb.d` before it is ever applied.
+- The queue wiring matches `ARCHITECTURE.md` §3: `SimulatorApplication` and `TelemetryProcessorApplication` each declare the same `Queue("telemetry", true)` bean, and nothing else. There is no exchange and no binding, because there is only one consumer.
+- `docker/database-script.sql` does not exist (the old solar-domain schema was deleted). Both tables in `ARCHITECTURE.md` §4 still need to be written, and `docker/docker-compose.yml` currently mounts no init script — the file has to be mounted into `/docker-entrypoint-initdb.d` before it is ever applied. Note the `database-data` volume outlives `docker compose down`, so an init script added later only runs after `docker compose down -v`.
 - **`OperatorApi` has no controllers yet.** Its `controller/` package is empty and none of the four SPEC.md §6 endpoints exist.
-- **Mind the `/api` prefix.** No module sets a `/api` context path, and `docker/nginx-conf/nginx.conf` proxies `/api/` through without stripping it — so controllers must map the full `/api/...` path (or a context path must be added) or every endpoint 404s through the frontend.
+- **Mind the `/api` prefix.** `docker/nginx-conf/nginx.conf` proxies `/api/` through without stripping it, and per `ARCHITECTURE.md` §5 no module sets a servlet context path — so controllers map the full `/api/...` paths from SPEC.md §6 verbatim. Adding a context path instead would turn `@RequestMapping("/api/assets")` into `/api/api/assets`.
 - Frontend (`Frontend/`) is intentionally left untouched for now — it still contains the old solar-energy GUI (`energy-flow-gui.*`, `app.js`) and will be rebuilt separately against the `/api/*` endpoints, using the component names in `GLOSSARY.md` §8.
 
 ## Common commands
@@ -67,8 +69,8 @@ Each Java module is built/run independently. From a module directory (e.g. `Oper
 ./mvnw test -Dtest=ClassName               # run a single test class
 ./mvnw test -Dtest=ClassName#methodName    # run a single test method
 ```
-On Windows use `mvnw.cmd` instead of `./mvnw`. From the repo root, `mvn compile`/`mvn test` builds the whole reactor (all four modules).
+On Windows use `mvnw.cmd` instead of `./mvnw`. From the repo root, `mvn compile`/`mvn test` builds the whole reactor (all three modules).
 
-Modules with a datasource (`FleetDataService`, `FleetRuleEngine`, `OperatorApi`) need Postgres reachable at `localhost:5432` for their `@SpringBootTest` context-load tests to pass — start the Docker infra first, or that test will fail with a Hibernate dialect error (this is expected, not a bug).
+Modules with a datasource (`TelemetryProcessor`, `OperatorApi`) need Postgres reachable at `localhost:5432` for their `@SpringBootTest` context-load tests to pass — start the Docker infra first, or that test will fail with a Hibernate dialect error (this is expected, not a bug). `TelemetryProcessor` additionally needs RabbitMQ up, since its listener container starts with the context.
 
-`application-dev.properties` (used by the `-Pdev` Maven profile) sets lazy init and a small Tomcat thread pool for low-RAM local runs — identical boilerplate across all four modules.
+`application-dev.properties` (used by the `-Pdev` Maven profile) sets lazy init for low-RAM local runs. Only `OperatorApi` also caps the Tomcat thread pool — `Simulator` and `TelemetryProcessor` run with `spring.main.web-application-type=none` and have no web server to tune.

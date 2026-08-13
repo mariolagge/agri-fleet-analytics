@@ -1,4 +1,4 @@
-package com.mariolagger.OperatorApi;
+package com.mariolagger.operatorapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

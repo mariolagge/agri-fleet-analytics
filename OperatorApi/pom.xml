@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>OperatorApi</artifactId>
-	<name/>
+	<name>OperatorApi</name>
 	<description/>
 	<url/>
 	<licenses>

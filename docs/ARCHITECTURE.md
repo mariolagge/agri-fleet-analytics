@@ -9,47 +9,38 @@ Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol
 The technical structure implementing the product defined in `SPEC.md` §1:
 
 ```
-Simulator ──▶ RabbitMQ fanout ──┬──▶ FleetDataService ──▶ PostgreSQL ◀── OperatorApi ──▶ nginx ──▶ browser
-                                └──▶ FleetRuleEngine  ──▶ PostgreSQL
+Simulator ──▶ RabbitMQ queue ──▶ TelemetryProcessor ──▶ PostgreSQL ◀── OperatorApi ──▶ nginx ──▶ browser
 ```
 
 Telemetry flows one way only. No module calls another over HTTP, and nothing flows back towards the Simulator — the API is read-only (`SPEC.md` §6), so no command path exists.
 
-Infrastructure (PostgreSQL, RabbitMQ, nginx/frontend) is started via `docker compose up` from `docker/`. The four Spring Boot modules are **not** containerized; each is built and run independently (Maven/IDE) against that infra.
+Infrastructure (PostgreSQL, RabbitMQ, nginx/frontend) is started via `docker compose up` from `docker/`. The three Spring Boot modules are **not** containerized; each is built and run independently (Maven/IDE) against that infra.
 
-Every run starts from the same known state, because each consumer clears the table it owns at startup (§4). Reproducibility therefore does not depend on whether the Postgres volume survives a `docker compose down`.
+Every run starts from the same known state, because `TelemetryProcessor` clears both tables at startup (§4). Reproducibility therefore does not depend on whether the Postgres volume survives a `docker compose down`.
 
 ---
 
 ## 2. Modules
 
-Four independent Spring Boot Maven modules under the root aggregator `pom.xml` (artifactId `agri-fleet-analytics`), each with its own `pom.xml` and `application.properties`. There is no shared library module — duplication across modules is expected where the same DTO or entity is needed in more than one.
+Three independent Spring Boot Maven modules under the root aggregator `pom.xml` (artifactId `agri-fleet-analytics`), each with its own `pom.xml` and `application.properties`. There is no shared library module — the telemetry message (`SPEC.md` §3.1) is defined as its own DTO in both `Simulator` and `TelemetryProcessor`, and that duplication is accepted.
 
 | Module | Port | Consumes | Writes | Role |
 |--------|------|----------|--------|------|
-| `Simulator` | 8081 | — | exchange `telemetry` | Generates telemetry per `SPEC.md` §3 and publishes it. Holds its state in memory. |
-| `FleetDataService` | 8084 | queue `telemetry.aggregates` | table `hourly_aggregate` | Accumulates hourly buckets and persists each hour once it completes. Owns the historical record. |
-| `FleetRuleEngine` | 8087 | queue `telemetry.rules` | table `asset_state` | Accumulates lifetime and rolling-24 h counters in memory, evaluates flags, status, live condition and ranking (`SPEC.md` §4–§5), and upserts the result. Owns the live view. |
-| `OperatorApi` | 8083 | — | — | Serves the read-only REST API (`SPEC.md` §6) by querying `asset_state` and `hourly_aggregate`. Consumes no queue and writes no table. |
+| `Simulator` | — | — | queue `telemetry` | Generates telemetry per `SPEC.md` §3 and publishes it. Holds its state in memory. |
+| `TelemetryProcessor` | — | queue `telemetry` | tables `asset_state`, `hourly_aggregate` | The only consumer. Accumulates the counters and hourly buckets (`SPEC.md` §4), evaluates flags, status, live condition and ranking (`SPEC.md` §5), persists completed hours and upserts the live view. |
+| `OperatorApi` | 8083 | — | — | Serves the read-only REST API (`SPEC.md` §6) by querying `asset_state` and `hourly_aggregate`. Consumes no queue, writes no table, and derives no product rule — it maps stored rows onto the §6 response shapes. |
 
-Ports 8081, 8084 and 8087 exist only because Spring Boot binds one; those three modules expose no application endpoints.
+**One accumulator.** `SPEC.md` §4.3 derives the rolling 24-hour window from the same hourly buckets that the historical record is built from, so counter accumulation is a single concern and lives in a single module. `TelemetryProcessor` holds the buckets in memory, flushes each hour to `hourly_aggregate` once it completes, and sums the most recent 24 for the rolling scope. The `SPEC.md` §4.2 accumulation rule therefore exists in exactly one place and the two tables cannot disagree about the same hour.
 
-**Deliberate duplication.** `FleetDataService` and `FleetRuleEngine` both implement the `SPEC.md` §4.2 accumulation rule and the §4.3 hourly bucketing, independently and from the same message stream. Given the no-shared-library rule above, that is the intended cost of keeping the two concerns in separate modules; both must stay aligned to §4 whenever it changes.
+**One HTTP port.** `Simulator` and `TelemetryProcessor` expose no endpoints and run with no web server (`spring.main.web-application-type=none`); their AMQP listener and scheduler threads keep the process alive. `OperatorApi` on 8083 is the only port in the system.
 
 ---
 
 ## 3. Messaging
 
-One RabbitMQ fanout exchange named `telemetry`, with two durable queues bound to it:
+One durable RabbitMQ queue named `telemetry`, published to through the default exchange. `Simulator` and `TelemetryProcessor` each declare the queue bean; idempotent re-declaration by both modules is expected, not a bug.
 
-| Queue | Bound by | Consumed by |
-|-------|----------|-------------|
-| `telemetry.aggregates` | `FleetDataService` | `FleetDataService` |
-| `telemetry.rules` | `FleetRuleEngine` | `FleetRuleEngine` |
-
-A fanout, not a shared queue: both consumers need **every** message. Two consumers on one queue would compete and each receive roughly half, silently halving all counters.
-
-Each module declares the beans it needs in its own `*Application.java` — `Simulator` the exchange, each consumer the exchange plus its own queue and binding. Idempotent re-declaration by several modules is expected, not a bug.
+There is exactly one consumer, so no exchange or binding is required. Should a second, independent consumer of the same stream ever be introduced, this must become a fanout exchange with one queue per consumer — two consumers on one queue would compete and each receive roughly half, silently halving all counters.
 
 There is no command or control queue. Nothing publishes towards the `Simulator`.
 
@@ -61,14 +52,20 @@ PostgreSQL database `agri-fleet-analytics-db` (user/password `admin`/`admin`). S
 
 | Table | Written by | Read by | Contents |
 |-------|------------|---------|----------|
-| `asset_state` | `FleetRuleEngine` | `OperatorApi` | One row per asset, upserted on every processed message: the eight counters in both scopes, the four flag severities, status, live condition, priority rank, and the most recent telemetry message. |
-| `hourly_aggregate` | `FleetDataService` | `OperatorApi` | One row per asset per completed hour: the eight counters' per-hour deltas, keyed by asset and hour start. |
+| `asset_state` | `TelemetryProcessor` | `OperatorApi` | One row per asset: the eight counters in both scopes, the four flags each with the severity, triggering counter, scope, value and threshold behind it, the derived figures of `SPEC.md` §4.5, status, recommendation, live condition, priority rank, and the most recent telemetry message. |
+| `hourly_aggregate` | `TelemetryProcessor` | `OperatorApi` | One row per asset per completed hour: the eight counters' per-hour deltas, keyed by asset and hour start. |
 
 Raw telemetry is not persisted; only the latest message per asset survives, inside `asset_state`.
 
-**Startup reset.** Each module clears the table it owns before consuming anything: `FleetRuleEngine` clears `asset_state` and writes the `SPEC.md` §4.4 baselines, `FleetDataService` clears `hourly_aggregate`. Neither reads the other's table. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run.
+`asset_state` carries every value the `SPEC.md` §6.1 response needs, including the reason behind each active flag. This is what keeps `OperatorApi` free of product rules: it never re-derives a threshold, a percentage or a recommendation, it only reads them.
 
-Counter columns store hours as `numeric`. The rolling-24 h buckets themselves live only in `FleetRuleEngine`'s memory — they are derived state, rebuilt from the stream, and are never persisted.
+**Write cadence.** `asset_state` is upserted on every processed message, and refreshed on a fixed interval as well. The interval is required because three groups of values move with wall-clock time rather than with message arrival — the rolling window edge (`SPEC.md` §4.3), window coverage and the utilization percentages (§4.5), and staleness of the live condition (§5.3) — and an asset that stops reporting would otherwise stay frozen at its last message forever.
+
+Priority rank is a cross-asset value, so all four rows are rewritten in one transaction; upserting a single asset's rank on its own would transiently leave two rows claiming the same rank.
+
+**Startup reset.** `TelemetryProcessor` clears `asset_state` and `hourly_aggregate` before consuming anything, then writes the `SPEC.md` §4.4 baselines. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run.
+
+Counter columns store hours as `numeric`. The hourly buckets themselves live in `TelemetryProcessor`'s memory while their hour is still open — they are derived state, rebuilt from the stream — and reach the database only once the hour completes.
 
 ---
 
@@ -76,7 +73,7 @@ Counter columns store hours as `numeric`. The rolling-24 h buckets themselves li
 
 `docker/nginx-conf/nginx.conf` serves the frontend and proxies `/api/` to `OperatorApi` on port 8083. `OperatorApi` is the only module the browser ever reaches; RabbitMQ and PostgreSQL are reachable from the host only for local development and management.
 
-Module ports are listed in §2.
+The `/api/` prefix is passed through unchanged, so `OperatorApi` maps the full `SPEC.md` §6 paths and sets no servlet context path.
 
 ---
 

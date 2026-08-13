@@ -49,7 +49,7 @@ Interview-First Coding
 
 Working Rules
 - Make the smallest change that completes the requested task.
-- Match existing package style (com.mariolagger.*), DTOs, and constructor injection.
+- Match existing package style (com.mariolagger.*, cased per GLOSSARY.md §1), DTOs, and constructor injection.
 - Do not implement Icebox / out-of-scope items from SPEC.
 - If unsure, choose the option easier to explain in an interview.
 - If any requirement, detail, decision, edge case, or implementation choice is not fully understood, ask multiple-choice questions covering every uncertainty before making any changes. Prefer the maximum number of questions needed; more questions are better than assumptions. Do not implement until all answers are received and understanding is complete.

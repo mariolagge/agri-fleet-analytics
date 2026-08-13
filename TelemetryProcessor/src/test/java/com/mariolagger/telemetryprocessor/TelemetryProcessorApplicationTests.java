@@ -1,10 +1,10 @@
-package com.mariolagger.FleetDataService;
+package com.mariolagger.telemetryprocessor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FleetDataServiceApplicationTests {
+class TelemetryProcessorApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,4 +1,4 @@
-package com.mariolagger.Simulator;
+package com.mariolagger.simulator;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.boot.SpringApplication;

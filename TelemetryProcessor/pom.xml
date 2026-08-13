@@ -8,8 +8,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>FleetDataService</artifactId>
-	<name>FleetDataService</name>
+	<artifactId>TelemetryProcessor</artifactId>
+	<name>TelemetryProcessor</name>
 	<description/>
 	<url/>
 	<licenses>
@@ -25,14 +25,15 @@
 		<url/>
 	</scm>
 	<dependencies>
+		<!-- No web starter: this module exposes no endpoints. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc</artifactId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- ############### -->

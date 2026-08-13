@@ -20,10 +20,9 @@
 	</properties>
 
 	<modules>
-		<module>OperatorApi</module>
 		<module>Simulator</module>
-		<module>FleetDataService</module>
-		<module>FleetRuleEngine</module>
+		<module>TelemetryProcessor</module>
+		<module>OperatorApi</module>
 	</modules>
 
 	<build>

@@ -4,31 +4,23 @@
             "type": "java",
             "name": "SimulatorApplication",
             "request": "launch",
-            "mainClass": "com.mariolagger.Simulator.SimulatorApplication",
+            "mainClass": "com.mariolagger.simulator.SimulatorApplication",
             "projectName": "Simulator",
             "vmArgs": "-Xmx192m -Xms64m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m -Dspring.profiles.active=dev"
         },
         {
             "type": "java",
-            "name": "FleetDataServiceApplication",
+            "name": "TelemetryProcessorApplication",
             "request": "launch",
-            "mainClass": "com.mariolagger.FleetDataService.FleetDataServiceApplication",
-            "projectName": "FleetDataService",
-            "vmArgs": "-Xmx192m -Xms64m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m -Dspring.profiles.active=dev"
-        },
-        {
-            "type": "java",
-            "name": "FleetRuleEngineApplication",
-            "request": "launch",
-            "mainClass": "com.mariolagger.FleetRuleEngine.FleetRuleEngineApplication",
-            "projectName": "FleetRuleEngine",
+            "mainClass": "com.mariolagger.telemetryprocessor.TelemetryProcessorApplication",
+            "projectName": "TelemetryProcessor",
             "vmArgs": "-Xmx192m -Xms64m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m -Dspring.profiles.active=dev"
         },
         {
             "type": "java",
             "name": "OperatorApiApplication",
             "request": "launch",
-            "mainClass": "com.mariolagger.OperatorApi.OperatorApiApplication",
+            "mainClass": "com.mariolagger.operatorapi.OperatorApiApplication",
             "projectName": "OperatorApi",
             "vmArgs": "-Xmx192m -Xms64m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m -Dspring.profiles.active=dev"
         }
