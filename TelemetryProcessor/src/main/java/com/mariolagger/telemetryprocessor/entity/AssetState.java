@@ -2,6 +2,9 @@ package com.mariolagger.telemetryprocessor.entity;
 
 import java.time.Instant;
 
+import com.mariolagger.telemetryprocessor.dto.AssetStatus;
+import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
+import com.mariolagger.telemetryprocessor.dto.LiveCondition;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
 import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
@@ -81,11 +84,13 @@ public class AssetState {
 	private Double productiveSharePercent;
 
 	// SPEC §5.2, §5.3, §5.4, §5.5
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
-	private String status;
+	private AssetStatus status;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "live_condition")
-	private String liveCondition;
+	private LiveCondition liveCondition;
 
 	@Column(name = "recommendation")
 	private String recommendation;
@@ -94,8 +99,9 @@ public class AssetState {
 	private int priorityRank;
 
 	// SPEC §5.1 flags; NULL severity means the flag is inactive
+	@Enumerated(EnumType.STRING)
 	@Column(name = "heavy_recent_use_severity")
-	private String heavyRecentUseSeverity;
+	private FlagSeverity heavyRecentUseSeverity;
 
 	@Column(name = "heavy_recent_use_value")
 	private Double heavyRecentUseValue;
@@ -103,8 +109,9 @@ public class AssetState {
 	@Column(name = "heavy_recent_use_threshold")
 	private Double heavyRecentUseThreshold;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "thermal_load_severity")
-	private String thermalLoadSeverity;
+	private FlagSeverity thermalLoadSeverity;
 
 	@Column(name = "thermal_load_value")
 	private Double thermalLoadValue;
@@ -112,8 +119,9 @@ public class AssetState {
 	@Column(name = "thermal_load_threshold")
 	private Double thermalLoadThreshold;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "mechanical_attention_severity")
-	private String mechanicalAttentionSeverity;
+	private FlagSeverity mechanicalAttentionSeverity;
 
 	@Column(name = "mechanical_attention_value")
 	private Double mechanicalAttentionValue;
@@ -121,8 +129,9 @@ public class AssetState {
 	@Column(name = "mechanical_attention_threshold")
 	private Double mechanicalAttentionThreshold;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "high_cumulative_load_severity")
-	private String highCumulativeLoadSeverity;
+	private FlagSeverity highCumulativeLoadSeverity;
 
 	@Column(name = "high_cumulative_load_value")
 	private Double highCumulativeLoadValue;
@@ -320,19 +329,19 @@ public class AssetState {
 		this.productiveSharePercent = productiveSharePercent;
 	}
 
-	public String getStatus() {
+	public AssetStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(AssetStatus status) {
 		this.status = status;
 	}
 
-	public String getLiveCondition() {
+	public LiveCondition getLiveCondition() {
 		return liveCondition;
 	}
 
-	public void setLiveCondition(String liveCondition) {
+	public void setLiveCondition(LiveCondition liveCondition) {
 		this.liveCondition = liveCondition;
 	}
 
@@ -352,11 +361,11 @@ public class AssetState {
 		this.priorityRank = priorityRank;
 	}
 
-	public String getHeavyRecentUseSeverity() {
+	public FlagSeverity getHeavyRecentUseSeverity() {
 		return heavyRecentUseSeverity;
 	}
 
-	public void setHeavyRecentUseSeverity(String heavyRecentUseSeverity) {
+	public void setHeavyRecentUseSeverity(FlagSeverity heavyRecentUseSeverity) {
 		this.heavyRecentUseSeverity = heavyRecentUseSeverity;
 	}
 
@@ -376,11 +385,11 @@ public class AssetState {
 		this.heavyRecentUseThreshold = heavyRecentUseThreshold;
 	}
 
-	public String getThermalLoadSeverity() {
+	public FlagSeverity getThermalLoadSeverity() {
 		return thermalLoadSeverity;
 	}
 
-	public void setThermalLoadSeverity(String thermalLoadSeverity) {
+	public void setThermalLoadSeverity(FlagSeverity thermalLoadSeverity) {
 		this.thermalLoadSeverity = thermalLoadSeverity;
 	}
 
@@ -400,11 +409,11 @@ public class AssetState {
 		this.thermalLoadThreshold = thermalLoadThreshold;
 	}
 
-	public String getMechanicalAttentionSeverity() {
+	public FlagSeverity getMechanicalAttentionSeverity() {
 		return mechanicalAttentionSeverity;
 	}
 
-	public void setMechanicalAttentionSeverity(String mechanicalAttentionSeverity) {
+	public void setMechanicalAttentionSeverity(FlagSeverity mechanicalAttentionSeverity) {
 		this.mechanicalAttentionSeverity = mechanicalAttentionSeverity;
 	}
 
@@ -424,11 +433,11 @@ public class AssetState {
 		this.mechanicalAttentionThreshold = mechanicalAttentionThreshold;
 	}
 
-	public String getHighCumulativeLoadSeverity() {
+	public FlagSeverity getHighCumulativeLoadSeverity() {
 		return highCumulativeLoadSeverity;
 	}
 
-	public void setHighCumulativeLoadSeverity(String highCumulativeLoadSeverity) {
+	public void setHighCumulativeLoadSeverity(FlagSeverity highCumulativeLoadSeverity) {
 		this.highCumulativeLoadSeverity = highCumulativeLoadSeverity;
 	}
 
