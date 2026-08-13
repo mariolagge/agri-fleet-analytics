@@ -250,7 +250,7 @@ function liveConditionHtml(liveCondition) {
 
 function assetChipHtml(assetId) {
   const tone = String(assetId || '').toLowerCase();
-  return `<span class="asset-chip asset-chip-${tone}">`
+  return `<span class="asset-chip asset-chip-${escapeHtml(tone)}">`
     + `${tablerIcon(assetIcon(assetId), { size: 24, stroke: '#fdfcf9' })}</span>`;
 }
 

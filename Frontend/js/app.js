@@ -48,6 +48,7 @@ async function refreshFleet() {
     return true;
   } catch (error) {
     fleetAssets = [];
+    renderFleet([], null, selectAsset);
     showFleetRankingError('Could not load the fleet.');
     renderSelection();
     showAlert(`Could not load the fleet. ${error.message}. Check that OperatorApi is running behind the /api proxy.`);

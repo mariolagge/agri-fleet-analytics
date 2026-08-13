@@ -163,8 +163,7 @@ public class TelemetryGenerator {
 		if (state.getThermalExcursionEndsAt() != null) {
 			return randomBetween(91, 98);
 		}
-		// SPEC §3.2 names 70-85 for WORKING and 45-60 for IDLE. TRANSPORT is not given a
-		// band; it runs without PTO load, so it sits between the two.
+		// SPEC §3.2
 		return switch (state.getWorkingStatus()) {
 			case WORKING -> randomBetween(70, 85);
 			case TRANSPORT -> randomBetween(55, 70);

@@ -5,18 +5,32 @@
 const NODE_STATUS_CLASSES = ['status-good', 'status-watch', 'status-critical'];
 const NODE_LIVE_CLASSES = ['live-normal', 'live-caution', 'live-alert', 'live-stale'];
 
+// The diagram loop runs over the four static node groups, not over the response, so a
+// machine the response does not mention is reset instead of keeping its previous values.
 function renderFleetDiagram(assets, selectedAssetId) {
-  assets.forEach((asset) => {
-    const node = document.querySelector(`#fleet-svg .node-group[data-asset-id="${asset.assetId}"]`);
-    if (!node) {
-      return;
-    }
+  document.querySelectorAll('#fleet-svg .node-group').forEach((node) => {
+    const asset = assets.find((candidate) => candidate.assetId === node.dataset.assetId);
 
     NODE_STATUS_CLASSES.forEach((cls) => node.classList.remove(cls));
     NODE_LIVE_CLASSES.forEach((cls) => node.classList.remove(cls));
-    node.classList.add(statusClass(asset.status));
-    node.classList.add(liveConditionClass(asset.liveCondition));
-    node.classList.toggle('is-selected', asset.assetId === selectedAssetId);
+    node.classList.toggle('is-selected', Boolean(asset) && asset.assetId === selectedAssetId);
+
+    if (!asset) {
+      node.querySelector('.node-status').textContent = EM_DASH;
+      node.querySelector('.node-value').textContent = EM_DASH;
+      node.querySelector('.node-rank').textContent = EM_DASH;
+      return;
+    }
+
+    // statusClass() returns '' for an unknown status, and classList.add('') throws.
+    const nodeStatusClass = statusClass(asset.status);
+    if (nodeStatusClass) {
+      node.classList.add(nodeStatusClass);
+    }
+    const nodeLiveClass = liveConditionClass(asset.liveCondition);
+    if (nodeLiveClass) {
+      node.classList.add(nodeLiveClass);
+    }
 
     node.querySelector('.node-status').textContent = statusDisplayName(asset.status).toUpperCase();
     node.querySelector('.node-value').textContent = asset.utilizationPercent === null
@@ -79,10 +93,13 @@ function renderFleetMetrics(assets) {
     : EM_DASH;
   setMetricValue('metric-urgent-flags', mostUrgent ? String((mostUrgent.flags || []).length) : EM_DASH);
 
-  const countOf = (status) => assets.filter((asset) => asset.status === status).length;
-  setMetricValue('metric-count-critical', String(countOf('CRITICAL')));
-  setMetricValue('metric-count-watch', String(countOf('WATCH')));
-  setMetricValue('metric-count-good', String(countOf('GOOD')));
+  // An unknown fleet is not a fleet of zero criticals, so an empty response reads as em dash.
+  const countOf = (status) => (assets.length === 0
+    ? EM_DASH
+    : String(assets.filter((asset) => asset.status === status).length));
+  setMetricValue('metric-count-critical', countOf('CRITICAL'));
+  setMetricValue('metric-count-watch', countOf('WATCH'));
+  setMetricValue('metric-count-good', countOf('GOOD'));
 
   const averageUtilization = averageOf(assets.map((asset) => asset.utilizationPercent));
   const averageProductiveShare = averageOf(assets.map((asset) => asset.productiveSharePercent));
@@ -90,7 +107,7 @@ function renderFleetMetrics(assets) {
   setMetricValue('metric-avg-productive', formatNumber(averageProductiveShare, 1));
 
   const reporting = assets.filter((asset) => asset.liveCondition !== 'STALE').length;
-  setMetricValue('metric-reporting', `${reporting}/${assets.length}`);
+  setMetricValue('metric-reporting', assets.length === 0 ? EM_DASH : `${reporting}/${assets.length}`);
 }
 
 function renderFleet(assets, selectedAssetId, onSelect) {
