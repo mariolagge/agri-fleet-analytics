@@ -45,13 +45,13 @@ public class AssetAssessmentService {
 	}
 
 	/**
-	 * SPEC §5.3, evaluated top to bottom — the first matching row wins. Staleness is
-	 * measured on the arrival wall-clock, not on the message timestamp: a backfilled
-	 * message carries an old timestamp but is not a sign of a silent asset.
+	 * SPEC §5.3, evaluated top to bottom — the first matching row wins. Staleness is the age
+	 * of the message's own timestamp, not of its arrival: a backfilled reading from twenty
+	 * hours ago describes an asset that has been silent for twenty hours.
 	 */
-	public LiveCondition liveCondition(TelemetryMessage latestMessage, Instant latestArrivalRealTime) {
-		if (latestMessage == null || latestArrivalRealTime == null
-				|| Duration.between(latestArrivalRealTime, Instant.now()).compareTo(STALE_AFTER) > 0) {
+	public LiveCondition liveCondition(TelemetryMessage latestMessage, Instant now) {
+		if (latestMessage == null
+				|| Duration.between(latestMessage.getTimestamp(), now).compareTo(STALE_AFTER) > 0) {
 			return LiveCondition.STALE;
 		}
 		if (latestMessage.getVibrationLevel() == VibrationLevel.HIGH

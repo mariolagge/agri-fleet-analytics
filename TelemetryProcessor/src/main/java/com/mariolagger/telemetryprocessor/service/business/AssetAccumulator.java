@@ -31,9 +31,6 @@ public class AssetAccumulator {
 	private Instant firstMessageTimestamp;
 	private TelemetryMessage latestMessage;
 
-	/** Wall-clock arrival, not the message timestamp — SPEC §5.3 STALE is measured on it. */
-	private Instant latestArrivalRealTime;
-
 	public AssetAccumulator(AssetId assetId, CounterSet lifetime) {
 		this.assetId = assetId;
 		this.lifetime = lifetime;
@@ -81,13 +78,5 @@ public class AssetAccumulator {
 
 	public void setLatestMessage(TelemetryMessage latestMessage) {
 		this.latestMessage = latestMessage;
-	}
-
-	public Instant getLatestArrivalRealTime() {
-		return latestArrivalRealTime;
-	}
-
-	public void setLatestArrivalRealTime(Instant latestArrivalRealTime) {
-		this.latestArrivalRealTime = latestArrivalRealTime;
 	}
 }

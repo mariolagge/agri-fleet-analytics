@@ -85,7 +85,6 @@ public class CounterAccumulationService {
 			accumulator.setFirstMessageTimestamp(timestamp);
 		}
 		accumulator.setLatestMessage(message);
-		accumulator.setLatestArrivalRealTime(Instant.now());
 	}
 
 	/**
@@ -184,10 +183,6 @@ public class CounterAccumulationService {
 
 	public synchronized TelemetryMessage latestMessage(AssetId assetId) {
 		return accumulators.get(assetId).getLatestMessage();
-	}
-
-	public synchronized Instant latestArrivalRealTime(AssetId assetId) {
-		return accumulators.get(assetId).getLatestArrivalRealTime();
 	}
 
 	/**

@@ -88,8 +88,7 @@ public class AssetStatePublisher {
 
 			AssetStatus status = assetAssessmentService.status(flags);
 			LiveCondition liveCondition = assetAssessmentService.liveCondition(
-					counterAccumulationService.latestMessage(assetId),
-					counterAccumulationService.latestArrivalRealTime(assetId));
+					counterAccumulationService.latestMessage(assetId), Instant.now());
 
 			AssetState row = new AssetState();
 			row.setAssetId(assetId.name());
