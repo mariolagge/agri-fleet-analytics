@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Energy Optimizer</title>
+  <link rel="stylesheet" href="css/energy-flow-gui.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <div class="logo">
+          <span data-tabler-icon="bolt" data-tabler-size="12" data-tabler-stroke="#f8f7f4"></span>
+        </div>
+        <div class="brand-text">
+          <h1>Farm Energy Optimizer</h1>
+        </div>
+      </div>
+    </header>
+
+    <div id="alert-placeholder"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="dashboard-stats">
+        <div class="metric-grid">
+          <div class="metric metric-group">
+            <div class="metric-icon"><span data-tabler-icon="solar-panel" data-tabler-size="54"></span></div>
+            <div class="metric-body">
+              <div class="metric-row">
+                <span class="metric-label">Self-Consumption</span>
+                <span class="metric-value" id="solarDepletedPercent">—<span class="metric-unit">%</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Produced</span>
+                <span class="metric-value" data-bind="farmProducedKwh" id="farmProducedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Used</span>
+                <span class="metric-value" data-bind="farmUsedKwh" id="farmUsedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="metric metric-group">
+            <div class="metric-icon"><span data-tabler-icon="plug-connected" data-tabler-size="54"></span></div>
+            <div class="metric-body">
+              <div class="metric-row">
+                <span class="metric-label">Portion</span>
+                <span class="metric-value" id="gridPortionPercent">—<span class="metric-unit">%</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Imported</span>
+                <span class="metric-value" data-bind="gridUsedKwh" id="gridUsedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Exported</span>
+                <span class="metric-value" data-bind="gridExportedKwh" id="gridExportedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="metric metric-group">
+            <div class="metric-icon"><span data-tabler-icon="battery" data-tabler-size="54"></span></div>
+            <div class="metric-body">
+              <div class="metric-row">
+                <span class="metric-label">SOC</span>
+                <span class="metric-value" data-bind="batterySocPercent" id="batterySocPercent-metric">—<span class="metric-unit">%</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Charged</span>
+                <span class="metric-value" data-bind="batteryChargedKwh" id="batteryChargedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">Discharged</span>
+                <span class="metric-value" data-bind="batteryDischargedKwh" id="batteryDischargedKwh-metric">—<span class="metric-unit">kWh</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-top">
+      <!-- LEFT: ENERGY FLOW VIZ -->
+      <section class="card viz-card">
+        <div class="svg-wrap">
+          <svg id="energy-svg" viewBox="0 0 1100 620" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="grad-pv" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0d6b66"/>
+                <stop offset="100%" stop-color="#0a5652"/>
+              </linearGradient>
+              <linearGradient id="grad-batt" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3d5a7a"/>
+                <stop offset="100%" stop-color="#324a66"/>
+              </linearGradient>
+              <linearGradient id="grad-grid" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#b07d2a"/>
+                <stop offset="100%" stop-color="#946820"/>
+              </linearGradient>
+
+              <filter id="glow-pv" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+
+              <clipPath id="clip-pill-source" clipPathUnits="userSpaceOnUse">
+                <rect x="-115" y="-54" width="230" height="108" rx="54"/>
+              </clipPath>
+              <clipPath id="clip-pill-load" clipPathUnits="userSpaceOnUse">
+                <rect x="-105" y="-48" width="210" height="96" rx="48"/>
+              </clipPath>
+            </defs>
+
+            <!-- Soft horizontal guide -->
+            <g opacity="0.28">
+              <line x1="50" y1="310" x2="1050" y2="310" stroke="#d4cfc4" stroke-width="1" stroke-dasharray="3 7"/>
+            </g>
+
+            <!-- FLOW PATHS (14 visual paths — aggregate liveFlows split per load in JS) -->
+            <g id="flows-group">
+              <path id="flow-pvToBatteryKwh" class="flow-path" data-aggregate-key="pvToBatteryKwh" data-base-width="3.5"
+                d="M 550 130 C 400 130, 280 200, 250 270" stroke="#0d6b66" stroke-width="3.5"/>
+              <path id="flow-pvToGridExportKwh" class="flow-path" data-aggregate-key="pvToGridExportKwh" data-base-width="2.5"
+                d="M 550 130 C 700 130, 820 200, 850 270" stroke="#0d6b66" stroke-width="2.5"/>
+              <path id="flow-pvToLoadsKwh--milk-cooling" class="flow-path" data-aggregate-key="pvToLoadsKwh" data-user-id="milk-cooling" data-base-width="2.2"
+                d="M 500 145 C 320 200, 220 380, 200 480" stroke="#0d6b66" stroke-width="2.2"/>
+              <path id="flow-pvToLoadsKwh--milking-robot" class="flow-path" data-aggregate-key="pvToLoadsKwh" data-user-id="milking-robot" data-base-width="2"
+                d="M 530 150 C 450 280, 400 400, 400 490" stroke="#0d6b66" stroke-width="2"/>
+              <path id="flow-pvToLoadsKwh--hay-dryer" class="flow-path" data-aggregate-key="pvToLoadsKwh" data-user-id="hay-dryer" data-base-width="2.8"
+                d="M 570 150 C 650 280, 700 400, 700 490" stroke="#0d6b66" stroke-width="2.8"/>
+              <path id="flow-pvToLoadsKwh--barn-ventilation" class="flow-path" data-aggregate-key="pvToLoadsKwh" data-user-id="barn-ventilation" data-base-width="1.8"
+                d="M 600 145 C 780 200, 880 380, 900 480" stroke="#0d6b66" stroke-width="1.8"/>
+              <path id="flow-batteryToLoadsKwh--milk-cooling" class="flow-path" data-aggregate-key="batteryToLoadsKwh" data-user-id="milk-cooling" data-base-width="2.5"
+                d="M 220 340 C 180 400, 180 450, 200 490" stroke="#3d5a7a" stroke-width="2.5"/>
+              <path id="flow-batteryToLoadsKwh--milking-robot" class="flow-path" data-aggregate-key="batteryToLoadsKwh" data-user-id="milking-robot" data-base-width="1.5"
+                d="M 260 350 C 300 420, 350 460, 390 500" stroke="#3d5a7a" stroke-width="1.5"/>
+              <path id="flow-batteryToLoadsKwh--hay-dryer" class="flow-path" data-aggregate-key="batteryToLoadsKwh" data-user-id="hay-dryer" data-base-width="1.2"
+                d="M 280 340 C 420 380, 560 450, 680 500" stroke="#3d5a7a" stroke-width="1.2"/>
+              <path id="flow-batteryToLoadsKwh--barn-ventilation" class="flow-path" data-aggregate-key="batteryToLoadsKwh" data-user-id="barn-ventilation" data-base-width="1"
+                d="M 280 330 C 500 320, 750 400, 880 490" stroke="#3d5a7a" stroke-width="1"/>
+              <path id="flow-gridToLoadsKwh--milk-cooling" class="flow-path" data-aggregate-key="gridToLoadsKwh" data-user-id="milk-cooling" data-base-width="1.5"
+                d="M 820 340 C 600 360, 350 430, 220 500" stroke="#b07d2a" stroke-width="1.5"/>
+              <path id="flow-gridToLoadsKwh--milking-robot" class="flow-path" data-aggregate-key="gridToLoadsKwh" data-user-id="milking-robot" data-base-width="2"
+                d="M 830 350 C 650 400, 500 460, 420 500" stroke="#b07d2a" stroke-width="2"/>
+              <path id="flow-gridToLoadsKwh--hay-dryer" class="flow-path" data-aggregate-key="gridToLoadsKwh" data-user-id="hay-dryer" data-base-width="1.8"
+                d="M 850 350 C 800 420, 750 460, 720 500" stroke="#b07d2a" stroke-width="1.8"/>
+              <path id="flow-gridToLoadsKwh--barn-ventilation" class="flow-path" data-aggregate-key="gridToLoadsKwh" data-user-id="barn-ventilation" data-base-width="2.2"
+                d="M 880 340 C 900 400, 910 450, 910 490" stroke="#b07d2a" stroke-width="2.2"/>
+            </g>
+
+            <g id="particles"></g>
+
+            <!-- NODES -->
+            <!-- Farm production (PV) -->
+            <g class="node-group" data-id="pv" transform="translate(550, 90)">
+              <rect class="node-bg" x="-115" y="-54" width="230" height="108" rx="54" fill="#fdfcf9" stroke="#0d6b66" stroke-width="1.35" filter="url(#glow-pv)"/>
+              <circle class="node-icon-bg" cx="-61" cy="0" r="54" fill="url(#grad-pv)"/>
+              <rect x="-115" y="-54" width="230" height="3.5" fill="url(#grad-pv)" clip-path="url(#clip-pill-source)"/>
+              <g data-tabler-icon="solar-panel" data-tabler-size="54" data-tabler-stroke="#fdfcf9" transform="translate(-88, -27)"></g>
+              <text class="node-label" x="10" y="-6">Farm produced</text>
+              <text class="node-value" id="farmProducedKwh" x="10" y="12">—</text>
+            </g>
+
+            <!-- Battery -->
+            <g class="node-group" data-id="battery" transform="translate(240, 310)">
+              <rect class="node-bg" x="-115" y="-54" width="230" height="108" rx="54" fill="#fdfcf9" stroke="#3d5a7a" stroke-width="1.35"/>
+              <circle class="node-icon-bg" cx="-61" cy="0" r="54" fill="url(#grad-batt)"/>
+              <rect x="-115" y="-54" width="230" height="3.5" fill="url(#grad-batt)" clip-path="url(#clip-pill-source)"/>
+              <g data-tabler-icon="battery" data-tabler-size="54" data-tabler-stroke="#fdfcf9" transform="translate(-88, -27)"></g>
+              <text class="node-label" x="10" y="-6">Battery</text>
+              <text class="node-value" id="batterySocPercent" x="10" y="12">—</text>
+            </g>
+
+            <!-- Public Grid -->
+            <g class="node-group" data-id="grid" transform="translate(860, 310)">
+              <rect class="node-bg" x="-115" y="-54" width="230" height="108" rx="54" fill="#fdfcf9" stroke="#b07d2a" stroke-width="1.35"/>
+              <circle class="node-icon-bg" cx="-61" cy="0" r="54" fill="url(#grad-grid)"/>
+              <rect x="-115" y="-54" width="230" height="3.5" fill="url(#grad-grid)" clip-path="url(#clip-pill-source)"/>
+              <g data-tabler-icon="plug-connected" data-tabler-size="54" data-tabler-stroke="#fdfcf9" transform="translate(-88, -27)"></g>
+              <text class="node-label" x="10" y="-6">Public Grid</text>
+              <text class="node-value" id="gridUsedKwh" x="10" y="12">Imported —</text>
+            </g>
+
+            <!-- Loads -->
+            <g class="node-group node-group-user node-group-user-cooling" data-id="milk-cooling" transform="translate(200, 530)">
+              <rect class="node-bg" x="-105" y="-48" width="210" height="96" rx="48" fill="#fdfcf9" stroke-width="1.15"/>
+              <circle class="user-node-icon" cx="-57" cy="0" r="48"/>
+              <rect class="user-node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-load)"/>
+              <g data-tabler-icon="temperature-snow" data-tabler-size="48" data-tabler-stroke="#fdfcf9" transform="translate(-81, -24)"></g>
+              <text class="node-label load-label" x="8" y="-4">milk-cooling</text>
+              <text class="node-value" id="usedKwh-milk-cooling" x="8" y="12">—</text>
+            </g>
+
+            <g class="node-group node-group-user node-group-user-robot" data-id="milking-robot" transform="translate(400, 530)">
+              <rect class="node-bg" x="-105" y="-48" width="210" height="96" rx="48" fill="#fdfcf9" stroke-width="1.15"/>
+              <circle class="user-node-icon" cx="-57" cy="0" r="48"/>
+              <rect class="user-node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-load)"/>
+              <g data-tabler-icon="robot" data-tabler-size="48" data-tabler-stroke="#fdfcf9" transform="translate(-81, -24)"></g>
+              <text class="node-label load-label" x="8" y="-4">milking-robot</text>
+              <text class="node-value" id="usedKwh-milking-robot" x="8" y="12">—</text>
+            </g>
+
+            <g class="node-group node-group-user node-group-user-dryer" data-id="hay-dryer" transform="translate(700, 530)">
+              <rect class="node-bg" x="-105" y="-48" width="210" height="96" rx="48" fill="#fdfcf9" stroke-width="1.15"/>
+              <circle class="user-node-icon" cx="-57" cy="0" r="48"/>
+              <rect class="user-node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-load)"/>
+              <g data-tabler-icon="car-fan" data-tabler-size="48" data-tabler-stroke="#fdfcf9" transform="translate(-81, -24)"></g>
+              <text class="node-label load-label" x="8" y="-4">hay-dryer</text>
+              <text class="node-value" id="usedKwh-hay-dryer" x="8" y="12">—</text>
+            </g>
+
+            <g class="node-group node-group-user node-group-user-ventilation" data-id="barn-ventilation" transform="translate(900, 530)">
+              <rect class="node-bg" x="-105" y="-48" width="210" height="96" rx="48" fill="#fdfcf9" stroke-width="1.15"/>
+              <circle class="user-node-icon" cx="-57" cy="0" r="48"/>
+              <rect class="user-node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-load)"/>
+              <g data-tabler-icon="wind" data-tabler-size="48" data-tabler-stroke="#fdfcf9" transform="translate(-81, -24)"></g>
+              <text class="node-label load-label" x="8" y="-4">barn-ventilation</text>
+              <text class="node-value" id="usedKwh-barn-ventilation" x="8" y="12">—</text>
+            </g>
+
+          </svg>
+        </div>
+      </section>
+
+      <!-- RIGHT: AI PANEL -->
+      <aside class="ai-panel">
+        <div class="ai-strategy">
+          <div class="ai-strategy-label">
+            Current Strategy
+          </div>
+          <div class="ai-strategy-text" id="ai-strategy-text">—</div>
+          <div class="ai-strategy-meta">
+            <span>—</span>
+            <span>·</span>
+            <span>—</span>
+          </div>
+
+          <div class="ai-chat">
+            <input type="text" id="ai-chat-input" placeholder="Ask Aether about strategy, loads, or forecast…" autocomplete="off" />
+            <button class="ai-chat-send" id="ai-chat-send" title="Send">
+              <span data-tabler-icon="send" data-tabler-size="14" data-tabler-stroke="#f8f7f4"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Insights</span>
+            <span style="font-size:11px;color:var(--text-tertiary)" id="insight-count">—</span>
+          </div>
+          <div style="padding:9px;display:flex;flex-direction:column;gap:7px;" id="insights-container">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <div class="card" style="padding:14px;">
+          <div class="section-label">Predicted Savings</div>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span style="font-size:24px;font-weight:650;letter-spacing:-0.03em;color:var(--good);" id="savings-value">—</span>
+            <span style="font-size:12px;color:var(--text-tertiary)">today</span>
+          </div>
+          <div style="margin-top:5px;font-size:12px;color:var(--text-secondary);">
+            vs. pure grid baseline · <span style="color:var(--good);font-weight:550;">—</span> efficiency
+          </div>
+        </div>
+      </aside>
+      </div>
+
+      <div class="dashboard-details">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Components</span>
+          </div>
+          <div class="component-list card-body-compact" id="comp-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Energy Users</span>
+          </div>
+          <div class="card-body-compact">
+            <div id="users-loading" class="section-loading">Loading energy users…</div>
+            <div class="component-list d-none" id="users-list"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Hay Drying</span>
+          </div>
+          <div class="card-body-compact">
+            <div id="hay-session-loading" class="section-loading">Loading session…</div>
+            <div id="hay-session-data" class="d-none">
+              <dl class="hay-dl">
+                <div class="hay-dl-row">
+                  <dt>Active</dt>
+                  <dd id="hay-active">—</dd>
+                </div>
+                <div class="hay-dl-row">
+                  <dt>Moisture %</dt>
+                  <dd id="hay-moisture">—</dd>
+                </div>
+                <div class="hay-dl-row">
+                  <dt>Started</dt>
+                  <dd id="hay-started">—</dd>
+                </div>
+                <div class="hay-dl-row">
+                  <dt>Stopped</dt>
+                  <dd id="hay-stopped">—</dd>
+                </div>
+              </dl>
+              <form id="hay-start-form" class="hay-form">
+                <label class="hay-form-label" for="hay-moisture-input">Hay moisture %</label>
+                <input type="number" class="hay-input" id="hay-moisture-input" min="0" max="100" step="1"
+                       placeholder="e.g. 25" required>
+                <div class="hay-form-actions">
+                  <button type="submit" class="btn btn-primary btn-sm" id="hay-start-btn"><span data-tabler-icon="player-play" data-tabler-size="13"></span> Start</button>
+                  <button type="button" class="btn btn-sm" id="hay-stop-btn"><span data-tabler-icon="player-stop" data-tabler-size="13"></span> Stop</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="data-section">
+      <details class="data-collapsible" open>
+        <summary class="data-collapsible-summary"><span data-tabler-icon="history" data-tabler-size="14"></span> Historical energy</summary>
+        <div class="card data-card">
+          <div class="card-body-compact">
+            <form id="historical-form" class="historical-form">
+              <div class="historical-form-fields">
+                <label class="hay-form-label" for="start">Start</label>
+                <input type="datetime-local" class="hay-input" id="start" required>
+                <label class="hay-form-label" for="end">End</label>
+                <input type="datetime-local" class="hay-input" id="end" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm"><span data-tabler-icon="download" data-tabler-size="13"></span> Load</button>
+            </form>
+            <div class="historical-table-wrap">
+              <table class="historical-table">
+                <thead>
+                  <tr>
+                    <th>Hour</th>
+                    <th>Farm prod.</th>
+                    <th>Farm used</th>
+                    <th>Grid in</th>
+                    <th>Grid out</th>
+                    <th>Batt. chg.</th>
+                    <th>Batt. dis.</th>
+                  </tr>
+                </thead>
+                <tbody id="historical-body">
+                  <tr>
+                    <td colspan="7" class="historical-empty">Choose a date range and click Load.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- SAFETY CONTROLS -->
+    <div class="safety-bar">
+      <div class="safety-label">
+        <span data-tabler-icon="shield" data-tabler-size="14"></span>
+        Hard Safety Controls
+      </div>
+      <div class="safety-actions">
+        <label class="toggle">
+          <input type="checkbox" id="toggle-manual" />
+          <span>Manual Override</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-island" />
+          <span>Island Mode</span>
+        </label>
+        <button class="estop" id="btn-estop">
+          <span data-tabler-icon="alert-octagon" data-tabler-size="13"></span>
+          EMERGENCY STOP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script src="js/energy-flow-gui.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.5</version>
+		<relativePath/>
+	</parent>
+	<groupId>com.mariolagger</groupId>
+	<artifactId>agri-fleet-analytics</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>agri-fleet-analytics</name>
+	<description>AgriFleet Analytics distributed system</description>
+
+	<properties>
+		<java.version>25</java.version>
+	</properties>
+
+	<modules>
+		<module>OperatorApi</module>
+		<module>Simulator</module>
+		<module>FleetDataService</module>
+		<module>FleetRuleEngine</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<!-- Local/dev only: low-RAM JVM + Spring profile "dev". Usage: mvn spring-boot:run -Pdev -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring-boot.run.jvmArguments>-Xmx192m -Xms64m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m</spring-boot.run.jvmArguments>
+				<spring-boot.run.profiles>dev</spring-boot.run.profiles>
+			</properties>
+		</profile>
+	</profiles>
+</project>

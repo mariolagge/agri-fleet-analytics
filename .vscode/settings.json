@@ -1,0 +1,19 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.jdt.ls.vmargs": "-Xmx512m -XX:+UseSerialGC -Xss512k -XX:MaxMetaspaceSize=128m",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.autobuild.enabled": true,
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "agri-fleet-analytics-db",
+            "username": "admin",
+            "database": "agri-fleet-analytics-db"
+        }
+    ]
+}
