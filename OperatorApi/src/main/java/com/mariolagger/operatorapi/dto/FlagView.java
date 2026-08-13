@@ -10,8 +10,8 @@ public class FlagView {
 	private FlagSeverity severity;
 	private String counter;
 	private FlagScope scope;
-	private double value;
-	private double threshold;
+	private Double value;
+	private Double threshold;
 
 	public FlagView() {
 	}
@@ -48,19 +48,19 @@ public class FlagView {
 		this.scope = scope;
 	}
 
-	public double getValue() {
+	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(double value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 
-	public double getThreshold() {
+	public Double getThreshold() {
 		return threshold;
 	}
 
-	public void setThreshold(double threshold) {
+	public void setThreshold(Double threshold) {
 		this.threshold = threshold;
 	}
 }

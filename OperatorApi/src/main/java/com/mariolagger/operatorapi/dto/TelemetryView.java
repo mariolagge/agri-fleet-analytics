@@ -7,10 +7,10 @@ public class TelemetryView {
 
 	private AssetId assetId;
 	private Instant timestamp;
-	private boolean ptoEngaged;
-	private double groundSpeedKmh;
-	private double loadFactor;
-	private double temperatureC;
+	private Boolean ptoEngaged;
+	private Double groundSpeedKmh;
+	private Double loadFactor;
+	private Double temperatureC;
 	private VibrationLevel vibrationLevel;
 	private WorkingStatus workingStatus;
 
@@ -33,35 +33,35 @@ public class TelemetryView {
 		this.timestamp = timestamp;
 	}
 
-	public boolean isPtoEngaged() {
+	public Boolean getPtoEngaged() {
 		return ptoEngaged;
 	}
 
-	public void setPtoEngaged(boolean ptoEngaged) {
+	public void setPtoEngaged(Boolean ptoEngaged) {
 		this.ptoEngaged = ptoEngaged;
 	}
 
-	public double getGroundSpeedKmh() {
+	public Double getGroundSpeedKmh() {
 		return groundSpeedKmh;
 	}
 
-	public void setGroundSpeedKmh(double groundSpeedKmh) {
+	public void setGroundSpeedKmh(Double groundSpeedKmh) {
 		this.groundSpeedKmh = groundSpeedKmh;
 	}
 
-	public double getLoadFactor() {
+	public Double getLoadFactor() {
 		return loadFactor;
 	}
 
-	public void setLoadFactor(double loadFactor) {
+	public void setLoadFactor(Double loadFactor) {
 		this.loadFactor = loadFactor;
 	}
 
-	public double getTemperatureC() {
+	public Double getTemperatureC() {
 		return temperatureC;
 	}
 
-	public void setTemperatureC(double temperatureC) {
+	public void setTemperatureC(Double temperatureC) {
 		this.temperatureC = temperatureC;
 	}
 

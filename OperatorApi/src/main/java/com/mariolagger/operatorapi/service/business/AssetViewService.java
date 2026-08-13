@@ -137,8 +137,8 @@ public class AssetViewService {
 		flagView.setSeverity(severity);
 		flagView.setCounter(counter);
 		flagView.setScope(scope);
-		flagView.setValue(round2(value));
-		flagView.setThreshold(round2(threshold));
+		flagView.setValue(round2OrNull(value));
+		flagView.setThreshold(round2OrNull(threshold));
 		flags.add(flagView);
 	}
 
@@ -190,9 +190,9 @@ public class AssetViewService {
 		telemetry.setAssetId(assetId);
 		telemetry.setTimestamp(assetState.getLatestTimestamp());
 		telemetry.setPtoEngaged(assetState.getLatestPtoEngaged());
-		telemetry.setGroundSpeedKmh(round2(assetState.getLatestGroundSpeedKmh()));
-		telemetry.setLoadFactor(round2(assetState.getLatestLoadFactor()));
-		telemetry.setTemperatureC(round2(assetState.getLatestTemperatureC()));
+		telemetry.setGroundSpeedKmh(round2OrNull(assetState.getLatestGroundSpeedKmh()));
+		telemetry.setLoadFactor(round2OrNull(assetState.getLatestLoadFactor()));
+		telemetry.setTemperatureC(round2OrNull(assetState.getLatestTemperatureC()));
 		telemetry.setVibrationLevel(assetState.getLatestVibrationLevel());
 		telemetry.setWorkingStatus(assetState.getLatestWorkingStatus());
 		return telemetry;
