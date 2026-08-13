@@ -125,7 +125,7 @@ Over a full window these values are intended to give three stable anchors and on
 
 `MOWER` moves because its only flag driver is the vibration excursion, and a window holds fewer than ten excursions of 2–15 minutes each — too few to average out. This is a property of the design, not a value that can be tuned away: the `ELEVATED` path is the only low-variance route to `vibrationAlertHours`, and it cannot be reached without also pushing `highLoadHours` past its own `SEVERE` bar, because both read the same `loadFactor` and 0.85 > 0.75. The three anchors are what make the §5.4 ranking meaningful; `MOWER` is what makes it visibly live.
 
-`temperatureC` drifts smoothly: 70–85 °C while `WORKING`, cooling towards 45–60 °C while `IDLE`. Independently of the state cycle, each asset enters a **thermal excursion** (temperature 91–98 °C) at its rate above per minute of working time, lasting 2–15 minutes.
+`temperatureC` drifts smoothly: 70–85 °C while `WORKING`, 55–70 °C while `TRANSPORT`, cooling towards 45–60 °C while `IDLE`. Independently of the state cycle, each asset enters a **thermal excursion** (temperature 91–98 °C) at its rate above per minute of working time, lasting 2–15 minutes.
 
 `vibrationLevel` is `NORMAL` by default, `ELEVATED` while `loadFactor ≥ 0.85`, and enters a **vibration excursion** (`HIGH`) at its rate above per minute of working time, lasting 2–15 minutes.
 
@@ -262,7 +262,7 @@ The status above is an integral over 24 hours and therefore cannot answer "is th
 
 | Value | Condition |
 |-------|-----------|
-| `STALE` | no message received for this asset in the last 60 s |
+| `STALE` | the most recent message for this asset is more than 60 s old, or the asset has not reported at all in this run |
 | `ALERT` | `vibrationLevel` = `HIGH` **or** `temperatureC > 95` |
 | `CAUTION` | `vibrationLevel` = `ELEVATED` **or** `temperatureC > 90` **or** `loadFactor ≥ 0.9` |
 | `NORMAL` | otherwise |
@@ -363,11 +363,15 @@ All timestamps in requests and responses are ISO-8601 instants in UTC. Errors us
 
 Assets that have never reported in this run are still listed, with their §4.4 baselines as `lifetimeCounters`, zeroed `rolling24hCounters`, `liveCondition` `STALE`, and both percentages `null`.
 
+`503 Service Unavailable` — no state has been published yet, so there is nothing to list. This is a startup condition, not an empty fleet: the fleet is fixed at four assets (§2).
+
 ### 6.2 `GET /api/assets/{assetId}`
 
 `200 OK` — a single asset object, identical in shape to one element of `assets` above.
 
-`404 Not Found` — `assetId` is not one of the four §2 assets.
+`404 Not Found` — `assetId` is not one of the four §2 assets. `404` is reserved for that case alone; a known asset whose state is merely missing is `503`, not `404`.
+
+`503 Service Unavailable` — `assetId` is one of the four §2 assets but no state has been published for it yet.
 
 ### 6.3 `GET /api/history`
 
@@ -436,7 +440,9 @@ The lightweight endpoint behind the live telemetry strip; intended to be polled 
 }
 ```
 
-Assets that have not reported in this run appear with `liveCondition` `STALE` and `telemetry` `null`. All four assets are always present, ordered by `assetId` ascending.
+`telemetry` is `null` only for an asset that has **never** reported in this run; that asset's `liveCondition` is `STALE`. An asset that reported and then fell silent is `STALE` too, but keeps its last reading, so the operator can see what it was doing when the signal stopped. All four assets are always present, ordered by `assetId` ascending.
+
+This endpoint has no `503`: before any state is published it answers `200` with all four assets `STALE` and `telemetry` `null`, which is the honest live picture rather than an error.
 
 ---
 

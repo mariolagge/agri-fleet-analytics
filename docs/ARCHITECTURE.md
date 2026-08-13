@@ -63,11 +63,11 @@ Raw telemetry is not persisted; only the latest message per asset survives, insi
 
 **Catch-up.** A message whose timestamp is well behind wall-clock is accumulated into the in-memory buckets but triggers no write; the fixed-interval refresh then publishes the result. The rule is general, not a special case for the `SPEC.md` §3.2 startup burst, and it is what keeps that burst from turning thousands of messages into thousands of four-row transactions before the API can answer at all. Nothing is lost by skipping the write, because the refresh publishes whatever the accumulators hold.
 
-Priority rank is a cross-asset value, so all four rows are rewritten in one transaction; upserting a single asset's rank on its own would transiently leave two rows claiming the same rank.
+Priority rank is a cross-asset value, so all four `asset_state` rows are written by a single `saveAll`, which is atomic on its own; upserting a single asset's rank would transiently leave two rows claiming the same rank. The sealed hours reach `hourly_aggregate` in a second, separate write — `asset_state` and `hourly_aggregate` are two transactions, never one spanning both tables — and an hour is marked flushed only after its write returns, so a failed write leaves the hour unsealed for the next cycle to retry.
 
-**Startup reset.** `TelemetryProcessor` clears `asset_state` and `hourly_aggregate` before consuming anything, then writes the `SPEC.md` §4.4 baselines. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run.
+**Startup reset.** `TelemetryProcessor` clears `asset_state` and `hourly_aggregate` before consuming anything, then writes the `SPEC.md` §4.4 baselines. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run. The clear and the first write are separate transactions, so `asset_state` is briefly empty and the API answers `SPEC.md` §6.1's `503` until that write returns.
 
-Counter columns store hours as `numeric`. The hourly buckets themselves live in `TelemetryProcessor`'s memory while their hour is still open — they are derived state, rebuilt from the stream — and reach the database only once the hour completes.
+Counter columns store hours as `numeric`. The hourly buckets themselves live in `TelemetryProcessor`'s memory while their hour is still open — they are derived state, rebuilt from the stream — and reach the database once **that asset's own stream** has moved past the hour, not once wall-clock has: a bucket is written when a message for a later hour has been processed, which `SPEC.md` §4.2 makes final. An asset that stops reporting therefore leaves its last hour open rather than sealing it on the clock.
 
 ---
 
