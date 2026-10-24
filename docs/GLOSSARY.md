@@ -1,6 +1,6 @@
 # docs\GLOSSARY.md
 
-Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol). This document owns **naming only**: which identifiers exist and what they are called. Conditions, thresholds and behaviour live in `SPEC.md`; structure lives in `ARCHITECTURE.md`. The one-line meanings below are non-normative glosses — where a gloss and a rule appear to disagree, the rule wins.
+This document owns **naming only**: which identifiers exist and what they are called. Conditions, thresholds and behaviour live in `SPEC.md`; structure lives in `ARCHITECTURE.md`. The one-line meanings below are non-normative glosses — where a gloss and a rule appear to disagree, the rule wins.
 
 ---
 
@@ -200,4 +200,4 @@ Rules: `SPEC.md` §6. Structure: `ARCHITECTURE.md` §6.
 | **Live telemetry strip** | The polled row of current readings per asset. |
 | **Hourly history** | The hourly-aggregate table over a chosen period. |
 
-Names retired with the AI layer (`SPEC.md` §8): *AI Strategy card*, *AI Insights cards*, *Native chat*, *Telemetry-strip explanation*. Do not reintroduce them without a SPEC change.
+Names retired with the AI layer: *AI Strategy card*, *AI Insights cards*, *Native chat*, *Telemetry-strip explanation*. Do not reintroduce them without a SPEC change.

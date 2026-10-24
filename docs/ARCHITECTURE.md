@@ -1,6 +1,6 @@
 # docs\ARCHITECTURE.md
 
-Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol). This document owns structure, modules, messaging, persistence, ports and technical boundaries — and nothing else. Product rules live in `SPEC.md`, names in `GLOSSARY.md`.
+This document owns structure, modules, messaging, persistence, ports and technical boundaries — and nothing else. Product rules live in `SPEC.md`, names in `GLOSSARY.md`.
 
 ---
 
@@ -96,4 +96,4 @@ The `/api/` prefix is passed through unchanged, so `OperatorApi` maps the full `
 | Frontend | HTML + CSS + vanilla JavaScript |
 | Orchestration | Docker Compose (infrastructure only) |
 
-No AI runtime is part of the system; see `SPEC.md` §8.
+No AI runtime is part of the system.

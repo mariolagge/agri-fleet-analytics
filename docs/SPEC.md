@@ -145,7 +145,7 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 
 **REQ-BUCKET-EXACT.** Bucket contents shall be exact seconds, so threshold comparisons are exact. Only the edge of the rolling window shall be quantised to the hour.
 
-DST transitions (23- and 25-hour local days) are not handled specially — out of scope (§8).
+DST transitions (23- and 25-hour local days) are not handled specially — out of scope.
 
 ### 4.4 Seeded lifetime baselines
 

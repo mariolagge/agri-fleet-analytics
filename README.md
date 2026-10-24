@@ -14,15 +14,16 @@ a frontend of plain HTML/CSS/JavaScript with no framework, bundler or dependenci
 
 ## Where things are documented
 
-This README is a front door only. Each of the four documents below owns one band of the
+This README is a front door only. Each document below owns one band of the
 project and is the single source of truth for it — nothing is restated between them.
 
 | Document | Owns |
 |----------|------|
-| [`CLAUDE.md`](CLAUDE.md) | Coding style, build and run commands, current repo status |
-| [`docs/SPEC.md`](docs/SPEC.md) | Product rules, domain logic, API contract, scope — and, in §0, the hierarchy these four documents follow |
+| [`CLAUDE.md`](CLAUDE.md) | Working rules for AI coding agents (interview-first coding style) |
+| [`docs/SPEC.md`](docs/SPEC.md) | Product rules, domain logic, API contract, scope |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Modules, ports, messaging, persistence, technical boundaries |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Every name: types, fields, counters, flags, statuses, endpoints, components |
+| [`docs/RUNNING.md`](docs/RUNNING.md) | How to start, test and stop the system |
 
 Start with `SPEC.md` §1 for what the system does, `ARCHITECTURE.md` §1 for how it is put
-together, and `CLAUDE.md` under "Common commands" for how to run it.
+together, and `docs/RUNNING.md` for how to run it.
