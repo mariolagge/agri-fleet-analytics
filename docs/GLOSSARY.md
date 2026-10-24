@@ -13,6 +13,7 @@ Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol
 | Java types | `PascalCase` | `TelemetryProcessorApplication` |
 | Database columns | `snake_case` | `vibration_alert_hours` |
 | Java packages | all lowercase, words concatenated, no underscores | `com.mariolagger.telemetryprocessor` |
+| Requirement IDs | `REQ-` plus uppercase words separated by hyphens. Each ID is declared once, on its shall in `SPEC.md`, and is not listed in this file | `REQ-` plus words |
 
 Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
 
