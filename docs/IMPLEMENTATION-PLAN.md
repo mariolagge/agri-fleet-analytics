@@ -213,7 +213,7 @@ Match the existing test classes (`AssetViewServiceTest` is the reference):
 | P5 | REQ IDs in code comments | P4 | 0.5 h | Mon 2 Nov | | Done (2026-10-25) |
 | P6 | REQ-tagged unit tests | P5 | 1.0 h | Tue 3 – Wed 4 Nov | | Done (2026-10-25) |
 | P7 | Traceability matrix | P6 | 0.5 h | Thu 5 Nov | | Done (2026-10-25) |
-| P8 | SysML-style system model | P4, P6 | 1.0 h | Fri 6 Nov | | Open |
+| P8 | SysML-style system model | P4, P6 | 1.0 h | Fri 6 Nov | | Done (2026-10-25) |
 | P9 | README front door | P3, P7, P8 | 1.5 h | Sat 7 Nov | | Open |
 | P10 | Final consistency review | all | 0.5 h | Sun 8 Nov | | Open |
 

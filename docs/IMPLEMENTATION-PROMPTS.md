@@ -93,72 +93,7 @@ Every other prompt runs strictly in order.
 
 
 
-### P8 — SysML-style system model
 
-| | |
-|---|---|
-| **Plan** | §7 P8, §5.3 |
-| **Precondition** | P7 committed |
-| **Owner before** | Replace `<CUT>` with `none`, `cut 1` or `cut 2` (plan §5.3) |
-| **Files** | new `docs/SYSTEM-MODEL.md`, `README.md` |
-
-````text
-Apply the standing rules in docs/IMPLEMENTATION-PROMPTS.md §2.
-
-GOAL
-Execute plan phase P8: write docs/SYSTEM-MODEL.md with the SysML-style Mermaid views.
-
-CUT FOR THIS RUN: <CUT>
-- none  -> all five sections
-- cut 1 -> omit §2 (block definition) and §3 (internal block); keep §1, §4, §5
-- cut 2 -> omit §2, §3 and §4; keep §1 and §5
-Omitted sections are left out entirely. The remaining sections keep their numbers (so §5
-stays §5), and the omitted sections' rows are dropped from the diagram-kind table.
-
-READ FIRST
-- CLAUDE.md
-- docs/IMPLEMENTATION-PLAN.md §0-§4, §5.3 and §7 P8
-- docs/ARCHITECTURE.md §1-§5
-- docs/SPEC.md: REQ-SIM-CYCLE, REQ-FLAGS, REQ-STATUS, REQ-RANK, REQ-RECOMMEND
-- docs/STAKEHOLDERS.md
-- README.md
-
-DO
-1. Write SYSTEM-MODEL.md: the frame from plan P8 "Document frame", then each section with
-   its one-sentence description, the Mermaid block copied verbatim from the plan, the
-   "Source:" line, and any sentence the plan places below the diagram.
-2. Add the SYSTEM-MODEL.md row to the README.md documents table.
-
-WATCH OUT
-- Copy the Mermaid blocks character for character, including en dashes, <br/> and quotes.
-  Use ```mermaid fences.
-- You cannot render Mermaid. Do not install anything to try (no npm, no mermaid-cli).
-  Rendering is checked by the owner on mermaid.live.
-- If the owner reports a rendering error, change only syntax, never content, and list the
-  change in the report.
-
-DO NOT
-- Do not add diagrams, elements or relations beyond the plan.
-- Do not edit ARCHITECTURE.md or SPEC.md.
-
-VERIFY
-1. Every class and test named in §5 exists:
-   (Bash) for n in FlagEvaluationService AssetAssessmentService FleetRankingService FlagEvaluationServiceTest AssetAssessmentServiceTest FleetRankingServiceTest; do git ls-files "*/$n.java" | grep -q . && echo "ok $n" || echo "MISSING $n"; done
-   -> six "ok" lines
-2. Each Mermaid block in SYSTEM-MODEL.md is identical to the plan's block for that section
-   (compare them one by one).
-
-DONE WHEN
-All P8 acceptance criteria in the plan are met, except the rendering check, which stays an
-owner task.
-
-REPORT
-In the plan §0 rule 7 format. Under "Owner tasks": "Paste each Mermaid block into
-https://mermaid.live and confirm it renders." Record the cut in the plan §5.1 status as
-the plan §5.3 requires.
-````
-
----
 
 ### P9 — README front door
 
