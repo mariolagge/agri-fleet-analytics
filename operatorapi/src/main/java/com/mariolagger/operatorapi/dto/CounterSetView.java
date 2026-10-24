@@ -1,6 +1,6 @@
 package com.mariolagger.operatorapi.dto;
 
-/** SPEC §4.1: the eight counters of one scope, in hours. */
+/** REQ-COUNTER-SET: the eight counters of one scope, in hours. */
 public class CounterSetView {
 
 	private double engineHours;

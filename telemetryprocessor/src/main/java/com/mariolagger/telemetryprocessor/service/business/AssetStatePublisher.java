@@ -48,7 +48,7 @@ public class AssetStatePublisher {
 
 	/**
 	 * ARCHITECTURE.md §4 startup reset: a stale Postgres volume must not leak state into a
-	 * new run. Publishing straight afterwards writes the SPEC §4.4 baselines, because that
+	 * new run. Publishing straight afterwards writes the REQ-BASELINES baselines, because that
 	 * is exactly what the freshly constructed accumulators hold.
 	 *
 	 * This must stay a @PostConstruct. Rabbit listener containers are SmartLifecycle beans
@@ -119,7 +119,7 @@ public class AssetStatePublisher {
 			sealableBucketsByAsset.put(assetId, sealableBuckets);
 		}
 
-		// SPEC §5.4 is cross-asset, so the rank is only known once all four rows exist —
+		// REQ-RANK is cross-asset, so the rank is only known once all four rows exist —
 		// and all four are then written together (ARCHITECTURE.md §4).
 		Map<AssetId, Integer> priorityRanks = fleetRankingService.assignPriorityRanks(flagsByAsset,
 				rolling24hCountersByAsset);
@@ -207,7 +207,7 @@ public class AssetStatePublisher {
 		row.setHighCumulativeLoadThreshold(highCumulativeLoad.getThreshold());
 	}
 
-	/** All seven columns stay NULL until the asset reports (SPEC §6.4). */
+	/** All seven columns stay NULL until the asset reports (REQ-API-LATEST). */
 	private void applyLatestMessage(AssetState row, TelemetryMessage latestMessage) {
 		if (latestMessage == null) {
 			return;

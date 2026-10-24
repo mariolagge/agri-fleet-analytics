@@ -1,6 +1,6 @@
 // Live telemetry strip: the newest reading per machine, from GET /api/telemetry/latest.
 // All four machines are always listed; one that has not reported carries a null
-// telemetry object and the STALE live condition (SPEC.md §6.4).
+// telemetry object and the STALE live condition (REQ-API-LATEST).
 
 function telemetryReadingHtml(label, value) {
   return `<span><span class="telemetry-reading-label">${escapeHtml(label)}</span> ${escapeHtml(value)}</span>`;

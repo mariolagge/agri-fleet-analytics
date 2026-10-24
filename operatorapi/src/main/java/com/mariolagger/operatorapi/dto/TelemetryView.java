@@ -2,7 +2,7 @@ package com.mariolagger.operatorapi.dto;
 
 import java.time.Instant;
 
-/** SPEC §3.1: the most recent telemetry message of one asset, as embedded by §6.4. */
+/** REQ-TELEMETRY-SHAPE: the most recent telemetry message of one asset, as embedded by REQ-API-LATEST. */
 public class TelemetryView {
 
 	private AssetId assetId;

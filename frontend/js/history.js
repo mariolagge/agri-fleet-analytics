@@ -1,4 +1,4 @@
-// Hourly history table. The period is validated by the API (SPEC.md §6.3) — a bad or
+// Hourly history table. The period is validated by the API (REQ-API-HISTORY) — a bad or
 // too-long range comes back as 400 and its message is shown in the table itself.
 
 const HISTORY_COLUMN_COUNT = 10;

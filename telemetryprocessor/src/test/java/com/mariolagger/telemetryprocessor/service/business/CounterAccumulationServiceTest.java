@@ -88,7 +88,7 @@ class CounterAccumulationServiceTest {
 		assertTrue(counterAccumulationService.sealableBuckets(ASSET).isEmpty());
 	}
 
-	/** SPEC §4.2 step 3. */
+	/** REQ-ACCUMULATE step 3. */
 	@Test
 	void deltaAboveSixtySecondsCreditsNothingButAdvancesTheLastProcessedTimestamp() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -100,7 +100,7 @@ class CounterAccumulationServiceTest {
 		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters().getEngineHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.2 step 3: above 60 s, not 60 s itself. */
+	/** REQ-ACCUMULATE step 3: above 60 s, not 60 s itself. */
 	@Test
 	void deltaOfExactlySixtySecondsIsCredited() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -109,7 +109,7 @@ class CounterAccumulationServiceTest {
 		assertEquals(SIXTY_SECONDS_IN_HOURS, rolling24hCounters().getEngineHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.2 step 1. */
+	/** REQ-ACCUMULATE step 1. */
 	@Test
 	void outOfOrderOrDuplicateTimestampUpdatesNothing() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -127,7 +127,7 @@ class CounterAccumulationServiceTest {
 		assertEquals(SIXTY_SECONDS_IN_HOURS, rolling24hCounters().getEngineHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.2 step 2: Δt is undefined for the first message of an asset. */
+	/** REQ-ACCUMULATE step 2: Δt is undefined for the first message of an asset. */
 	@Test
 	void firstMessageOfAnAssetCreditsNothing() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -135,7 +135,7 @@ class CounterAccumulationServiceTest {
 		assertEquals(0.0, rolling24hCounters().getEngineHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.1: the three buckets partition engine hours. */
+	/** REQ-COUNTER-INVARIANT: the three buckets partition engine hours. */
 	@Test
 	void engineHoursEqualsWorkingPlusTransportPlusIdle() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -151,7 +151,7 @@ class CounterAccumulationServiceTest {
 				+ rolling24hCounters.getTransportHours() + rolling24hCounters.getIdleHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.1: productive work is pto plus ground speed, never the reported status. */
+	/** REQ-COUNTER-SET: productive work is pto plus ground speed, never the reported status. */
 	@Test
 	void productiveWorkIsDerivedFromPtoAndGroundSpeedNotFromWorkingStatus() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -163,7 +163,7 @@ class CounterAccumulationServiceTest {
 		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getIdleHours(), TOLERANCE);
 	}
 
-	/** SPEC §4.5: the percentage is the quotient of the counters published beside it. */
+	/** REQ-UTILIZATION: the percentage is the quotient of the counters published beside it. */
 	@Test
 	void utilizationPercentIsTheQuotientOfTheSnapshotsOwnCountersAndCoverage() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
@@ -177,7 +177,7 @@ class CounterAccumulationServiceTest {
 				snapshot.getUtilizationPercent(), TOLERANCE);
 	}
 
-	/** SPEC §4.5: null, not 0.0, when the denominator is 0. */
+	/** REQ-UTILIZATION: null, not 0.0, when the denominator is 0. */
 	@Test
 	void assetThatNeverReportedHasNoCoverageAndNullPercentages() {
 		AssetSnapshot snapshot = counterAccumulationService.snapshotOf(AssetId.MOWER, HOUR_07);

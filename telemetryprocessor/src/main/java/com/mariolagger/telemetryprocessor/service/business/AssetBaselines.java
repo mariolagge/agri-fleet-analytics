@@ -3,7 +3,7 @@ package com.mariolagger.telemetryprocessor.service.business;
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 
 /**
- * The SPEC §4.4 seeded service history. Lifetime scope only — the rolling 24-hour window
+ * The REQ-BASELINES seeded service history. Lifetime scope only — the rolling 24-hour window
  * always starts empty — and never carried across restarts, so every run is reproducible.
  */
 public final class AssetBaselines {
@@ -13,7 +13,7 @@ public final class AssetBaselines {
 
 	/** A fresh copy per call: the caller adds this run's hours on top of it. */
 	public static CounterSet baselineFor(AssetId assetId) {
-		// SPEC §4.4, column order: engine, working, transport, idle, loaded, highLoad,
+		// REQ-BASELINES, column order: engine, working, transport, idle, loaded, highLoad,
 		// tempExcursion, vibrationAlert.
 		return switch (assetId) {
 			case TRACTOR -> new CounterSet(6200, 3400, 1500, 1300, 980, 410, 26, 58);

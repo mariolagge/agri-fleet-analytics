@@ -2,7 +2,7 @@ package com.mariolagger.operatorapi.dto;
 
 import java.util.List;
 
-/** SPEC §6.1 and §6.2: one asset with its counters, flags, status and ranking. */
+/** REQ-API-ASSETS and REQ-API-ASSET: one asset with its counters, flags, status and ranking. */
 public class AssetView {
 
 	private AssetId assetId;
@@ -15,7 +15,7 @@ public class AssetView {
 	private CounterSetView rolling24hCounters;
 	private double windowCoverageHours;
 
-	// SPEC §4.5: both are null when their denominator is 0
+	// REQ-UTILIZATION: both are null when their denominator is 0
 	private Double utilizationPercent;
 	private Double productiveSharePercent;
 

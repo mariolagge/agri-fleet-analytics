@@ -8,6 +8,6 @@ import com.mariolagger.operatorapi.entity.AssetState;
 
 public interface AssetStateRepository extends JpaRepository<AssetState, String> {
 
-	/** SPEC §6.1: assets are ordered by priorityRank. */
+	/** REQ-API-ASSETS: assets are ordered by priorityRank. */
 	List<AssetState> findAllByOrderByPriorityRankAsc();
 }

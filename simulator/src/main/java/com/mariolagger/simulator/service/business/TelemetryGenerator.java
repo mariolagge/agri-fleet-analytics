@@ -14,7 +14,7 @@ import com.mariolagger.simulator.dto.WorkingStatus;
 @Component
 public class TelemetryGenerator {
 
-	// Not fixed by SPEC §3.2: how fast temperatureC closes the gap to its target band.
+	// Not fixed by REQ-SIM-TEMPERATURE: how fast temperatureC closes the gap to its target band.
 	private static final double TEMPERATURE_DRIFT_C_PER_SECOND = 0.4;
 
 	private final Random random = new Random();
@@ -42,7 +42,7 @@ public class TelemetryGenerator {
 		TelemetryMessage message = new TelemetryMessage();
 		message.setAssetId(state.getAssetId());
 		message.setTimestamp(timestamp);
-		// SPEC §3.1: WORKING exactly when ptoEngaged and groundSpeedKmh > 2 — every
+		// REQ-TELEMETRY-WORKING-STATUS: WORKING exactly when ptoEngaged and groundSpeedKmh > 2 — every
 		// WORKING speed range below starts at 3 or above, every other state has pto off.
 		message.setPtoEngaged(workingStatus == WorkingStatus.WORKING);
 		message.setGroundSpeedKmh(groundSpeedKmh);
@@ -73,7 +73,7 @@ public class TelemetryGenerator {
 	}
 
 	private long dwellSeconds(WorkingStatus workingStatus) {
-		// SPEC §3.2
+		// REQ-SIM-CYCLE
 		return switch (workingStatus) {
 			case WORKING -> randomMinutesAsSeconds(20, 60);
 			case TRANSPORT -> randomMinutesAsSeconds(3, 10);
@@ -82,7 +82,7 @@ public class TelemetryGenerator {
 	}
 
 	private WorkingStatus nextWorkingStatus(WorkingStatus workingStatus) {
-		// SPEC §3.2
+		// REQ-SIM-CYCLE
 		return switch (workingStatus) {
 			case WORKING -> random.nextDouble() < 0.60 ? WorkingStatus.TRANSPORT : WorkingStatus.IDLE;
 			case TRANSPORT -> random.nextDouble() < 0.70 ? WorkingStatus.WORKING : WorkingStatus.IDLE;
@@ -91,7 +91,7 @@ public class TelemetryGenerator {
 	}
 
 	private double groundSpeedKmh(AssetId assetId, WorkingStatus workingStatus) {
-		// SPEC §3.2
+		// REQ-SIM-CYCLE
 		return switch (workingStatus) {
 			case WORKING -> switch (assetId) {
 				case TRACTOR -> randomBetween(6, 14);
@@ -105,8 +105,8 @@ public class TelemetryGenerator {
 	}
 
 	/**
-	 * SPEC §3.2. The working band is per asset — it is the only per-asset difference any
-	 * §4.1 counter reads, and therefore the whole reason the four machines rank differently.
+	 * REQ-SIM-CYCLE. The working band is per asset — it is the only per-asset difference any
+	 * REQ-COUNTER-SET counter reads, and therefore the whole reason the four machines rank differently.
 	 * Only TRACTOR reaches 0.85, so only TRACTOR reports ELEVATED from load alone.
 	 */
 	private double loadFactor(AssetId assetId, WorkingStatus workingStatus) {
@@ -122,7 +122,7 @@ public class TelemetryGenerator {
 		};
 	}
 
-	/** SPEC §3.2, per asset, per minute of working time. */
+	/** REQ-SIM-TEMPERATURE, per asset, per minute of working time. */
 	private double thermalExcursionChancePerMinute(AssetId assetId) {
 		return switch (assetId) {
 			case TRACTOR -> 0.015;
@@ -132,7 +132,7 @@ public class TelemetryGenerator {
 		};
 	}
 
-	/** SPEC §3.2, per asset, per minute of working time. */
+	/** REQ-SIM-VIBRATION, per asset, per minute of working time. */
 	private double vibrationExcursionChancePerMinute(AssetId assetId) {
 		return switch (assetId) {
 			case TRACTOR -> 0.010;
@@ -159,11 +159,11 @@ public class TelemetryGenerator {
 	}
 
 	private double targetTemperatureC(AssetSimulationState state) {
-		// SPEC §3.2: an excursion overrides the state bands and runs to its own end.
+		// REQ-SIM-TEMPERATURE: an excursion overrides the state bands and runs to its own end.
 		if (state.getThermalExcursionEndsAt() != null) {
 			return randomBetween(91, 98);
 		}
-		// SPEC §3.2
+		// REQ-SIM-TEMPERATURE
 		return switch (state.getWorkingStatus()) {
 			case WORKING -> randomBetween(70, 85);
 			case TRANSPORT -> randomBetween(55, 70);
@@ -172,7 +172,7 @@ public class TelemetryGenerator {
 	}
 
 	private VibrationLevel vibrationLevel(AssetSimulationState state, double loadFactor) {
-		// SPEC §3.2
+		// REQ-SIM-VIBRATION
 		if (state.getVibrationExcursionEndsAt() != null) {
 			return VibrationLevel.HIGH;
 		}
@@ -183,7 +183,7 @@ public class TelemetryGenerator {
 	}
 
 	private void maybeStartExcursions(AssetSimulationState state, Instant timestamp, double deltaSeconds) {
-		// SPEC §3.2: only while WORKING and not already inside one of that kind. The rate is
+		// REQ-SIM-EXCURSION-RATE: only while WORKING and not already inside one of that kind. The rate is
 		// per minute of working time, so it is scaled to this message's own delta — the burst
 		// steps 60 s and the live phase ~7.5 s, and both must wear the machine at one speed.
 		if (state.getWorkingStatus() != WorkingStatus.WORKING) {
@@ -201,7 +201,7 @@ public class TelemetryGenerator {
 	}
 
 	private void expireFinishedExcursions(AssetSimulationState state, Instant timestamp) {
-		// SPEC §3.2: an excursion runs to its end independently of the state cycle, so it
+		// REQ-SIM-TEMPERATURE and REQ-SIM-VIBRATION: an excursion runs to its end independently of the state cycle, so it
 		// is cleared by the clock and never by a state change. A non-null end therefore
 		// means "currently inside one" everywhere below.
 		if (state.getThermalExcursionEndsAt() != null && !timestamp.isBefore(state.getThermalExcursionEndsAt())) {
@@ -213,7 +213,7 @@ public class TelemetryGenerator {
 	}
 
 	private long excursionSeconds() {
-		// SPEC §3.2: excursions last 2-15 minutes
+		// REQ-SIM-TEMPERATURE and REQ-SIM-VIBRATION: excursions last 2-15 minutes
 		return randomMinutesAsSeconds(2, 15);
 	}
 

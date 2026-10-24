@@ -11,7 +11,7 @@ import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 
 /**
- * SPEC §5.4. All four assets are ranked every time; an asset with no flags simply sorts to
+ * REQ-RANK. All four assets are ranked every time; an asset with no flags simply sorts to
  * the bottom.
  */
 @Component
@@ -30,7 +30,7 @@ public class FleetRankingService {
 		return priorityRanks;
 	}
 
-	/** The four SPEC §5.4 criteria, in order. Criterion 4 makes the order fully deterministic. */
+	/** The four REQ-RANK criteria, in order. Criterion 4 makes the order fully deterministic. */
 	private int compare(AssetId left, AssetId right, Map<AssetId, List<FlagEvaluation>> flagsByAsset,
 			Map<AssetId, CounterSet> rolling24hCountersByAsset) {
 		int bySevereCount = Integer.compare(severityCount(right, flagsByAsset, FlagSeverity.SEVERE),
@@ -56,7 +56,7 @@ public class FleetRankingService {
 	}
 
 	/**
-	 * SPEC §5.4 criterion 3: a deliberate tie-breaking magnitude, not a physical quantity —
+	 * REQ-RANK criterion 3: a deliberate tie-breaking magnitude, not a physical quantity —
 	 * the three counters can all be credited by the same message.
 	 */
 	private double counterSum(CounterSet rolling24hCounters) {

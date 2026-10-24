@@ -7,7 +7,7 @@ import com.mariolagger.simulator.dto.WorkingStatus;
 
 /**
  * Everything one asset remembers between two telemetry messages. In memory only,
- * one instance per asset, fresh on every run (SPEC §3.2).
+ * one instance per asset, fresh on every run (REQ-SIM-MEMORY).
  */
 public class AssetSimulationState {
 

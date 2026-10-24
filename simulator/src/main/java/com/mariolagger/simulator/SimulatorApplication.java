@@ -20,7 +20,7 @@ public class SimulatorApplication {
 	@Bean
 	public MessageConverter jsonMessageConverter() {
 		// Without this the RabbitTemplate falls back to Java serialization.
-		// SPEC §3.1: Jackson 3 writes Instant as an ISO-8601 UTC string by default,
+		// REQ-TELEMETRY-SHAPE: Jackson 3 writes Instant as an ISO-8601 UTC string by default,
 		// so no date configuration is needed here.
 		return new JacksonJsonMessageConverter();
 	}

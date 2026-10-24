@@ -69,7 +69,7 @@ class AssetViewServiceTest {
 		assertReasonIsNotEmpty(thrown);
 	}
 
-	/** Bug 7: 404 is reserved for an id outside the four SPEC §2 assets. */
+	/** Bug 7: 404 is reserved for an id outside the four REQ-FLEET-FIXED assets. */
 	@Test
 	void getAssetThrows404ForAnUnknownAssetIdWithoutQueryingTheRepository() {
 		ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
@@ -167,7 +167,7 @@ class AssetViewServiceTest {
 		assertTrue(assetView.getFlags().isEmpty());
 	}
 
-	/** SPEC §5.1: an active flag is published with the counter, scope, value and threshold. */
+	/** REQ-FLAGS: an active flag is published with the counter, scope, value and threshold. */
 	@Test
 	void anActiveFlagCarriesItsCounterScopeValueAndThresholdRoundedToTwoDecimals() {
 		AssetState flagged = assetStateRow(AssetId.TRACTOR);
@@ -199,7 +199,7 @@ class AssetViewServiceTest {
 		assertEquals(4500.0, highCumulativeLoad.getThreshold());
 	}
 
-	/** SPEC §6.4: all four assets are always present, ordered by assetId ascending. */
+	/** REQ-API-LATEST: all four assets are always present, ordered by assetId ascending. */
 	@Test
 	void getLatestTelemetryReturnsAllFourAssetsInAscendingIdOrderWithTheMissingOnesStale() {
 		AssetState tractor = assetStateRow(AssetId.TRACTOR);

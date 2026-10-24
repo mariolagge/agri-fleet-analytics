@@ -3,9 +3,9 @@ package com.mariolagger.operatorapi.dto;
 import java.time.Instant;
 
 /**
- * SPEC §6.3: one asset for one hour. Counter values are the amount accrued within that
+ * REQ-API-HISTORY: one asset for one hour. Counter values are the amount accrued within that
  * hour, not running totals. `hourStart` is the UTC instant at which the Europe/Vienna
- * local hour began (SPEC §4.3).
+ * local hour began (REQ-BUCKETS).
  */
 public class HistoryRow {
 

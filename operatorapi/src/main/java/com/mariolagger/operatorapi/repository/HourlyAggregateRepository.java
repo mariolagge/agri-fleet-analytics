@@ -9,7 +9,7 @@ import com.mariolagger.operatorapi.entity.HourlyAggregate;
 import com.mariolagger.operatorapi.entity.HourlyAggregateId;
 
 /**
- * SPEC §6.3: one row per asset per hour that overlaps the requested period, ordered by
+ * REQ-API-HISTORY: one row per asset per hour that overlaps the requested period, ordered by
  * hourStart ascending then assetId ascending. A row covering [hourStart, hourStart + 1h)
  * overlaps [from, to) exactly when hourStart &lt; to and hourStart &gt; from − 1h, so both
  * finders take `to` and `from` minus one hour as their bounds.

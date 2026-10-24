@@ -3,7 +3,7 @@ package com.mariolagger.operatorapi.dto;
 import java.time.Instant;
 import java.util.List;
 
-/** SPEC §6.1: the body of GET /api/assets. */
+/** REQ-API-ASSETS: the body of GET /api/assets. */
 public class FleetResponse {
 
 	private Instant generatedAt;

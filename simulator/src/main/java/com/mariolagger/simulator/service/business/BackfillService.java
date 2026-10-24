@@ -13,7 +13,7 @@ import com.mariolagger.simulator.service.messaging.TelemetryPublisher;
 @Component
 public class BackfillService {
 
-	// SPEC §4.2 step 3 discards a delta GREATER than 60 s, so 60 s exactly is the
+	// REQ-ACCUMULATE step 3 discards a delta GREATER than 60 s, so 60 s exactly is the
 	// largest step the consumer still credits. This is the whole reason a 24 h window
 	// can be filled in seconds; rounding it up to 61 would credit nothing at all.
 	private static final long BACKFILL_STEP_SECONDS = 60;

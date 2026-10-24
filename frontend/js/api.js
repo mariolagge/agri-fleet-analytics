@@ -3,7 +3,7 @@
 
 const API_BASE = '';
 
-// Spring's default error body carries the useful text in "message" (SPEC.md §6).
+// Spring's default error body carries the useful text in "message" (REQ-API-COMMON).
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE}${path}`);
   if (response.ok) {
@@ -38,5 +38,5 @@ function fetchHistory(fromInstant, toInstant, assetId) {
   return fetchJson(`/api/history?${params}`);
 }
 
-// GET /api/assets/{assetId} (SPEC.md §6.2) is not called from this screen: it returns an
+// GET /api/assets/{assetId} (REQ-API-ASSET) is not called from this screen: it returns an
 // object identical to one element of the fleet response, which the poll already holds.

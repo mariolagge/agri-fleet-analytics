@@ -1,6 +1,6 @@
 // Fleet ranking: the SVG diagram, the ranked list under it, and the fleet metric strip.
 // The assets array is rendered in the order the API returned it — that order IS the
-// priority ranking (SPEC.md §5.4), so it is never re-sorted here.
+// priority ranking (REQ-RANK), so it is never re-sorted here.
 
 const NODE_STATUS_CLASSES = ['status-good', 'status-watch', 'status-critical'];
 const NODE_LIVE_CLASSES = ['live-normal', 'live-caution', 'live-alert', 'live-stale'];

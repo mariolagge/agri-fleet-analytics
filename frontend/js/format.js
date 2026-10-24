@@ -70,7 +70,7 @@ const COUNTER_DISPLAY_NAMES = {
   vibrationAlertHours: 'Vibration alert',
 };
 
-// Fixed order for the counter panels, matching SPEC.md §4.1.
+// Fixed order for the counter panels, matching REQ-COUNTER-SET.
 const COUNTER_ORDER = [
   'engineHours',
   'totalWorkingHours',
@@ -166,7 +166,7 @@ function vibrationLevelDisplayName(vibrationLevel) {
   return VIBRATION_LEVEL_DISPLAY_NAMES[vibrationLevel] || EM_DASH;
 }
 
-// A missing value is an em dash, never a zero: SPEC.md §4.5 publishes null percentages
+// A missing value is an em dash, never a zero: REQ-UTILIZATION publishes null percentages
 // for assets that have not reported, and rendering those as 0 would be a lie.
 function formatNumber(value, fractionDigits = 1) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
@@ -192,8 +192,8 @@ function formatPercent(value) {
   return `${formatNumber(value, 1)} %`;
 }
 
-// The API speaks UTC instants (SPEC.md §6); the farmer reads farm-local time. That is the
-// farm's zone, not the browser's — SPEC.md §4.3 aligns the hourly buckets to Europe/Vienna,
+// The API speaks UTC instants (REQ-API-COMMON); the farmer reads farm-local time. That is the
+// farm's zone, not the browser's — REQ-BUCKETS aligns the hourly buckets to Europe/Vienna,
 // so on a machine set to any other zone the hourStart column would stop landing on :00.
 const FARM_ZONE = 'Europe/Vienna';
 
@@ -246,7 +246,7 @@ function escapeHtml(text) {
 
 // Small display fragments shared by the fleet ranking, the asset detail and the
 // telemetry strip. Status and live condition stay in separate elements on purpose —
-// SPEC.md §5.3 keeps them apart.
+// REQ-LIVE keeps them apart.
 
 function statusPillHtml(status) {
   return `<span class="status-pill ${statusClass(status)}">`
@@ -302,7 +302,7 @@ function toDatetimeLocalValue(date) {
 
 // The UTC ISO-8601 instant the API wants, from a farm-local datetime-local value. The
 // offset is read once, at the naive instant: a period that straddles a DST transition is
-// off by an hour, which SPEC.md §8 puts out of scope.
+// off by an hour, which SPEC §4.3 puts out of scope.
 function toUtcInstant(localValue) {
   if (!localValue) {
     return '';

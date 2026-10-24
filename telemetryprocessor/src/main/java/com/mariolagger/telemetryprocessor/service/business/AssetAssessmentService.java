@@ -13,25 +13,25 @@ import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
 
 /**
- * SPEC §5.2, §5.3 and §5.5. Status is an integral over 24 hours; liveCondition is the
+ * REQ-STATUS, REQ-LIVE and REQ-RECOMMEND. Status is an integral over 24 hours; liveCondition is the
  * current instant. They are computed side by side here and never fed into each other —
- * §5.3 is explicit that liveCondition influences nothing else.
+ * REQ-LIVE is explicit that liveCondition influences nothing else.
  */
 @Component
 public class AssetAssessmentService {
 
-	// SPEC §5.3.
+	// REQ-LIVE.
 	private static final Duration STALE_AFTER = Duration.ofSeconds(60);
 	private static final double ALERT_TEMPERATURE_C = 95.0;
 	private static final double CAUTION_TEMPERATURE_C = 90.0;
 	private static final double CAUTION_LOAD_FACTOR = 0.9;
 
-	// SPEC §5.5, verbatim.
+	// REQ-RECOMMEND, verbatim.
 	private static final String CRITICAL_RECOMMENDATION = "Priority check recommended within the next 5 engine hours.";
 	private static final String WATCH_RECOMMENDATION = "Plan inspection within the next 15–20 engine hours.";
 	private static final String GOOD_RECOMMENDATION = "No inspection recommended at this time.";
 
-	/** SPEC §5.2 — each active flag counted once, at its current severity. */
+	/** REQ-STATUS — each active flag counted once, at its current severity. */
 	public AssetStatus status(List<FlagEvaluation> flags) {
 		int severeCount = FlagEvaluation.countAtSeverity(flags, FlagSeverity.SEVERE);
 		int moderateCount = FlagEvaluation.countAtSeverity(flags, FlagSeverity.MODERATE);
@@ -45,7 +45,7 @@ public class AssetAssessmentService {
 	}
 
 	/**
-	 * SPEC §5.3, evaluated top to bottom — the first matching row wins. Staleness is the age
+	 * REQ-LIVE, evaluated top to bottom — the first matching row wins. Staleness is the age
 	 * of the message's own timestamp, not of its arrival: a backfilled reading from twenty
 	 * hours ago describes an asset that has been silent for twenty hours.
 	 */
@@ -66,7 +66,7 @@ public class AssetAssessmentService {
 		return LiveCondition.NORMAL;
 	}
 
-	/** SPEC §5.5 — driven by status alone. */
+	/** REQ-RECOMMEND — driven by status alone. */
 	public String recommendation(AssetStatus status) {
 		return switch (status) {
 			case CRITICAL -> CRITICAL_RECOMMENDATION;

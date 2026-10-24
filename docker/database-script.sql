@@ -1,7 +1,7 @@
 CREATE TABLE asset_state (
     asset_id                          text PRIMARY KEY,
 
-    -- SPEC §4.1 counters, lifetime scope (§4.4 baselines + this run)
+    -- REQ-COUNTER-SET counters, lifetime scope (REQ-BASELINES + this run)
     lifetime_engine_hours             numeric NOT NULL,
     lifetime_total_working_hours      numeric NOT NULL,
     lifetime_transport_hours          numeric NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE asset_state (
     lifetime_temp_excursion_hours     numeric NOT NULL,
     lifetime_vibration_alert_hours    numeric NOT NULL,
 
-    -- SPEC §4.1 counters, rolling 24 h scope (§4.3)
+    -- REQ-COUNTER-SET counters, rolling 24 h scope (REQ-SCOPES)
     rolling_24h_engine_hours          numeric NOT NULL,
     rolling_24h_total_working_hours   numeric NOT NULL,
     rolling_24h_transport_hours       numeric NOT NULL,
@@ -21,18 +21,18 @@ CREATE TABLE asset_state (
     rolling_24h_temp_excursion_hours  numeric NOT NULL,
     rolling_24h_vibration_alert_hours numeric NOT NULL,
 
-    -- SPEC §4.5
+    -- REQ-UTILIZATION
     window_coverage_hours             numeric NOT NULL,
     utilization_percent               numeric NULL,
     productive_share_percent          numeric NULL,
 
-    -- SPEC §5.2, §5.3, §5.4, §5.5
+    -- REQ-STATUS, REQ-LIVE, REQ-RANK, REQ-RECOMMEND
     status                            text NOT NULL,
     live_condition                    text NOT NULL,
     recommendation                    text NOT NULL,
     priority_rank                     integer NOT NULL,
 
-    -- SPEC §5.1 flags; NULL severity means the flag is inactive
+    -- REQ-FLAGS flags; NULL severity means the flag is inactive
     heavy_recent_use_severity         text NULL,
     heavy_recent_use_value            numeric NULL,
     heavy_recent_use_threshold        numeric NULL,
@@ -46,7 +46,7 @@ CREATE TABLE asset_state (
     high_cumulative_load_value        numeric NULL,
     high_cumulative_load_threshold    numeric NULL,
 
-    -- SPEC §3.1 most recent message; all NULL until the asset reports
+    -- REQ-TELEMETRY-SHAPE most recent message; all NULL until the asset reports
     latest_timestamp                  timestamptz NULL,
     latest_pto_engaged                boolean NULL,
     latest_ground_speed_kmh           numeric NULL,

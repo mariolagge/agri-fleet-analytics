@@ -210,7 +210,7 @@ Match the existing test classes (`AssetViewServiceTest` is the reference):
 | P2 | Stakeholders and needs | P1 | 0.5 h | Tue 27 Oct | | Done (2026-10-25) |
 | P3 | BPMN maintenance planning as-is / to-be | P2 | 2.0 h | Wed 28 – Sat 31 Oct | | Done (2026-10-25) |
 | P4 | REQ attributes in SPEC | P2 | 0.5 h | Sun 1 Nov | | Done (2026-10-25) |
-| P5 | REQ IDs in code comments | P4 | 0.5 h | Mon 2 Nov | | Open |
+| P5 | REQ IDs in code comments | P4 | 0.5 h | Mon 2 Nov | | Done (2026-10-25) |
 | P6 | REQ-tagged unit tests | P5 | 1.0 h | Tue 3 – Wed 4 Nov | | Open |
 | P7 | Traceability matrix | P6 | 0.5 h | Thu 5 Nov | | Open |
 | P8 | SysML-style system model | P4, P6 | 1.0 h | Fri 6 Nov | | Open |

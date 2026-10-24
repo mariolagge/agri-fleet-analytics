@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 
 /**
- * SPEC §5.1. The eight threshold rows collapse into at most four flags: one per counter,
+ * REQ-FLAGS. The eight threshold rows collapse into at most four flags: one per counter,
  * each at the highest severity it currently meets.
  */
 @Component
 public class FlagEvaluationService {
 
-	// SPEC §5.1, rolling 24 h scope.
+	// REQ-FLAGS, rolling 24 h scope.
 	private static final double HEAVY_RECENT_USE_MODERATE_HOURS = 1.5;
 	private static final double HEAVY_RECENT_USE_SEVERE_HOURS = 2.5;
 	private static final double THERMAL_LOAD_MODERATE_HOURS = 0.8;
@@ -19,7 +19,7 @@ public class FlagEvaluationService {
 	private static final double MECHANICAL_ATTENTION_MODERATE_HOURS = 1.0;
 	private static final double MECHANICAL_ATTENTION_SEVERE_HOURS = 2.0;
 
-	// SPEC §5.1, lifetime scope.
+	// REQ-FLAGS, lifetime scope.
 	private static final double HIGH_CUMULATIVE_LOAD_MODERATE_HOURS = 850.0;
 	private static final double HIGH_CUMULATIVE_LOAD_SEVERE_HOURS = 1200.0;
 

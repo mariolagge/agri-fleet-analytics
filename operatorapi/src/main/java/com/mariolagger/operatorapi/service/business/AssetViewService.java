@@ -26,7 +26,7 @@ import com.mariolagger.operatorapi.entity.AssetState;
 import com.mariolagger.operatorapi.repository.AssetStateRepository;
 
 /**
- * Maps asset_state rows onto the SPEC §6.1, §6.2 and §6.4 response shapes. ARCHITECTURE.md
+ * Maps asset_state rows onto the REQ-API-ASSETS, REQ-API-ASSET and REQ-API-LATEST response shapes. ARCHITECTURE.md
  * §2: no threshold, percentage, status, recommendation or rank is derived here — every one
  * of them is read from the row TelemetryProcessor wrote.
  */
@@ -39,7 +39,7 @@ public class AssetViewService {
 		this.assetStateRepository = assetStateRepository;
 	}
 
-	/** SPEC §6.1. */
+	/** REQ-API-ASSETS. */
 	public FleetResponse getFleet() {
 		List<AssetView> assets = new ArrayList<>();
 		for (AssetState assetState : assetStateRepository.findAllByOrderByPriorityRankAsc()) {
@@ -57,7 +57,7 @@ public class AssetViewService {
 		return response;
 	}
 
-	/** SPEC §6.2. */
+	/** REQ-API-ASSET. */
 	public AssetView getAsset(String assetId) {
 		AssetId knownAssetId = requireKnownAsset(assetId);
 		AssetState assetState = assetStateRepository.findById(knownAssetId.name())
@@ -67,7 +67,7 @@ public class AssetViewService {
 		return toAssetView(assetState);
 	}
 
-	/** SPEC §6.4. All four assets are always present, ordered by assetId ascending. */
+	/** REQ-API-LATEST. All four assets are always present, ordered by assetId ascending. */
 	public LatestTelemetryResponse getLatestTelemetry() {
 		Map<String, AssetState> assetStatesByAssetId = new HashMap<>();
 		for (AssetState assetState : assetStateRepository.findAll()) {
@@ -172,7 +172,7 @@ public class AssetViewService {
 		LatestTelemetryEntry entry = new LatestTelemetryEntry();
 		entry.setAssetId(assetId);
 
-		// SPEC §6.4: an asset that has not reported in this run is STALE with no telemetry
+		// REQ-API-LATEST: an asset that has not reported in this run is STALE with no telemetry
 		if (assetState == null) {
 			entry.setLiveCondition(LiveCondition.STALE);
 			return entry;
@@ -198,7 +198,7 @@ public class AssetViewService {
 		return telemetry;
 	}
 
-	/** SPEC §6.2: 404 when the id is not one of the four SPEC §2 assets. */
+	/** REQ-API-ASSET: 404 when the id is not one of the four REQ-FLEET-FIXED assets. */
 	private AssetId requireKnownAsset(String assetId) {
 		try {
 			return AssetId.valueOf(assetId);

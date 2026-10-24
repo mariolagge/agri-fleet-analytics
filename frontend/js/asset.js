@@ -1,6 +1,6 @@
 // Asset detail for the selected machine, plus the two counter cards below it.
 // Every flag is shown with the counter, scope, value and threshold behind it, because
-// the farmer must always be able to see why a machine is flagged (SPEC.md §7).
+// the farmer must always be able to see why a machine is flagged (REQ-DECISIONS).
 
 function flagReasonHtml(flag) {
   return `

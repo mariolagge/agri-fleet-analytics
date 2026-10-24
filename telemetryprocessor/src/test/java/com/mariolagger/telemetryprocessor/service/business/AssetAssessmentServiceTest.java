@@ -28,7 +28,7 @@ class AssetAssessmentServiceTest {
 
 	private final AssetAssessmentService assetAssessmentService = new AssetAssessmentService();
 
-	/** SPEC §5.3: staleness is the age of the reading itself, not of its delivery. */
+	/** REQ-LIVE: staleness is the age of the reading itself, not of its delivery. */
 	@Test
 	void messageTwentyHoursOldIsStaleWhateverItsReadingsSay() {
 		TelemetryMessage backfilledAlarmingMessage = message(TWENTY_HOURS_AGO, 0.95, 99.0, VibrationLevel.HIGH);
@@ -70,7 +70,7 @@ class AssetAssessmentServiceTest {
 		assertEquals(LiveCondition.CAUTION, assetAssessmentService.liveCondition(message, NOW));
 	}
 
-	/** SPEC §5.3: the caution load factor row is inclusive. */
+	/** REQ-LIVE: the caution load factor row is inclusive. */
 	@Test
 	void loadFactorExactlyAtTheCautionBarIsCaution() {
 		TelemetryMessage message = message(TEN_SECONDS_AGO, 0.9, 70.0, VibrationLevel.NORMAL);
@@ -85,34 +85,34 @@ class AssetAssessmentServiceTest {
 		assertEquals(LiveCondition.NORMAL, assetAssessmentService.liveCondition(message, NOW));
 	}
 
-	/** SPEC §5.2. */
+	/** REQ-STATUS. */
 	@Test
 	void oneSevereFlagIsCritical() {
 		assertEquals(AssetStatus.CRITICAL,
 				assetAssessmentService.status(flags(FlagSeverity.SEVERE, null, null, null)));
 	}
 
-	/** SPEC §5.2. */
+	/** REQ-STATUS. */
 	@Test
 	void twoModerateFlagsAreCritical() {
 		assertEquals(AssetStatus.CRITICAL,
 				assetAssessmentService.status(flags(FlagSeverity.MODERATE, FlagSeverity.MODERATE, null, null)));
 	}
 
-	/** SPEC §5.2. */
+	/** REQ-STATUS. */
 	@Test
 	void oneModerateFlagIsWatch() {
 		assertEquals(AssetStatus.WATCH,
 				assetAssessmentService.status(flags(FlagSeverity.MODERATE, null, null, null)));
 	}
 
-	/** SPEC §5.2. */
+	/** REQ-STATUS. */
 	@Test
 	void noActiveFlagIsGood() {
 		assertEquals(AssetStatus.GOOD, assetAssessmentService.status(flags(null, null, null, null)));
 	}
 
-	/** SPEC §5.5, verbatim — en dash included. */
+	/** REQ-RECOMMEND, verbatim — en dash included. */
 	@Test
 	void eachStatusMapsToItsRecommendation() {
 		assertEquals("Priority check recommended within the next 5 engine hours.",

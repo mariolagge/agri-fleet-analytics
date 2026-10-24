@@ -1,8 +1,8 @@
 package com.mariolagger.telemetryprocessor.service.business;
 
 /**
- * The eight SPEC §4.1 counters as one value, in hours. The same type carries an hourly
- * bucket (SPEC §4.3), a lifetime total (§4.4) and the contribution of a single message,
+ * The eight REQ-COUNTER-SET counters as one value, in hours. The same type carries an hourly
+ * bucket (REQ-BUCKETS), a lifetime total (REQ-BASELINES) and the contribution of a single message,
  * because all three are the same eight numbers added the same way.
  */
 public class CounterSet {

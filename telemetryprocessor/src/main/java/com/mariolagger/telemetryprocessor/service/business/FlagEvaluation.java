@@ -5,7 +5,7 @@ import java.util.List;
 import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 
 /**
- * One SPEC §5.1 flag as it stands right now: its severity, the counter value behind it and
+ * One REQ-FLAGS flag as it stands right now: its severity, the counter value behind it and
  * the threshold that value crossed, so the reason survives all the way into the response.
  * An inactive flag carries no severity, no value and no threshold — GLOSSARY §5 gives it
  * no representation at all.
@@ -30,7 +30,7 @@ public class FlagEvaluation {
 		return new FlagEvaluation(severity, value, threshold);
 	}
 
-	/** How many of these flags currently sit at one severity — SPEC §5.2 and §5.4 both count. */
+	/** How many of these flags currently sit at one severity — REQ-STATUS and REQ-RANK both count. */
 	public static int countAtSeverity(List<FlagEvaluation> flags, FlagSeverity severity) {
 		int count = 0;
 		for (FlagEvaluation flag : flags) {

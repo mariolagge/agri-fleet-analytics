@@ -1,6 +1,6 @@
 package com.mariolagger.telemetryprocessor.dto;
 
-/** SPEC §5.2. */
+/** REQ-STATUS. */
 public enum AssetStatus {
 	GOOD,
 	WATCH,

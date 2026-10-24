@@ -5,7 +5,7 @@ import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 /**
  * Everything one asset_state row needs from the accumulator, taken under a single lock
  * acquisition from a single clock read. The two percentages are the exact quotients of the
- * counters beside them, which is what SPEC §1 asks for: every published number traceable to
+ * counters beside them, which is what REQ-GOAL-TRACE asks for: every published number traceable to
  * a counter.
  *
  * The counters are copies; latestMessage is handed out by reference and is never mutated

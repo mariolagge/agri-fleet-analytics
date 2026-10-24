@@ -1,7 +1,7 @@
 package com.mariolagger.operatorapi.dto;
 
 /**
- * SPEC §5.1: an active flag published together with the counter value and the threshold
+ * REQ-FLAGS: an active flag published together with the counter value and the threshold
  * that triggered it, so the farmer can always see the underlying reason.
  */
 public class FlagView {

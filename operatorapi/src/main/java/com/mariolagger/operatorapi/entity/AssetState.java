@@ -23,7 +23,7 @@ public class AssetState {
 	@Column(name = "asset_id")
 	private String assetId;
 
-	// SPEC §4.1 counters, lifetime scope
+	// REQ-COUNTER-SET counters, lifetime scope
 	@Column(name = "lifetime_engine_hours")
 	private double lifetimeEngineHours;
 
@@ -48,7 +48,7 @@ public class AssetState {
 	@Column(name = "lifetime_vibration_alert_hours")
 	private double lifetimeVibrationAlertHours;
 
-	// SPEC §4.1 counters, rolling 24 h scope (§4.3)
+	// REQ-COUNTER-SET counters, rolling 24 h scope (REQ-SCOPES)
 	@Column(name = "rolling_24h_engine_hours")
 	private double rolling24hEngineHours;
 
@@ -73,7 +73,7 @@ public class AssetState {
 	@Column(name = "rolling_24h_vibration_alert_hours")
 	private double rolling24hVibrationAlertHours;
 
-	// SPEC §4.5
+	// REQ-UTILIZATION
 	@Column(name = "window_coverage_hours")
 	private double windowCoverageHours;
 
@@ -83,7 +83,7 @@ public class AssetState {
 	@Column(name = "productive_share_percent")
 	private Double productiveSharePercent;
 
-	// SPEC §5.2, §5.3, §5.4, §5.5
+	// REQ-STATUS, REQ-LIVE, REQ-RANK, REQ-RECOMMEND
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private AssetStatus status;
@@ -98,7 +98,7 @@ public class AssetState {
 	@Column(name = "priority_rank")
 	private int priorityRank;
 
-	// SPEC §5.1 flags; NULL severity means the flag is inactive
+	// REQ-FLAGS flags; NULL severity means the flag is inactive
 	@Enumerated(EnumType.STRING)
 	@Column(name = "heavy_recent_use_severity")
 	private FlagSeverity heavyRecentUseSeverity;
@@ -139,7 +139,7 @@ public class AssetState {
 	@Column(name = "high_cumulative_load_threshold")
 	private Double highCumulativeLoadThreshold;
 
-	// SPEC §3.1 most recent message; all NULL until the asset reports
+	// REQ-TELEMETRY-SHAPE most recent message; all NULL until the asset reports
 	@Column(name = "latest_timestamp")
 	private Instant latestTimestamp;
 

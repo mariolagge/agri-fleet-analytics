@@ -18,7 +18,7 @@ import com.mariolagger.operatorapi.entity.HourlyAggregate;
 import com.mariolagger.operatorapi.repository.HourlyAggregateRepository;
 
 /**
- * SPEC §6.3. Counter values are the amount accrued within that hour, exactly as
+ * REQ-API-HISTORY. Counter values are the amount accrued within that hour, exactly as
  * TelemetryProcessor sealed it — nothing is summed, scaled or re-derived here.
  */
 @Component
@@ -43,7 +43,7 @@ public class HistoryService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the requested range must not exceed 7 days");
 		}
 
-		// SPEC §6.3: a row covering [hourStart, hourStart + 1h) overlaps [from, to) exactly
+		// REQ-API-HISTORY: a row covering [hourStart, hourStart + 1h) overlaps [from, to) exactly
 		// when hourStart < to and hourStart > from − 1h
 		Instant fromMinusOneHour = fromInstant.minus(1, ChronoUnit.HOURS);
 
@@ -85,7 +85,7 @@ public class HistoryService {
 		return row;
 	}
 
-	/** SPEC §6.3: 400 when the parameter is missing or unparseable. */
+	/** REQ-API-HISTORY: 400 when the parameter is missing or unparseable. */
 	private Instant parseRequiredInstant(String value, String parameterName) {
 		if (isBlank(value)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, parameterName + " is required");
@@ -98,7 +98,7 @@ public class HistoryService {
 		}
 	}
 
-	/** SPEC §6.3: 404 when assetId is given but is not one of the four SPEC §2 assets. */
+	/** REQ-API-HISTORY: 404 when assetId is given but is not one of the four REQ-FLEET-FIXED assets. */
 	private AssetId requireKnownAsset(String assetId) {
 		try {
 			return AssetId.valueOf(assetId);

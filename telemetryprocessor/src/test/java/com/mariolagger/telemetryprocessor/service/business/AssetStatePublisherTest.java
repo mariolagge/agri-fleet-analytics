@@ -49,7 +49,7 @@ class AssetStatePublisherTest {
 	private static final Instant AT_06_31_00 = Instant.parse("2026-08-13T06:31:00Z");
 	private static final Instant AT_07_00_10 = Instant.parse("2026-08-13T07:00:10Z");
 
-	/** SPEC §4.4: the TRACTOR baseline engine hours. */
+	/** REQ-BASELINES: the TRACTOR baseline engine hours. */
 	private static final double TRACTOR_BASELINE_ENGINE_HOURS = 6200.0;
 
 	private static final double TOLERANCE = 1e-9;
@@ -96,7 +96,7 @@ class AssetStatePublisherTest {
 		assertTrue(counterAccumulationService.sealableBuckets(ASSET).containsKey(HOUR_06));
 	}
 
-	/** SPEC §5.4 is cross-asset, so all four rows are written together and ranked 1..4. */
+	/** REQ-RANK is cross-asset, so all four rows are written together and ranked 1..4. */
 	@Test
 	void allFourRowsReachTheRepositoryInOneSaveAllWithDistinctRanks() {
 		assetStatePublisher.publish();
@@ -113,7 +113,7 @@ class AssetStatePublisherTest {
 		assertEquals(List.of(1, 2, 3, 4), priorityRanks);
 	}
 
-	/** ARCHITECTURE.md §4 startup reset, then the SPEC §4.4 baselines. */
+	/** ARCHITECTURE.md §4 startup reset, then the REQ-BASELINES baselines. */
 	@Test
 	void resetOnStartupClearsBothTablesAndThenWritesTheBaselines() {
 		assetStatePublisher.resetOnStartup();

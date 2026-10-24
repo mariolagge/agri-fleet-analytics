@@ -1,7 +1,7 @@
 package com.mariolagger.operatorapi.dto;
 
 /**
- * SPEC §6.4: one asset in the live telemetry strip. An asset that has not reported in this
+ * REQ-API-LATEST: one asset in the live telemetry strip. An asset that has not reported in this
  * run carries liveCondition STALE and a null `telemetry`.
  */
 public class LatestTelemetryEntry {

@@ -10,7 +10,7 @@ import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 
 /**
- * Everything one asset needs in memory. The hourly buckets (SPEC §4.3) are derived state,
+ * Everything one asset needs in memory. The hourly buckets (REQ-BUCKETS) are derived state,
  * rebuilt from the stream on every run, so they live here and not in the database until
  * their hour completes.
  */
@@ -18,7 +18,7 @@ public class AssetAccumulator {
 
 	private final AssetId assetId;
 
-	/** SPEC §4.4 baseline plus everything accrued in this run. */
+	/** REQ-BASELINES baseline plus everything accrued in this run. */
 	private final CounterSet lifetime;
 
 	/** Keyed by the UTC instant at which the Europe/Vienna hour began, oldest first. */

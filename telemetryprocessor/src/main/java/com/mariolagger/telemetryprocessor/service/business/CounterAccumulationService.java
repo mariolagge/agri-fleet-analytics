@@ -18,9 +18,9 @@ import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
 import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
 /**
- * The one place SPEC §4.2 exists. Owns the four accumulators, credits every accepted
+ * The one place REQ-ACCUMULATE exists. Owns the four accumulators, credits every accepted
  * message into the hourly bucket containing its own timestamp and into the lifetime
- * total, and derives the rolling 24-hour window (§4.3) and the §4.5 figures from them.
+ * total, and derives the rolling 24-hour window (REQ-SCOPES) and the REQ-UTILIZATION figures from them.
  *
  * Every public method is synchronized: the Rabbit listener thread and the 5 s refresh
  * scheduler both reach this state.
@@ -30,16 +30,16 @@ public class CounterAccumulationService {
 
 	private static final ZoneId FARM_ZONE = ZoneId.of("Europe/Vienna");
 
-	/** SPEC §4.2 step 3: a Δt above — not equal to — 60 s credits nothing. */
+	/** REQ-ACCUMULATE step 3: a Δt above — not equal to — 60 s credits nothing. */
 	private static final double MAXIMUM_CREDITED_DELTA_SECONDS = 60.0;
 
-	// SPEC §4.1 thresholds.
+	// REQ-COUNTER-SET thresholds.
 	private static final double PRODUCTIVE_GROUND_SPEED_KMH = 2.0;
 	private static final double LOADED_LOAD_FACTOR = 0.55;
 	private static final double HIGH_LOAD_FACTOR = 0.75;
 	private static final double TEMP_EXCURSION_C = 90.0;
 
-	/** SPEC §4.3: the open bucket plus the 23 completed buckets before it. */
+	/** REQ-SCOPES: the open bucket plus the 23 completed buckets before it. */
 	private static final int ROLLING_WINDOW_HOURS = 24;
 
 	/** The open bucket plus the last 24; older buckets are dropped once they are flushed. */
@@ -56,7 +56,7 @@ public class CounterAccumulationService {
 	}
 
 	/**
-	 * SPEC §4.2, in order. The four steps are deliberately written as one straight path:
+	 * REQ-ACCUMULATE, in order. The four steps are deliberately written as one straight path:
 	 * step 1 returns, step 3 falls through the crediting block, and every accepted message
 	 * ends by storing its timestamp.
 	 */
@@ -89,7 +89,7 @@ public class CounterAccumulationService {
 	}
 
 	/**
-	 * SPEC §4.1 — the hours this one message credits. The same contribution goes into the
+	 * REQ-COUNTER-SET — the hours this one message credits. The same contribution goes into the
 	 * bucket and into the lifetime total, so the two scopes can never disagree about a
 	 * message.
 	 */
@@ -97,7 +97,7 @@ public class CounterAccumulationService {
 		CounterSet contribution = new CounterSet();
 		contribution.addEngineHours(hours);
 
-		// SPEC §3.1: productive work is derived from the condition itself, never from the
+		// REQ-TELEMETRY-PRODUCTIVE: productive work is derived from the condition itself, never from the
 		// simulator's workingStatus, which only separates TRANSPORT from IDLE.
 		boolean productiveWork = message.isPtoEngaged() && message.getGroundSpeedKmh() > PRODUCTIVE_GROUND_SPEED_KMH;
 
@@ -142,14 +142,14 @@ public class CounterAccumulationService {
 				productiveSharePercent(rolling24hCounters), latestMessage(assetId));
 	}
 
-	/** SPEC §4.4 baseline plus this run. */
+	/** REQ-BASELINES baseline plus this run. */
 	private CounterSet lifetimeCounters(AssetId assetId) {
 		CounterSet copy = new CounterSet();
 		copy.add(accumulators.get(assetId).getLifetime());
 		return copy;
 	}
 
-	/** SPEC §4.3 — the open bucket plus the 23 completed before it, summed. */
+	/** REQ-SCOPES — the open bucket plus the 23 completed before it, summed. */
 	private CounterSet rolling24hCounters(AssetId assetId, Instant now) {
 		Instant windowStart = rollingWindowStart(now);
 		CounterSet rolling = new CounterSet();
@@ -162,7 +162,7 @@ public class CounterAccumulationService {
 	}
 
 	/**
-	 * SPEC §4.5 — from the later of (start of the oldest included bucket) and (the asset's
+	 * REQ-UTILIZATION — from the later of (start of the oldest included bucket) and (the asset's
 	 * first message in this run) up to now. 0 for an asset that has not reported.
 	 */
 	private double windowCoverageHours(AssetId assetId, Instant now) {
@@ -178,7 +178,7 @@ public class CounterAccumulationService {
 	}
 
 	/**
-	 * SPEC §4.5 — null, not 0.0, when the denominator is 0. Both values are handed in rather
+	 * REQ-UTILIZATION — null, not 0.0, when the denominator is 0. Both values are handed in rather
 	 * than recomputed, so the published percentage is exactly the quotient of the counters
 	 * published beside it.
 	 */
@@ -189,7 +189,7 @@ public class CounterAccumulationService {
 		return rolling24hCounters.getTotalWorkingHours() / windowCoverageHours * 100.0;
 	}
 
-	/** SPEC §4.5 — null, not 0.0, when the denominator is 0. */
+	/** REQ-UTILIZATION — null, not 0.0, when the denominator is 0. */
 	private Double productiveSharePercent(CounterSet rolling24hCounters) {
 		if (rolling24hCounters.getEngineHours() == 0.0) {
 			return null;
@@ -206,7 +206,7 @@ public class CounterAccumulationService {
 	 * copies. A pure read: the caller decides when the hand-over actually happened by calling
 	 * markSealed afterwards.
 	 *
-	 * SPEC §4.2: message timestamps are strictly increasing per asset — step 1 discards
+	 * REQ-ACCUMULATE: message timestamps are strictly increasing per asset — step 1 discards
 	 * anything else — so once a message for a later hour has been processed, no later message
 	 * can land in an earlier hour. The asset's own stream, not wall-clock, is therefore the
 	 * boundary between "may still grow" and "final".

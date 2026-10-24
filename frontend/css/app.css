@@ -725,7 +725,7 @@ header {
 .node-group.status-critical .node-rank-bg,
 .node-group.status-critical .node-status { fill: var(--critical); }
 
-/* Live condition is its own channel, never merged into status (SPEC §5.3). */
+/* Live condition is its own channel, never merged into status (REQ-LIVE). */
 .node-live-dot { fill: var(--stale); }
 .node-group.live-normal .node-live-dot { fill: var(--good); }
 .node-group.live-caution .node-live-dot { fill: var(--watch); }

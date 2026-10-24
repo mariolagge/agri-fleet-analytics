@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mariolagger.operatorapi.dto.LatestTelemetryResponse;
 import com.mariolagger.operatorapi.service.business.AssetViewService;
 
-/** SPEC §6.4: the lightweight endpoint behind the live telemetry strip. */
+/** REQ-API-LATEST: the lightweight endpoint behind the live telemetry strip. */
 @RestController
 @RequestMapping("/api/telemetry")
 public class TelemetryController {

@@ -3,7 +3,7 @@ package com.mariolagger.operatorapi.dto;
 import java.time.Instant;
 import java.util.List;
 
-/** SPEC §6.3: the body of GET /api/history. An empty `rows` array is a valid 200. */
+/** REQ-API-HISTORY: the body of GET /api/history. An empty `rows` array is a valid 200. */
 public class HistoryResponse {
 
 	private Instant from;

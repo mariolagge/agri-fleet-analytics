@@ -10,7 +10,7 @@ import com.mariolagger.operatorapi.dto.FleetResponse;
 import com.mariolagger.operatorapi.service.business.AssetViewService;
 
 /**
- * SPEC §6.1 and §6.2. The full /api path is mapped here: ARCHITECTURE.md §5 passes the
+ * REQ-API-ASSETS and REQ-API-ASSET. The full /api path is mapped here: ARCHITECTURE.md §5 passes the
  * prefix through nginx unchanged, so a servlet context path would produce /api/api/assets.
  */
 @RestController

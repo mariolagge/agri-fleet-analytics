@@ -9,8 +9,8 @@ import com.mariolagger.operatorapi.dto.HistoryResponse;
 import com.mariolagger.operatorapi.service.business.HistoryService;
 
 /**
- * SPEC §6.3. The three parameters arrive as raw strings so that "missing" and
- * "unparseable" both reach HistoryService and come back as the SPEC-mandated 400.
+ * REQ-API-HISTORY. The three parameters arrive as raw strings so that "missing" and
+ * "unparseable" both reach HistoryService and come back as the REQ-API-HISTORY 400.
  */
 @RestController
 @RequestMapping("/api/history")
