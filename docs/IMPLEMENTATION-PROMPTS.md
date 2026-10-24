@@ -95,64 +95,7 @@ Every other prompt runs strictly in order.
 
 
 
-### P9 — README front door
 
-| | |
-|---|---|
-| **Plan** | §7 P9 |
-| **Precondition** | P8 committed; `docs/images/dashboard.png` exists (plan P9 owner task) |
-| **Files** | `README.md` |
-
-````text
-Apply the standing rules in docs/IMPLEMENTATION-PROMPTS.md §2.
-
-GOAL
-Execute plan phase P9: rewrite README.md as the portfolio's front door.
-
-READ FIRST
-- CLAUDE.md
-- docs/IMPLEMENTATION-PLAN.md §0-§4 and §7 P9
-- README.md (current)
-- docs/PROCESS.md §1-§4 (the story must match it, including any owner corrections)
-- docs/SYSTEM-MODEL.md §1
-- docs/STAKEHOLDERS.md
-
-DO
-1. Check that docs/images/dashboard.png exists. If not, stop and ask the owner to take the
-   screenshot (plan P9 owner task).
-2. Rewrite README.md with the seven parts in the order plan P9 lists.
-
-WATCH OUT
-- Audience: a recruiter reads it in two minutes; an engineer uses the artifacts table.
-  Plain, concrete sentences. No buzzwords, no claims the repository cannot back up.
-- "The problem" and "The solution" may only state what PROCESS.md and SPEC.md support.
-  The system sends no notifications, keeps no maintenance log, and the workshop does not
-  use it.
-- The engineering artifacts table replaces the old documents table completely; every
-  document that table listed must still appear in the new one.
-- Part 5 copies SYSTEM-MODEL.md §1 character for character, preceded by the HTML comment
-  the plan gives.
-- No company name of a target employer.
-
-DO NOT
-- Do not change any file other than README.md.
-
-VERIFY
-1. (Bash) diff <(awk '/^```mermaid/{n++; f=(n==1); next} /^```/{f=0} f' README.md) <(awk '/^```mermaid/{n++; f=(n==1); next} /^```/{f=0} f' docs/SYSTEM-MODEL.md)
-   -> no output
-2. (PowerShell) (Get-Content README.md).Count -> at most 90
-3. For every relative link and the image path: (PowerShell) Test-Path <target> -> True
-4. The seven parts appear in the plan's order (check the headings).
-
-DONE WHEN
-All P9 acceptance criteria in the plan are met.
-
-REPORT
-In the plan §0 rule 7 format. Under "Owner tasks": "Commit, push develop, and open the
-README on GitHub to check that the image and the Mermaid diagram render."
-````
-
----
 
 ### P10 — Final consistency review
 
