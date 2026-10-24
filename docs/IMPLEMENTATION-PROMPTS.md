@@ -91,68 +91,7 @@ Every other prompt runs strictly in order.
 
 
 
-### P7 — Traceability matrix
 
-| | |
-|---|---|
-| **Plan** | §7 P7 |
-| **Precondition** | P6 committed |
-| **Files** | new `docs/TRACEABILITY.md`, `README.md` |
-
-````text
-Apply the standing rules in docs/IMPLEMENTATION-PROMPTS.md §2.
-
-GOAL
-Execute plan phase P7: write docs/TRACEABILITY.md, tracing every need to its requirements
-and every requirement to its implementing files and verifying tests.
-
-READ FIRST
-- CLAUDE.md
-- docs/IMPLEMENTATION-PLAN.md §0-§4 and §7 P7
-- docs/SPEC.md (REQ order and the Priority/Source lines)
-- docs/STAKEHOLDERS.md (NEED order)
-- README.md
-
-COLLECT THE DATA (Bash) — build the tables only from these outputs, never from memory
-1. Requirement order, priority and source:
-   grep -nE '^\*\*REQ-|^\*Priority:' docs/SPEC.md
-2. Implementing files (one line per file and REQ):
-   git grep -oE 'REQ-[A-Z]+(-[A-Z]+)*' -- '*/src/main/*' frontend docker | sort -u
-3. Verifying tests (count, REQ, test class):
-   git grep -oE '@DisplayName\("REQ-[A-Z]+(-[A-Z]+)*:' -- '*/src/test/*' | sed -E 's#^.*/([A-Za-z]+)\.java:@DisplayName\("(REQ-[A-Z-]+):#\2 \1#' | sort | uniq -c
-
-DO
-Write TRACEABILITY.md with the heading, sentence and sections 1-3 exactly as plan P7
-specifies, then add the README.md documents row.
-
-WATCH OUT
-- REQ-API-ASSET is a prefix of REQ-API-ASSETS. The commands above match whole IDs (and the
-  DisplayName command includes the colon), so use their output, not a substring search.
-- Module prefix from the path: simulator/ -> Simulator, telemetryprocessor/ ->
-  TelemetryProcessor, operatorapi/ -> OperatorApi, frontend/ -> frontend, docker/ -> docker.
-- Java files are listed by class name (no .java); other files by file name.
-- List entries within a cell separated by "<br>", sorted by module then name.
-- Section 3 must name every Must REQ with "—" in Verified by.
-
-DO NOT
-- Do not add a verification-method column or any column the plan does not list.
-- Do not edit SPEC.md, code or tests to make the matrix look better.
-
-VERIFY
-1. Table 1 has 10 data rows; table 2 has 35 data rows (count them).
-2. (Bash) grep -oE '^\| `?REQ-[A-Z]+(-[A-Z]+)*' docs/TRACEABILITY.md | sort | uniq -d
-   -> no output (no REQ twice)
-3. Spot check five REQs (REQ-SIM-CYCLE, REQ-ACCUMULATE, REQ-FLAGS, REQ-API-ASSET,
-   REQ-API-HISTORY) against outputs 2 and 3 above.
-
-DONE WHEN
-All P7 acceptance criteria in the plan are met.
-
-REPORT
-In the plan §0 rule 7 format, including the coverage numbers from section 3.
-````
-
----
 
 ### P8 — SysML-style system model
 
