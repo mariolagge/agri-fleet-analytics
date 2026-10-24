@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -76,6 +77,7 @@ class AssetStatePublisherTest {
 
 	/** The hour reached hourly_aggregate, so it is never handed over again. */
 	@Test
+	@DisplayName("ARCHITECTURE §4: publish seals the hour once both writes have returned")
 	void publishSealsTheHourOnceBothWritesHaveReturned() {
 		accumulateAcrossTheHourBoundary();
 		assertTrue(counterAccumulationService.sealableBuckets(ASSET).containsKey(HOUR_06));
@@ -87,6 +89,7 @@ class AssetStatePublisherTest {
 
 	/** A failed write must leave the hour sealable, so the next cycle retries it. */
 	@Test
+	@DisplayName("ARCHITECTURE §4: publish leaves the hour sealable when the asset state write throws")
 	void publishLeavesTheHourSealableWhenTheAssetStateWriteThrows() {
 		accumulateAcrossTheHourBoundary();
 		when(assetStateRepository.saveAll(anyIterable())).thenThrow(new RuntimeException("asset_state write failed"));
@@ -98,6 +101,7 @@ class AssetStatePublisherTest {
 
 	/** REQ-RANK is cross-asset, so all four rows are written together and ranked 1..4. */
 	@Test
+	@DisplayName("REQ-RANK: all four rows reach the repository in one saveAll with distinct ranks")
 	void allFourRowsReachTheRepositoryInOneSaveAllWithDistinctRanks() {
 		assetStatePublisher.publish();
 
@@ -115,6 +119,7 @@ class AssetStatePublisherTest {
 
 	/** ARCHITECTURE.md §4 startup reset, then the REQ-BASELINES baselines. */
 	@Test
+	@DisplayName("REQ-BASELINES: reset on startup clears both tables and then writes the baselines")
 	void resetOnStartupClearsBothTablesAndThenWritesTheBaselines() {
 		assetStatePublisher.resetOnStartup();
 
@@ -130,6 +135,7 @@ class AssetStatePublisherTest {
 
 	/** One clock read per publish, so the four rows describe the same instant. */
 	@Test
+	@DisplayName("ARCHITECTURE §4: every row of one publish carries the same updatedAt")
 	void everyRowOfOnePublishCarriesTheSameUpdatedAt() {
 		assetStatePublisher.publish();
 
@@ -144,6 +150,7 @@ class AssetStatePublisherTest {
 
 	/** The sealed hour is written to hourly_aggregate with the counters it accumulated. */
 	@Test
+	@DisplayName("REQ-BUCKETS: the sealed hour is written to hourly_aggregate")
 	void theSealedHourIsWrittenToHourlyAggregate() {
 		accumulateAcrossTheHourBoundary();
 

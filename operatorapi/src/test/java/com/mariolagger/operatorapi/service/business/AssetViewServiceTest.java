@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -59,6 +60,7 @@ class AssetViewServiceTest {
 
 	/** Bug 7: no published state is a server-side gap, not a missing resource. */
 	@Test
+	@DisplayName("REQ-API-ASSETS: get fleet throws 503 when no state has been published yet")
 	void getFleetThrows503WhenNoStateHasBeenPublishedYet() {
 		when(assetStateRepository.findAllByOrderByPriorityRankAsc()).thenReturn(List.of());
 
@@ -71,6 +73,7 @@ class AssetViewServiceTest {
 
 	/** Bug 7: 404 is reserved for an id outside the four REQ-FLEET-FIXED assets. */
 	@Test
+	@DisplayName("REQ-API-ASSET: get asset throws 404 for an unknown asset id without querying the repository")
 	void getAssetThrows404ForAnUnknownAssetIdWithoutQueryingTheRepository() {
 		ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
 				() -> assetViewService.getAsset("BULLDOZER"));
@@ -82,6 +85,7 @@ class AssetViewServiceTest {
 
 	/** Bug 7: a known asset with no row is the same server-side gap as an empty fleet. */
 	@Test
+	@DisplayName("REQ-API-ASSET: get asset throws 503 when the known asset has no stored row")
 	void getAssetThrows503WhenTheKnownAssetHasNoStoredRow() {
 		when(assetStateRepository.findById(AssetId.TRACTOR.name())).thenReturn(Optional.empty());
 
@@ -98,6 +102,7 @@ class AssetViewServiceTest {
 	 * order — a service that re-sorted would reorder this list.
 	 */
 	@Test
+	@DisplayName("REQ-API-ASSETS: get fleet keeps the repository order and does not re-sort by priority rank")
 	void getFleetKeepsTheRepositoryOrderAndDoesNotReSortByPriorityRank() {
 		AssetState tractor = assetStateRow(AssetId.TRACTOR);
 		tractor.setPriorityRank(2);
@@ -122,6 +127,7 @@ class AssetViewServiceTest {
 
 	/** Bug 13: an asset that never reported has no telemetry object at all. */
 	@Test
+	@DisplayName("REQ-API-LATEST: get latest telemetry leaves telemetry null when every latest column is null")
 	void getLatestTelemetryLeavesTelemetryNullWhenEveryLatestColumnIsNull() {
 		AssetState neverReported = assetStateRow(AssetId.TRACTOR);
 		neverReported.setLiveCondition(LiveCondition.STALE);
@@ -135,6 +141,7 @@ class AssetViewServiceTest {
 
 	/** Bug 13: a null reading stays null in the response — it must not become 0.0. */
 	@Test
+	@DisplayName("REQ-API-LATEST: get latest telemetry maps a null reading to null and not to zero")
 	void getLatestTelemetryMapsANullReadingToNullAndNotToZero() {
 		AssetState reported = assetStateRow(AssetId.MOWER);
 		reported.setLiveCondition(LiveCondition.NORMAL);
@@ -157,6 +164,7 @@ class AssetViewServiceTest {
 
 	/** GLOSSARY §5: an inactive flag has no severity and is absent from the response. */
 	@Test
+	@DisplayName("REQ-FLAGS: an asset with no flag severity set produces an empty flags list")
 	void anAssetWithNoFlagSeveritySetProducesAnEmptyFlagsList() {
 		AssetState unflagged = assetStateRow(AssetId.MIXER);
 		when(assetStateRepository.findById(AssetId.MIXER.name())).thenReturn(Optional.of(unflagged));
@@ -169,6 +177,7 @@ class AssetViewServiceTest {
 
 	/** REQ-FLAGS: an active flag is published with the counter, scope, value and threshold. */
 	@Test
+	@DisplayName("REQ-FLAGS: an active flag carries its counter, scope, value and threshold rounded to two decimals")
 	void anActiveFlagCarriesItsCounterScopeValueAndThresholdRoundedToTwoDecimals() {
 		AssetState flagged = assetStateRow(AssetId.TRACTOR);
 		flagged.setStatus(AssetStatus.WATCH);
@@ -201,6 +210,7 @@ class AssetViewServiceTest {
 
 	/** REQ-API-LATEST: all four assets are always present, ordered by assetId ascending. */
 	@Test
+	@DisplayName("REQ-API-LATEST: get latest telemetry returns all four assets in ascending id order with the missing ones stale")
 	void getLatestTelemetryReturnsAllFourAssetsInAscendingIdOrderWithTheMissingOnesStale() {
 		AssetState tractor = assetStateRow(AssetId.TRACTOR);
 		tractor.setLiveCondition(LiveCondition.NORMAL);

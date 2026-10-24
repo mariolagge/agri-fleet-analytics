@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.mariolagger.telemetryprocessor.dto.AssetId;
@@ -47,6 +48,7 @@ class CounterAccumulationServiceTest {
 	private final CounterAccumulationService counterAccumulationService = new CounterAccumulationService();
 
 	@Test
+	@DisplayName("ARCHITECTURE §4: sealable buckets stay empty while the stream is still inside the hour")
 	void sealableBucketsIsEmptyWhileTheStreamIsStillInsideTheHour() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
@@ -56,6 +58,7 @@ class CounterAccumulationServiceTest {
 	}
 
 	@Test
+	@DisplayName("ARCHITECTURE §4: an hour becomes sealable once a message of the next hour arrives")
 	void hourBecomesSealableOnceAMessageOfTheNextHourArrives() {
 		accumulateAcrossTheHourBoundary();
 
@@ -67,6 +70,7 @@ class CounterAccumulationServiceTest {
 	}
 
 	@Test
+	@DisplayName("ARCHITECTURE §4: sealable buckets are returned as copies")
 	void sealableBucketsReturnsCopies() {
 		accumulateAcrossTheHourBoundary();
 
@@ -77,6 +81,7 @@ class CounterAccumulationServiceTest {
 	}
 
 	@Test
+	@DisplayName("ARCHITECTURE §4: sealable buckets are offered again until they are marked sealed")
 	void sealableBucketsIsRepeatableUntilMarkSealed() {
 		accumulateAcrossTheHourBoundary();
 
@@ -90,6 +95,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-ACCUMULATE step 3. */
 	@Test
+	@DisplayName("REQ-ACCUMULATE: a gap above 60 s credits nothing but advances the last processed timestamp")
 	void deltaAboveSixtySecondsCreditsNothingButAdvancesTheLastProcessedTimestamp() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(productiveMessage(AT_06_32_00));
@@ -102,6 +108,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-ACCUMULATE step 3: above 60 s, not 60 s itself. */
 	@Test
+	@DisplayName("REQ-ACCUMULATE: a gap of exactly 60 s is credited")
 	void deltaOfExactlySixtySecondsIsCredited() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(productiveMessage(AT_06_31_00));
@@ -111,6 +118,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-ACCUMULATE step 1. */
 	@Test
+	@DisplayName("REQ-ACCUMULATE: an out-of-order or duplicate timestamp updates nothing")
 	void outOfOrderOrDuplicateTimestampUpdatesNothing() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		TelemetryMessage lastAcceptedMessage = productiveMessage(AT_06_30_30);
@@ -129,6 +137,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-ACCUMULATE step 2: Δt is undefined for the first message of an asset. */
 	@Test
+	@DisplayName("REQ-ACCUMULATE: the first message of an asset credits nothing")
 	void firstMessageOfAnAssetCreditsNothing() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 
@@ -137,6 +146,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-COUNTER-INVARIANT: the three buckets partition engine hours. */
 	@Test
+	@DisplayName("REQ-COUNTER-INVARIANT: engine hours equal working plus transport plus idle hours")
 	void engineHoursEqualsWorkingPlusTransportPlusIdle() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
@@ -153,6 +163,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-COUNTER-SET: productive work is pto plus ground speed, never the reported status. */
 	@Test
+	@DisplayName("REQ-TELEMETRY-PRODUCTIVE: productive work is derived from pto and ground speed, not from working status")
 	void productiveWorkIsDerivedFromPtoAndGroundSpeedNotFromWorkingStatus() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(
@@ -165,6 +176,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-UTILIZATION: the percentage is the quotient of the counters published beside it. */
 	@Test
+	@DisplayName("REQ-UTILIZATION: utilization percent is the quotient of the snapshot's own counters and coverage")
 	void utilizationPercentIsTheQuotientOfTheSnapshotsOwnCountersAndCoverage() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
@@ -179,6 +191,7 @@ class CounterAccumulationServiceTest {
 
 	/** REQ-UTILIZATION: null, not 0.0, when the denominator is 0. */
 	@Test
+	@DisplayName("REQ-UTILIZATION: an asset that never reported has no coverage and null percentages")
 	void assetThatNeverReportedHasNoCoverageAndNullPercentages() {
 		AssetSnapshot snapshot = counterAccumulationService.snapshotOf(AssetId.MOWER, HOUR_07);
 
