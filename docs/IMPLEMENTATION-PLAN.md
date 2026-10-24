@@ -207,7 +207,7 @@ Match the existing test classes (`AssetViewServiceTest` is the reference):
 |-------|-------|-----------|-----------|---------|----------|--------|
 | P0 | Milestone and issues (owner only) | — | 0.5 h | Mon 26 Oct | — | Open |
 | P1 | Fix stale references, add RUNNING.md | P0 | 0.5 h | Mon 26 Oct | | Done (2026-10-25) |
-| P2 | Stakeholders and needs | P1 | 0.5 h | Tue 27 Oct | | Open |
+| P2 | Stakeholders and needs | P1 | 0.5 h | Tue 27 Oct | | Done (2026-10-25) |
 | P3 | BPMN maintenance planning as-is / to-be | P2 | 2.0 h | Wed 28 – Sat 31 Oct | | Open |
 | P4 | REQ attributes in SPEC | P2 | 0.5 h | Sun 1 Nov | | Open |
 | P5 | REQ IDs in code comments | P4 | 0.5 h | Mon 2 Nov | | Open |

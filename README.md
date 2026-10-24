@@ -24,6 +24,7 @@ project and is the single source of truth for it — nothing is restated between
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Modules, ports, messaging, persistence, technical boundaries |
 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Every name: types, fields, counters, flags, statuses, endpoints, components |
 | [`docs/RUNNING.md`](docs/RUNNING.md) | How to start, test and stop the system |
+| [`docs/STAKEHOLDERS.md`](docs/STAKEHOLDERS.md) | Stakeholders and their needs |
 
 Start with `SPEC.md` §1 for what the system does, `ARCHITECTURE.md` §1 for how it is put
 together, and `docs/RUNNING.md` for how to run it.

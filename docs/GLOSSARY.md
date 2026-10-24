@@ -14,6 +14,8 @@ This document owns **naming only**: which identifiers exist and what they are ca
 | Database columns | `snake_case` | `vibration_alert_hours` |
 | Java packages | all lowercase, words concatenated, no underscores | `com.mariolagger.telemetryprocessor` |
 | Requirement IDs | `REQ-` plus uppercase words separated by hyphens. Each ID is declared once, on its shall in `SPEC.md`, and is not listed in this file | `REQ-` plus words |
+| Stakeholder IDs | `STK-` plus one uppercase word. Each ID is declared once, in `STAKEHOLDERS.md`, and is not listed in this file | `STK-FARMER` |
+| Stakeholder need IDs | `NEED-` plus uppercase words separated by hyphens. Each ID is declared once, in `STAKEHOLDERS.md`, and is not listed in this file | `NEED-FLAG-REASON` |
 
 Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
 
