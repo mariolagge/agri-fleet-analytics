@@ -4,9 +4,9 @@ This document owns the product rules: requirements, domain logic, API contract a
 
 Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses MoSCoW:
 
-- `Must` — needed for one of the three decisions in REQ-DECISIONS, or for traceability (REQ-GOAL-TRACE).
-- `Should` — makes results correct or robust, but every decision still works without it.
-- `Could` — demo tuning only.
+- `Must` — part of the implemented release.
+- `Should` — not implemented; makes results correct or robust, but every decision still works without it.
+- `Could` — not implemented; demo tuning only.
 
 **Source** lists the stakeholder needs (`NEED-…`, `STAKEHOLDERS.md` §2) the requirement serves.
 
@@ -90,7 +90,7 @@ Schedule per asset. A segment overrides a state value only where the table says 
 
 **REQ-SIM-DEMO.** Over a full rolling window, the schedule shall produce these outcomes: `TRACTOR` at `CRITICAL`, `BALER` at `WATCH` on `HEAVY_RECENT_USE` alone, `MIXER` at `GOOD`, and `MOWER` moving between `GOOD` and `WATCH` as `MECHANICAL_ATTENTION` comes and goes.
 
-*Priority: Could · Source: NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
 
 Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
@@ -105,7 +105,7 @@ Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
 **REQ-SIM-BURST.** Each asset shall open its run by publishing one message per simulated minute across a configurable window of the immediately preceding hours, ending at the present, and only then switch to the §3.1 cadence. The step shall be exactly 60 seconds, which §4.2 credits, so the burst can fill the window in the time it takes to publish. Timestamps shall be true wall-clock instants. The window shall default to 24 hours.
 
-*Priority: Could · Source: NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
 
 ---
 
@@ -157,7 +157,7 @@ DST transitions (23- and 25-hour local days) are not handled specially — out o
 
 **REQ-BASELINES.** The lifetime flag threshold in §5.1 is unreachable in a demo that starts from zero. Each asset shall therefore start from the fixed lifetime baseline in the table below, loaded at startup. Baselines shall apply to the lifetime scope only. The rolling 24-hour window shall start empty. Lifetime counters shall not be carried across restarts; every run shall start from this table, so a demo run is reproducible.
 
-*Priority: Could · Source: NEED-LIFETIME-HOURS, NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: NEED-LIFETIME-HOURS, NEED-REPRODUCIBLE-DEMO*
 
 | Asset | `engineHours` | `totalWorkingHours` | `highLoadHours` | `tempExcursionHours` | `vibrationAlertHours` |
 |-------|---------------|---------------------|-----------------|----------------------|------------------------|
@@ -313,7 +313,7 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
 
 **REQ-API-HISTORY.** `GET /api/history` shall accept the parameters in the table below. It shall return one row per asset per hour that overlaps the requested period, ordered by `hourStart` ascending then `assetId` ascending. Counter values shall be the amount accrued within that hour, not running totals. Hours shall be aligned to `Europe/Vienna` local hours (§4.3) and reported as the UTC instant at which the local hour began. It shall return `400` when `from` or `to` is missing or unparseable, when `from` is not before `to`, or when the range exceeds 7 days. A range of exactly 7 days shall be accepted. It shall return `404` when `assetId` is given but is not one of the §2 assets. An empty `rows` array shall be `200`, not an error.
 
-*Priority: Should · Source: NEED-HISTORY-REVIEW*
+*Priority: Must · Source: NEED-HISTORY-REVIEW*
 
 | Parameter | Required | Format |
 |-----------|----------|--------|
@@ -347,7 +347,7 @@ The live telemetry strip is intended to be polled every few seconds. That interv
 
 **REQ-API-LATEST.** `GET /api/telemetry/latest` shall return `200` in the shape below, including before any state has been published. It shall not return `503`. `telemetry` shall be `null` only for an asset that has never reported in this run, and that asset's `liveCondition` shall be `STALE`. An asset that reported and then fell silent shall be `STALE` and shall keep its last reading, so the last activity stays visible. All four assets shall be present, ordered by `assetId` ascending.
 
-*Priority: Should · Source: NEED-OPERATIONAL-RISK*
+*Priority: Must · Source: NEED-OPERATIONAL-RISK*
 
 `200 OK`
 

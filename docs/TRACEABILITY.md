@@ -1,6 +1,6 @@
 # docs\TRACEABILITY.md
 
-This document is a derived view, built by hand from the *Source* attributes in `SPEC.md`, the user stories in `USER-STORY-MAP.md`, the `REQ-` comments in the code and the `@DisplayName` of the unit tests. Where it disagrees with those, they win. Update it in the same change as any of them.
+This document is a derived view, built by hand from the *Source* attributes in `SPEC.md`, the user stories in `USER-STORY-MAP.md`, the `REQ-` comments in the code and the `DisplayName` of the unit tests. Where it disagrees with those, they win. Update it in the same change as any of them.
 
 ---
 
@@ -10,14 +10,14 @@ This document is a derived view, built by hand from the *Source* attributes in `
 |------|-------------|--------------|--------------|
 | `NEED-MONITOR-FLEET` | `STK-FARMER` | `US-1.1` | `REQ-GOAL-SCOPE` |
 | `NEED-PRIORITISE-MAINTENANCE` | `STK-FARMER` | `US-1.1`<br>`US-2.1`<br>`US-2.2`<br>`US-3.2` | `REQ-FLAGS`<br>`REQ-STATUS`<br>`REQ-RANK`<br>`REQ-RECOMMEND`<br>`REQ-API-ASSETS`<br>`REQ-DECISIONS` |
-| `NEED-OPERATIONAL-RISK` | `STK-FARMER` | `US-1.2`<br>`US-5.1`<br>`US-5.2` | `REQ-SCOPES`<br>`REQ-LIVE`<br>`REQ-API-LATEST`<br>`REQ-DECISIONS` |
-| `NEED-UTILIZATION-AWARENESS` | `STK-FARMER` | `US-6.1` | `REQ-COUNTER-SET`<br>`REQ-UTILIZATION`<br>`REQ-DECISIONS` |
-| `NEED-FLAG-REASON` | `STK-WORKSHOP` | `US-3.1`<br>`US-3.2`<br>`US-4.1` | `REQ-GOAL-TRACE`<br>`REQ-FLAGS`<br>`REQ-API-ASSETS` |
-| `NEED-HISTORY-REVIEW` | `STK-WORKSHOP` | `US-4.3`<br>`US-4.4` | `REQ-BUCKETS`<br>`REQ-API-HISTORY` |
-| `NEED-LIFETIME-HOURS` | `STK-WORKSHOP` | `US-4.2`<br>`US-7.4` | `REQ-SCOPES`<br>`REQ-BASELINES` |
-| `NEED-TRACEABLE-RULES` | `STK-ADMIN` | `US-7.1` | `REQ-GOAL-TRACE`<br>`REQ-COUNTER-SET`<br>`REQ-ACCUMULATE`<br>`REQ-BUCKETS` |
-| `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | `US-7.2`<br>`US-7.4`<br>`US-7.5` | `REQ-SIM-SCHEDULE`<br>`REQ-SIM-DEMO`<br>`REQ-SIM-BURST`<br>`REQ-BASELINES` |
-| `NEED-STABLE-INTERFACE` | `STK-ADMIN` | `US-7.3` | `REQ-TELEMETRY-SHAPE`<br>`REQ-API-COMMON` |
+| `NEED-OPERATIONAL-RISK` | `STK-FARMER` | `US-1.2`<br>`US-4.1`<br>`US-4.2` | `REQ-SCOPES`<br>`REQ-LIVE`<br>`REQ-API-LATEST`<br>`REQ-DECISIONS` |
+| `NEED-UTILIZATION-AWARENESS` | `STK-FARMER` | `US-5.1` | `REQ-COUNTER-SET`<br>`REQ-UTILIZATION`<br>`REQ-DECISIONS` |
+| `NEED-FLAG-REASON` | `STK-WORKSHOP` | `US-3.1`<br>`US-3.2`<br>`US-6.1` | `REQ-GOAL-TRACE`<br>`REQ-FLAGS`<br>`REQ-API-ASSETS` |
+| `NEED-HISTORY-REVIEW` | `STK-WORKSHOP` | `US-6.3`<br>`US-6.4` | `REQ-BUCKETS`<br>`REQ-API-HISTORY` |
+| `NEED-LIFETIME-HOURS` | `STK-WORKSHOP` | `US-6.2`<br>`US-7.3` | `REQ-SCOPES`<br>`REQ-BASELINES` |
+| `NEED-TRACEABLE-RULES` | `STK-ADMIN` | `US-7.4` | `REQ-GOAL-TRACE`<br>`REQ-COUNTER-SET`<br>`REQ-ACCUMULATE`<br>`REQ-BUCKETS` |
+| `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | `US-7.1`<br>`US-7.2`<br>`US-7.3` | `REQ-SIM-SCHEDULE`<br>`REQ-SIM-DEMO`<br>`REQ-SIM-BURST`<br>`REQ-BASELINES` |
+| `NEED-STABLE-INTERFACE` | `STK-ADMIN` | `US-7.5` | `REQ-TELEMETRY-SHAPE`<br>`REQ-API-COMMON` |
 
 ---
 
@@ -25,7 +25,7 @@ This document is a derived view, built by hand from the *Source* attributes in `
 
 **Verification method** says how the requirement is checked:
 
-- `Test` — automated unit test; the *Verified by* column names the test classes and how many tests in each start their `@DisplayName` with the REQ ID.
+- `Test` — automated unit test; the *Verified by* column names the test classes and how many tests in each start their `DisplayName` with the REQ ID.
 - `Inspection` — review of code or documents against the requirement; §3 says what is inspected.
 - `Demonstration` — shown on the running system (`RUNNING.md`); §3 says what is shown.
 
@@ -35,13 +35,13 @@ This document is a derived view, built by hand from the *Source* attributes in `
 | `REQ-GOAL-TRACE` | Must | TelemetryProcessor: AssetSnapshot | Inspection | §3 |
 | `REQ-TELEMETRY-SHAPE` | Must | Simulator: SimulatorApplication<br>Simulator: TelemetryScheduler<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>OperatorApi: TelemetryView<br>docker: database-script.sql | Test | TelemetryGeneratorTest (1) |
 | `REQ-SIM-SCHEDULE` | Must | Simulator: AssetSimulationState<br>Simulator: ScheduleSegment<br>Simulator: SimulatedFleet<br>Simulator: TelemetryGenerator<br>Simulator: WorkingStatus | Test | TelemetryGeneratorTest (2) |
-| `REQ-SIM-BURST` | Could | Simulator: application.properties | Demonstration | §3 |
-| `REQ-SIM-DEMO` | Could | Simulator: application.properties | Test | TelemetryGeneratorTest (2) |
+| `REQ-SIM-BURST` | Must | Simulator: application.properties | Demonstration | §3 |
+| `REQ-SIM-DEMO` | Must | Simulator: application.properties | Test | TelemetryGeneratorTest (2) |
 | `REQ-COUNTER-SET` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>OperatorApi: AssetState<br>OperatorApi: CounterSetView<br>frontend: format.js<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (4) |
 | `REQ-ACCUMULATE` | Must | Simulator: BackfillService<br>Simulator: SimulatedFleet<br>TelemetryProcessor: CounterAccumulationService | Test | CounterAccumulationServiceTest (4) |
 | `REQ-BUCKETS` | Must | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: CounterSet<br>OperatorApi: HistoryRow<br>frontend: format.js | Test | AssetStatePublisherTest (1) |
 | `REQ-SCOPES` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: FlagScope<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (2) |
-| `REQ-BASELINES` | Could | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: AssetBaselines<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>docker: database-script.sql | Test | AssetStatePublisherTest (1) |
+| `REQ-BASELINES` | Must | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: AssetBaselines<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>docker: database-script.sql | Test | AssetStatePublisherTest (1) |
 | `REQ-UTILIZATION` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: AssetView<br>frontend: format.js<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (2) |
 | `REQ-FLAGS` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: FlagEvaluation<br>TelemetryProcessor: FlagEvaluationService<br>OperatorApi: AssetState<br>OperatorApi: Flag<br>OperatorApi: FlagView<br>docker: database-script.sql | Test | FlagEvaluationServiceTest (6)<br>AssetStatePublisherTest (1)<br>AssetViewServiceTest (2) |
 | `REQ-STATUS` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStatus<br>TelemetryProcessor: FlagEvaluation<br>OperatorApi: AssetState<br>OperatorApi: AssetStatus<br>docker: database-script.sql | Test | AssetAssessmentServiceTest (4) |
@@ -50,8 +50,8 @@ This document is a derived view, built by hand from the *Source* attributes in `
 | `REQ-RECOMMEND` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>docker: database-script.sql | Test | AssetAssessmentServiceTest (1) |
 | `REQ-API-COMMON` | Must | OperatorApi: application.properties<br>frontend: api.js<br>frontend: format.js | Inspection | §3 |
 | `REQ-API-ASSETS` | Must | OperatorApi: AssetController<br>OperatorApi: AssetStateRepository<br>OperatorApi: AssetView<br>OperatorApi: AssetViewService<br>OperatorApi: FleetResponse<br>frontend: api.js | Test | AssetViewServiceTest (3) |
-| `REQ-API-HISTORY` | Should | OperatorApi: HistoryController<br>OperatorApi: HistoryResponse<br>OperatorApi: HistoryRow<br>OperatorApi: HistoryService<br>OperatorApi: HourlyAggregateRepository<br>OperatorApi: application.properties<br>frontend: history.js | Test | HistoryServiceTest (8) |
-| `REQ-API-LATEST` | Should | TelemetryProcessor: AssetStatePublisher<br>OperatorApi: AssetViewService<br>OperatorApi: LatestTelemetryEntry<br>OperatorApi: LatestTelemetryResponse<br>OperatorApi: TelemetryController<br>OperatorApi: TelemetryView<br>frontend: telemetry.js | Test | AssetViewServiceTest (3) |
+| `REQ-API-HISTORY` | Must | OperatorApi: HistoryController<br>OperatorApi: HistoryResponse<br>OperatorApi: HistoryRow<br>OperatorApi: HistoryService<br>OperatorApi: HourlyAggregateRepository<br>OperatorApi: application.properties<br>frontend: history.js | Test | HistoryServiceTest (8) |
+| `REQ-API-LATEST` | Must | TelemetryProcessor: AssetStatePublisher<br>OperatorApi: AssetViewService<br>OperatorApi: LatestTelemetryEntry<br>OperatorApi: LatestTelemetryResponse<br>OperatorApi: TelemetryController<br>OperatorApi: TelemetryView<br>frontend: telemetry.js | Test | AssetViewServiceTest (3) |
 | `REQ-DECISIONS` | Must | frontend: asset.js | Demonstration | §3 |
 
 ---
