@@ -42,7 +42,6 @@ async function refreshFleet() {
       selectedAssetId = fleetAssets.length > 0 ? fleetAssets[0].assetId : null;
     }
 
-    document.getElementById('generated-at').textContent = formatTimeOfDay(response.generatedAt);
     renderFleet(fleetAssets, selectedAssetId, selectAsset);
     renderSelection();
     return true;
@@ -77,7 +76,6 @@ async function refreshAll() {
 initTablerIcons();
 initFleetDiagram(selectAsset, describeAsset);
 initHistory();
-document.getElementById('refresh-btn').addEventListener('click', refreshAll);
 
 refreshAll();
 setInterval(refreshAll, REFRESH_INTERVAL_MS);

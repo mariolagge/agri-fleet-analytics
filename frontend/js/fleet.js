@@ -1,4 +1,4 @@
-// Fleet ranking: the SVG diagram, the ranked list under it, and the fleet metric strip.
+// Fleet ranking: the SVG diagram and the ranked list under it.
 // The assets array is rendered in the order the API returned it — that order IS the
 // priority ranking (REQ-RANK), so it is never re-sorted here.
 
@@ -51,7 +51,6 @@ function rankRowHtml(asset, selectedAssetId) {
         <span class="rank-name-row">
           <span class="rank-name">${escapeHtml(assetDisplayName(asset.assetId))}</span>
           ${statusPillHtml(asset.status)}
-          ${liveConditionHtml(asset.liveCondition)}
         </span>
         ${flagChipsHtml(asset.flags)}
       </span>
@@ -67,51 +66,7 @@ function renderFleetRanking(assets, selectedAssetId, onSelect) {
   });
 }
 
-function setMetricValue(elementId, text) {
-  const element = document.getElementById(elementId);
-  const unit = element.querySelector('.metric-unit');
-  element.textContent = text;
-  if (unit) {
-    element.appendChild(unit);
-  }
-}
-
-function averageOf(values) {
-  const known = values.filter((value) => value !== null && value !== undefined);
-  if (known.length === 0) {
-    return null;
-  }
-  const sum = known.reduce((total, value) => total + Number(value), 0);
-  return sum / known.length;
-}
-
-function renderFleetMetrics(assets) {
-  const mostUrgent = assets[0];
-  setMetricValue('metric-urgent-name', mostUrgent ? assetDisplayName(mostUrgent.assetId) : EM_DASH);
-  document.getElementById('metric-urgent-status').innerHTML = mostUrgent
-    ? statusPillHtml(mostUrgent.status)
-    : EM_DASH;
-  setMetricValue('metric-urgent-flags', mostUrgent ? String((mostUrgent.flags || []).length) : EM_DASH);
-
-  // An unknown fleet is not a fleet of zero criticals, so an empty response reads as em dash.
-  const countOf = (status) => (assets.length === 0
-    ? EM_DASH
-    : String(assets.filter((asset) => asset.status === status).length));
-  setMetricValue('metric-count-critical', countOf('CRITICAL'));
-  setMetricValue('metric-count-watch', countOf('WATCH'));
-  setMetricValue('metric-count-good', countOf('GOOD'));
-
-  const averageUtilization = averageOf(assets.map((asset) => asset.utilizationPercent));
-  const averageProductiveShare = averageOf(assets.map((asset) => asset.productiveSharePercent));
-  setMetricValue('metric-avg-utilization', formatNumber(averageUtilization, 1));
-  setMetricValue('metric-avg-productive', formatNumber(averageProductiveShare, 1));
-
-  const reporting = assets.filter((asset) => asset.liveCondition !== 'STALE').length;
-  setMetricValue('metric-reporting', assets.length === 0 ? EM_DASH : `${reporting}/${assets.length}`);
-}
-
 function renderFleet(assets, selectedAssetId, onSelect) {
-  renderFleetMetrics(assets);
   renderFleetDiagram(assets, selectedAssetId);
   renderFleetRanking(assets, selectedAssetId, onSelect);
 }
