@@ -63,16 +63,9 @@
   --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --mono: "SF Mono", "Fira Code", ui-monospace, monospace;
 
-  /* Matches rendered viz icon size: 54 SVG units scaled to screen */
-  --app-content-width: min(calc(100vw - 36px), 1524px);
-  --viz-icon-screen-size: calc(var(--app-content-width) * 54 / 1100);
-  --panel-icon-size: calc(var(--viz-icon-screen-size) * 0.7);
-}
-
-@media (min-width: 960px) {
-  :root {
-    --viz-icon-screen-size: calc(var(--app-content-width) * 0.6 * 54 / 1100);
-  }
+  /* Metric strip icon tile and the icon inside it */
+  --metric-icon-size: 46px;
+  --panel-icon-size: 30px;
 }
 
 * {
@@ -230,7 +223,6 @@ header {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1;
 }
 
 .dashboard-top {
@@ -240,41 +232,86 @@ header {
   min-width: 0;
 }
 
-@media (min-width: 960px) {
-  .dashboard-top {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 18px;
-    align-items: start;
-  }
-}
-
 .dashboard-stats {
   width: 100%;
   min-width: 0;
 }
 
-.dashboard-details {
+.dashboard-asset {
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-width: 0;
 }
 
-@media (min-width: 960px) {
-  .dashboard-details {
+/* Side by side on phones; stacked once the asset column becomes a narrow side column. */
+.counter-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+/*
+ * Layout by screen width. The detail cards get fixed, narrow columns so labels stay
+ * close to their numbers; the fleet diagram column takes whatever width is left.
+ *   phone  (< 760px):   everything stacked, in HTML order
+ *   tablet (>= 760px):  [stats over the full width] + [fleet | telemetry over asset, counters]
+ *   laptop (>= 1200px): telemetry spans the top right; detail and counters get a column each below it
+ *   wide   (>= 1540px): the metric strip moves into the fleet column
+ * The fleet card spans two rows, so the right-hand cards stack without leaving gaps.
+ */
+@media (min-width: 760px) {
+  .dashboard-top {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-areas:
+      "stats stats"
+      "fleet telemetry"
+      "fleet asset";
+    grid-template-rows: auto auto 1fr;
+    gap: 16px;
     align-items: start;
+  }
+
+  .dashboard-stats { grid-area: stats; }
+  .dashboard-fleet { grid-area: fleet; }
+  .dashboard-asset { grid-area: asset; }
+  .dashboard-telemetry { grid-area: telemetry; }
+  .counter-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-top {
+    grid-template-columns: minmax(0, 1fr) 300px 250px;
+    grid-template-areas:
+      "stats stats     stats"
+      "fleet telemetry telemetry"
+      "fleet detail    counters";
+  }
+
+  /* The wrapper steps aside so detail and counters become grid cells of their own. */
+  .dashboard-asset { display: contents; }
+  .dashboard-asset > .card { grid-area: detail; }
+  .counter-pair { grid-area: counters; }
+}
+
+@media (min-width: 1540px) {
+  .dashboard-top {
+    grid-template-areas:
+      "stats telemetry telemetry"
+      "fleet telemetry telemetry"
+      "fleet detail    counters";
   }
 }
 
-.dashboard-details .card {
+.counter-pair .card,
+.dashboard-telemetry {
   min-width: 0;
 }
 
-.dashboard-details .card-header {
+.counter-pair .card-header,
+.dashboard-telemetry .card-header {
   border-bottom: none;
 }
 
@@ -339,7 +376,6 @@ header {
 .viz-card {
   padding: 0;
   position: relative;
-  min-height: 420px;
   min-width: 0;
 }
 
@@ -352,19 +388,18 @@ header {
     linear-gradient(180deg, var(--wash-top) 0%, var(--wash-bottom) 100%);
 }
 
+/* Capped so the diagram does not grow taller than the cards beside it on wide screens. */
 .viz-svg {
   width: 100%;
   height: auto;
+  max-height: 300px;
   display: block;
-  min-height: 380px;
 }
 
-@media (min-width: 640px) {
-  .viz-svg { min-height: 460px; }
-}
-
-@media (min-width: 1100px) {
-  .viz-svg { min-height: 520px; }
+/* On phones the diagram text is too small to read; the ranking list below shows the same. */
+@media (max-width: 479px) {
+  .svg-wrap { display: none; }
+  .fleet-ranking { border-top: none; }
 }
 
 .node-group {
@@ -409,6 +444,20 @@ header {
   gap: 8px;
 }
 
+/* When the strip spans the whole width, cap each card so its values stay near the labels. */
+@media (min-width: 760px) {
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 300px));
+  }
+}
+
+/* Wide: the strip sits in the fleet column, so the three cards share that width. */
+@media (min-width: 1540px) {
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .metric {
   display: flex;
   flex-direction: row;
@@ -432,7 +481,7 @@ header {
   aspect-ratio: 1;
   align-self: stretch;
   flex: 0 0 auto;
-  min-width: var(--viz-icon-screen-size);
+  min-width: var(--metric-icon-size);
 }
 
 .metric-icon svg,
@@ -493,9 +542,10 @@ header {
   margin-left: 1px;
 }
 
+/* One machine per row. */
 .component-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 5px;
 }
 
@@ -607,8 +657,8 @@ header {
 
 /* ========== FLEET RANKING LIST ========== */
 .fleet-ranking {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   padding: 8px;
   border-top: 1px solid var(--border);
@@ -913,12 +963,17 @@ header {
 }
 
 .telemetry-readings {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-  gap: 2px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
   font-size: 10px;
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+}
+
+/* Keep each reading ("Speed 8.2 km/h") on one line. */
+.telemetry-readings > span {
+  white-space: nowrap;
 }
 
 .telemetry-reading-label {
@@ -999,8 +1054,10 @@ select.form-input {
   transform: rotate(90deg);
 }
 
+/* Capped so the seven table columns stay readable on wide screens. */
 .data-card {
   margin-top: 4px;
+  max-width: 1100px;
 }
 
 /* ========== HISTORY TABLE ========== */
@@ -1014,10 +1071,17 @@ select.form-input {
 
 .history-form-fields {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 6px 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+  gap: 10px 14px;
   flex: 1;
   min-width: 200px;
+}
+
+/* Label directly above its input. */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .history-table-wrap {
@@ -1172,4 +1236,11 @@ select.form-input {
 @media (max-width: 480px) {
   .brand-text h1 { font-size: 12px; }
   .metric-value { font-size: 15.5px; }
+}
+
+/* Laptop and wider: the ranking has room for two machines per row. */
+@media (min-width: 1200px) {
+  .fleet-ranking {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
