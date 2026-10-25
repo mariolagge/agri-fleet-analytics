@@ -49,11 +49,6 @@ const FLAG_ICONS = {
   HIGH_CUMULATIVE_LOAD: 'hourglass',
 };
 
-const SEVERITY_DISPLAY_NAMES = {
-  MODERATE: 'Moderate',
-  SEVERE: 'Severe',
-};
-
 const SCOPE_DISPLAY_NAMES = {
   LIFETIME: 'lifetime',
   ROLLING_24H: '24 h',
@@ -62,9 +57,6 @@ const SCOPE_DISPLAY_NAMES = {
 const COUNTER_DISPLAY_NAMES = {
   engineHours: 'Engine',
   totalWorkingHours: 'Working',
-  transportHours: 'Transport',
-  idleHours: 'Idle',
-  loadedHours: 'Loaded',
   highLoadHours: 'High load',
   tempExcursionHours: 'Temp excursion',
   vibrationAlertHours: 'Vibration alert',
@@ -74,19 +66,10 @@ const COUNTER_DISPLAY_NAMES = {
 const COUNTER_ORDER = [
   'engineHours',
   'totalWorkingHours',
-  'transportHours',
-  'idleHours',
-  'loadedHours',
   'highLoadHours',
   'tempExcursionHours',
   'vibrationAlertHours',
 ];
-
-const WORKING_STATUS_DISPLAY_NAMES = {
-  WORKING: 'Working',
-  TRANSPORT: 'Transport',
-  IDLE: 'Idle',
-};
 
 const VIBRATION_LEVEL_DISPLAY_NAMES = {
   NORMAL: 'Normal',
@@ -139,27 +122,12 @@ function flagIcon(flag) {
   return FLAG_ICONS[flag] || 'alert-triangle';
 }
 
-function severityDisplayName(severity) {
-  return SEVERITY_DISPLAY_NAMES[severity] || EM_DASH;
-}
-
-function severityClass(severity) {
-  if (severity === 'MODERATE' || severity === 'SEVERE') {
-    return `severity-${severity.toLowerCase()}`;
-  }
-  return '';
-}
-
 function scopeDisplayName(scope) {
   return SCOPE_DISPLAY_NAMES[scope] || scope || EM_DASH;
 }
 
 function counterDisplayName(counter) {
   return COUNTER_DISPLAY_NAMES[counter] || counter || EM_DASH;
-}
-
-function workingStatusDisplayName(workingStatus) {
-  return WORKING_STATUS_DISPLAY_NAMES[workingStatus] || EM_DASH;
 }
 
 function vibrationLevelDisplayName(vibrationLevel) {
@@ -268,7 +236,7 @@ function flagChipsHtml(flags) {
   if (!Array.isArray(flags) || flags.length === 0) {
     return '<span class="flag-chips-empty">No active flags</span>';
   }
-  const chips = flags.map((flag) => `<span class="flag-chip ${severityClass(flag.severity)}">`
+  const chips = flags.map((flag) => `<span class="flag-chip">`
     + `${tablerIcon(flagIcon(flag.flag), { size: 11 })}${escapeHtml(flagDisplayName(flag.flag))}</span>`);
   return `<span class="flag-chips">${chips.join('')}</span>`;
 }

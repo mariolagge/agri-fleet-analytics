@@ -4,9 +4,6 @@ CREATE TABLE asset_state (
     -- REQ-COUNTER-SET counters, lifetime scope (REQ-BASELINES + this run)
     lifetime_engine_hours             numeric NOT NULL,
     lifetime_total_working_hours      numeric NOT NULL,
-    lifetime_transport_hours          numeric NOT NULL,
-    lifetime_idle_hours               numeric NOT NULL,
-    lifetime_loaded_hours             numeric NOT NULL,
     lifetime_high_load_hours          numeric NOT NULL,
     lifetime_temp_excursion_hours     numeric NOT NULL,
     lifetime_vibration_alert_hours    numeric NOT NULL,
@@ -14,9 +11,6 @@ CREATE TABLE asset_state (
     -- REQ-COUNTER-SET counters, rolling 24 h scope (REQ-SCOPES)
     rolling_24h_engine_hours          numeric NOT NULL,
     rolling_24h_total_working_hours   numeric NOT NULL,
-    rolling_24h_transport_hours       numeric NOT NULL,
-    rolling_24h_idle_hours            numeric NOT NULL,
-    rolling_24h_loaded_hours          numeric NOT NULL,
     rolling_24h_high_load_hours       numeric NOT NULL,
     rolling_24h_temp_excursion_hours  numeric NOT NULL,
     rolling_24h_vibration_alert_hours numeric NOT NULL,
@@ -32,17 +26,13 @@ CREATE TABLE asset_state (
     recommendation                    text NOT NULL,
     priority_rank                     integer NOT NULL,
 
-    -- REQ-FLAGS flags; NULL severity means the flag is inactive
-    heavy_recent_use_severity         text NULL,
+    -- REQ-FLAGS flags; NULL value means the flag is inactive
     heavy_recent_use_value            numeric NULL,
     heavy_recent_use_threshold        numeric NULL,
-    thermal_load_severity             text NULL,
     thermal_load_value                numeric NULL,
     thermal_load_threshold            numeric NULL,
-    mechanical_attention_severity     text NULL,
     mechanical_attention_value        numeric NULL,
     mechanical_attention_threshold    numeric NULL,
-    high_cumulative_load_severity     text NULL,
     high_cumulative_load_value        numeric NULL,
     high_cumulative_load_threshold    numeric NULL,
 
@@ -53,7 +43,6 @@ CREATE TABLE asset_state (
     latest_load_factor                numeric NULL,
     latest_temperature_c              numeric NULL,
     latest_vibration_level            text NULL,
-    latest_working_status             text NULL,
 
     updated_at                        timestamptz NOT NULL
 );
@@ -63,9 +52,6 @@ CREATE TABLE hourly_aggregate (
     hour_start            timestamptz NOT NULL,
     engine_hours          numeric NOT NULL,
     total_working_hours   numeric NOT NULL,
-    transport_hours       numeric NOT NULL,
-    idle_hours            numeric NOT NULL,
-    loaded_hours          numeric NOT NULL,
     high_load_hours       numeric NOT NULL,
     temp_excursion_hours  numeric NOT NULL,
     vibration_alert_hours numeric NOT NULL,

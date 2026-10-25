@@ -11,7 +11,6 @@ public class TelemetryMessage {
 	private double loadFactor;
 	private double temperatureC;
 	private VibrationLevel vibrationLevel;
-	private WorkingStatus workingStatus;
 
 	public TelemetryMessage() {
 	}
@@ -70,13 +69,5 @@ public class TelemetryMessage {
 
 	public void setVibrationLevel(VibrationLevel vibrationLevel) {
 		this.vibrationLevel = vibrationLevel;
-	}
-
-	public WorkingStatus getWorkingStatus() {
-		return workingStatus;
-	}
-
-	public void setWorkingStatus(WorkingStatus workingStatus) {
-		this.workingStatus = workingStatus;
 	}
 }

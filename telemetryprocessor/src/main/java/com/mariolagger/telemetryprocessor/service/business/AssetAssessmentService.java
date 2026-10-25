@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.mariolagger.telemetryprocessor.dto.AssetStatus;
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 import com.mariolagger.telemetryprocessor.dto.LiveCondition;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
@@ -31,14 +30,13 @@ public class AssetAssessmentService {
 	private static final String WATCH_RECOMMENDATION = "Plan inspection within the next 15–20 engine hours.";
 	private static final String GOOD_RECOMMENDATION = "No inspection recommended at this time.";
 
-	/** REQ-STATUS — each active flag counted once, at its current severity. */
+	/** REQ-STATUS — by the number of active flags. */
 	public AssetStatus status(List<FlagEvaluation> flags) {
-		int severeCount = FlagEvaluation.countAtSeverity(flags, FlagSeverity.SEVERE);
-		int moderateCount = FlagEvaluation.countAtSeverity(flags, FlagSeverity.MODERATE);
-		if (severeCount >= 1 || moderateCount >= 2) {
+		int activeCount = FlagEvaluation.countActive(flags);
+		if (activeCount >= 2) {
 			return AssetStatus.CRITICAL;
 		}
-		if (moderateCount == 1) {
+		if (activeCount == 1) {
 			return AssetStatus.WATCH;
 		}
 		return AssetStatus.GOOD;

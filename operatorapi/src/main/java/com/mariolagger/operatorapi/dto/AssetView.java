@@ -2,7 +2,7 @@ package com.mariolagger.operatorapi.dto;
 
 import java.util.List;
 
-/** REQ-API-ASSETS and REQ-API-ASSET: one asset with its counters, flags, status and ranking. */
+/** REQ-API-ASSETS: one asset with its counters, flags, status and ranking. */
 public class AssetView {
 
 	private AssetId assetId;

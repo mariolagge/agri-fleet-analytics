@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.mariolagger.telemetryprocessor.dto.AssetId;
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 
 /**
  * No mocks. REQ-RANK ranks all four assets together, so every test starts from a fleet with
@@ -30,33 +29,23 @@ class FleetRankingServiceTest {
 	@BeforeEach
 	void createFleetWithNoFlagsAndZeroCounters() {
 		for (AssetId assetId : AssetId.values()) {
-			flagsByAsset.put(assetId, flags(null, null, null, null));
+			flagsByAsset.put(assetId, flags(0));
 			rolling24hCountersByAsset.put(assetId, rolling24hCounters(0.0, 0.0, 0.0));
 		}
 	}
 
+	/** MOWER has the larger counter sum, so only criterion 1 can put TRACTOR first. */
 	@Test
-	@DisplayName("REQ-RANK: one severe flag outranks two moderate flags")
-	void oneSevereFlagOutranksTwoModerateFlags() {
-		flagsByAsset.put(AssetId.TRACTOR, flags(FlagSeverity.SEVERE, null, null, null));
-		flagsByAsset.put(AssetId.MOWER, flags(FlagSeverity.MODERATE, FlagSeverity.MODERATE, null, null));
+	@DisplayName("REQ-RANK: more active flags rank higher, whatever the counter sum")
+	void moreActiveFlagsRankHigherWhateverTheCounterSum() {
+		flagsByAsset.put(AssetId.TRACTOR, flags(2));
+		flagsByAsset.put(AssetId.MOWER, flags(1));
+		rolling24hCountersByAsset.put(AssetId.MOWER, rolling24hCounters(5.0, 5.0, 5.0));
 
 		Map<AssetId, Integer> priorityRanks = assignPriorityRanks();
 
 		assertEquals(1, priorityRanks.get(AssetId.TRACTOR));
 		assertEquals(2, priorityRanks.get(AssetId.MOWER));
-	}
-
-	@Test
-	@DisplayName("REQ-RANK: with equal severe counts, more moderate flags rank higher")
-	void withEqualSevereCountsMoreModerateFlagsRankHigher() {
-		flagsByAsset.put(AssetId.TRACTOR, flags(FlagSeverity.SEVERE, FlagSeverity.MODERATE, null, null));
-		flagsByAsset.put(AssetId.BALER, flags(FlagSeverity.SEVERE, null, null, null));
-
-		Map<AssetId, Integer> priorityRanks = assignPriorityRanks();
-
-		assertEquals(1, priorityRanks.get(AssetId.TRACTOR));
-		assertEquals(2, priorityRanks.get(AssetId.BALER));
 	}
 
 	/** BALER has the largest single counter, MIXER the larger sum of the three. */
@@ -87,9 +76,9 @@ class FleetRankingServiceTest {
 	@Test
 	@DisplayName("REQ-RANK: the result holds the ranks 1 to 4, each exactly once")
 	void theResultHoldsTheRanksOneToFourEachExactlyOnce() {
-		flagsByAsset.put(AssetId.TRACTOR, flags(FlagSeverity.SEVERE, null, null, null));
-		flagsByAsset.put(AssetId.MOWER, flags(FlagSeverity.MODERATE, null, null, null));
-		flagsByAsset.put(AssetId.MIXER, flags(FlagSeverity.MODERATE, null, null, null));
+		flagsByAsset.put(AssetId.TRACTOR, flags(2));
+		flagsByAsset.put(AssetId.MOWER, flags(1));
+		flagsByAsset.put(AssetId.MIXER, flags(1));
 
 		Map<AssetId, Integer> priorityRanks = assignPriorityRanks();
 
@@ -103,21 +92,18 @@ class FleetRankingServiceTest {
 		return fleetRankingService.assignPriorityRanks(flagsByAsset, rolling24hCountersByAsset);
 	}
 
-	private List<FlagEvaluation> flags(FlagSeverity heavyRecentUse, FlagSeverity thermalLoad,
-			FlagSeverity mechanicalAttention, FlagSeverity highCumulativeLoad) {
-		return List.of(flag(heavyRecentUse), flag(thermalLoad), flag(mechanicalAttention), flag(highCumulativeLoad));
-	}
-
-	private FlagEvaluation flag(FlagSeverity severity) {
-		if (severity == null) {
-			return FlagEvaluation.inactive();
+	/** The four flags of one asset, the first activeCount of them active. */
+	private List<FlagEvaluation> flags(int activeCount) {
+		List<FlagEvaluation> flags = new ArrayList<>();
+		for (int index = 0; index < 4; index++) {
+			flags.add(index < activeCount ? FlagEvaluation.active(3.0, 2.0) : FlagEvaluation.inactive());
 		}
-		return FlagEvaluation.active(severity, 3.0, 2.0);
+		return flags;
 	}
 
-	/** Only the three counters REQ-RANK criterion 3 adds up are set; the other five stay 0. */
+	/** Only the three counters REQ-RANK criterion 2 adds up are set; the other two stay 0. */
 	private CounterSet rolling24hCounters(double highLoadHours, double tempExcursionHours,
 			double vibrationAlertHours) {
-		return new CounterSet(0.0, 0.0, 0.0, 0.0, 0.0, highLoadHours, tempExcursionHours, vibrationAlertHours);
+		return new CounterSet(0.0, 0.0, highLoadHours, tempExcursionHours, vibrationAlertHours);
 	}
 }

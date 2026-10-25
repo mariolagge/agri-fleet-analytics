@@ -2,6 +2,7 @@ package com.mariolagger.telemetryprocessor.service.business;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyIterable;
@@ -26,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
-import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 import com.mariolagger.telemetryprocessor.entity.AssetState;
 import com.mariolagger.telemetryprocessor.entity.HourlyAggregate;
 import com.mariolagger.telemetryprocessor.repository.AssetStateRepository;
@@ -133,6 +133,22 @@ class AssetStatePublisherTest {
 		assertEquals(TRACTOR_BASELINE_ENGINE_HOURS, rowOf(rows, ASSET).getLifetimeEngineHours(), TOLERANCE);
 	}
 
+	/** On the baselines alone only TRACTOR's highLoadHours (410) reaches the lifetime threshold (400). */
+	@Test
+	@DisplayName("REQ-FLAGS: an active flag is stored with its value and threshold, an inactive one with neither")
+	void anActiveFlagIsStoredWithItsValueAndThresholdAnInactiveOneWithNeither() {
+		assetStatePublisher.publish();
+
+		verify(assetStateRepository).saveAll(assetStateRows.capture());
+		List<AssetState> rows = capturedRows();
+		AssetState tractor = rowOf(rows, AssetId.TRACTOR);
+		AssetState mower = rowOf(rows, AssetId.MOWER);
+		assertEquals(410.0, tractor.getHighCumulativeLoadValue(), TOLERANCE);
+		assertEquals(400.0, tractor.getHighCumulativeLoadThreshold(), TOLERANCE);
+		assertNull(mower.getHighCumulativeLoadValue());
+		assertNull(mower.getHighCumulativeLoadThreshold());
+	}
+
 	/** One clock read per publish, so the four rows describe the same instant. */
 	@Test
 	@DisplayName("ARCHITECTURE §4: every row of one publish carries the same updatedAt")
@@ -201,7 +217,6 @@ class AssetStatePublisherTest {
 		message.setLoadFactor(0.6);
 		message.setTemperatureC(70.0);
 		message.setVibrationLevel(VibrationLevel.NORMAL);
-		message.setWorkingStatus(WorkingStatus.WORKING);
 		return message;
 	}
 }

@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
-import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
 /**
  * Every time-dependent value is handed to the service, so these cases are expressed with
@@ -144,34 +143,94 @@ class CounterAccumulationServiceTest {
 		assertEquals(0.0, rolling24hCounters().getEngineHours(), TOLERANCE);
 	}
 
-	/** REQ-COUNTER-INVARIANT: the three buckets partition engine hours. */
+	/** REQ-COUNTER-SET: pto alone or speed alone is not productive work; speed must be above 2, not 2. */
 	@Test
-	@DisplayName("REQ-COUNTER-INVARIANT: engine hours equal working plus transport plus idle hours")
-	void engineHoursEqualsWorkingPlusTransportPlusIdle() {
+	@DisplayName("REQ-COUNTER-SET: productive work needs both pto engaged and ground speed above 2")
+	void productiveWorkNeedsBothPtoEngagedAndGroundSpeedAboveTwo() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
-		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
-		counterAccumulationService.accumulate(transportMessage(AT_06_31_00));
-		counterAccumulationService.accumulate(idleMessage(AT_06_31_30));
+		counterAccumulationService.accumulate(message(AT_06_30_30, false, 8.0, 0.6, 70.0, VibrationLevel.NORMAL));
+		counterAccumulationService.accumulate(message(AT_06_31_00, true, 2.0, 0.6, 70.0, VibrationLevel.NORMAL));
+		counterAccumulationService.accumulate(productiveMessage(AT_06_31_30));
 
 		CounterSet rolling24hCounters = rolling24hCounters();
+		assertEquals(3 * THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getEngineHours(), TOLERANCE);
 		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getTotalWorkingHours(), TOLERANCE);
-		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getTransportHours(), TOLERANCE);
-		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getIdleHours(), TOLERANCE);
-		assertEquals(rolling24hCounters.getEngineHours(), rolling24hCounters.getTotalWorkingHours()
-				+ rolling24hCounters.getTransportHours() + rolling24hCounters.getIdleHours(), TOLERANCE);
 	}
 
-	/** REQ-COUNTER-SET: productive work is pto plus ground speed, never the reported status. */
+	/** REQ-COUNTER-SET: load counts only while working, and the 0.75 bar is inclusive. */
 	@Test
-	@DisplayName("REQ-TELEMETRY-PRODUCTIVE: productive work is derived from pto and ground speed, not from working status")
-	void productiveWorkIsDerivedFromPtoAndGroundSpeedNotFromWorkingStatus() {
+	@DisplayName("REQ-COUNTER-SET: high load hours accrue only during productive work at a load factor of 0.75 or more")
+	void highLoadHoursAccrueOnlyDuringProductiveWorkAtALoadFactorOfPointSevenFiveOrMore() {
 		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
-		counterAccumulationService.accumulate(
-				message(AT_06_30_30, false, 8.0, 0.6, 70.0, VibrationLevel.NORMAL, WorkingStatus.WORKING));
+		counterAccumulationService.accumulate(message(AT_06_30_30, true, 8.0, 0.75, 70.0, VibrationLevel.NORMAL));
+		counterAccumulationService.accumulate(message(AT_06_31_00, false, 0.0, 0.9, 70.0, VibrationLevel.NORMAL));
+		counterAccumulationService.accumulate(message(AT_06_31_30, true, 8.0, 0.74, 70.0, VibrationLevel.NORMAL));
+
+		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters().getHighLoadHours(), TOLERANCE);
+	}
+
+	/** REQ-COUNTER-SET: an idle machine can still overheat or vibrate. */
+	@Test
+	@DisplayName("REQ-COUNTER-SET: temperature and vibration hours accrue regardless of working state")
+	void temperatureAndVibrationHoursAccrueRegardlessOfWorkingState() {
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
+		counterAccumulationService.accumulate(message(AT_06_30_30, false, 0.0, 0.1, 90.1, VibrationLevel.ELEVATED));
+		counterAccumulationService.accumulate(message(AT_06_31_00, false, 0.0, 0.1, 90.0, VibrationLevel.HIGH));
 
 		CounterSet rolling24hCounters = rolling24hCounters();
-		assertEquals(0.0, rolling24hCounters.getTotalWorkingHours(), TOLERANCE);
-		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getIdleHours(), TOLERANCE);
+		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getTempExcursionHours(), TOLERANCE);
+		assertEquals(SIXTY_SECONDS_IN_HOURS, rolling24hCounters.getVibrationAlertHours(), TOLERANCE);
+	}
+
+	@Test
+	@DisplayName("REQ-COUNTER-SET: engine hours are at least working hours, which are at least high load hours")
+	void engineHoursAreAtLeastWorkingHoursWhichAreAtLeastHighLoadHours() {
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
+		counterAccumulationService.accumulate(message(AT_06_30_30, true, 8.0, 0.9, 70.0, VibrationLevel.NORMAL));
+		counterAccumulationService.accumulate(productiveMessage(AT_06_31_00));
+		counterAccumulationService.accumulate(message(AT_06_31_30, false, 20.0, 0.2, 65.0, VibrationLevel.NORMAL));
+
+		CounterSet rolling24hCounters = rolling24hCounters();
+		assertTrue(rolling24hCounters.getEngineHours() >= rolling24hCounters.getTotalWorkingHours());
+		assertTrue(rolling24hCounters.getTotalWorkingHours() >= rolling24hCounters.getHighLoadHours());
+		assertEquals(3 * THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getEngineHours(), TOLERANCE);
+		assertEquals(2 * THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getTotalWorkingHours(), TOLERANCE);
+		assertEquals(THIRTY_SECONDS_IN_HOURS, rolling24hCounters.getHighLoadHours(), TOLERANCE);
+	}
+
+	/** REQ-SCOPES and REQ-BASELINES: one message lands in both scopes, but only lifetime starts from the baseline. */
+	@Test
+	@DisplayName("REQ-SCOPES: lifetime is the baseline plus this run, while the rolling window starts empty")
+	void lifetimeIsTheBaselinePlusThisRunWhileTheRollingWindowStartsEmpty() {
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
+
+		AssetSnapshot snapshot = snapshot();
+		double baselineEngineHours = AssetBaselines.baselineFor(ASSET).getEngineHours();
+		assertEquals(THIRTY_SECONDS_IN_HOURS, snapshot.getRolling24hCounters().getEngineHours(), TOLERANCE);
+		assertEquals(baselineEngineHours + THIRTY_SECONDS_IN_HOURS, snapshot.getLifetimeCounters().getEngineHours(),
+				TOLERANCE);
+	}
+
+	/**
+	 * REQ-SCOPES: the window is the open bucket plus the 23 completed before it. At 05:30Z the
+	 * next day the 06:00Z bucket is the oldest one still inside; at 06:30Z it has dropped out.
+	 */
+	@Test
+	@DisplayName("REQ-SCOPES: an hour leaves the rolling window after 23 completed hours but stays in lifetime")
+	void anHourLeavesTheRollingWindowAfterTwentyThreeCompletedHoursButStaysInLifetime() {
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_00));
+		counterAccumulationService.accumulate(productiveMessage(AT_06_30_30));
+
+		AssetSnapshot lastHourInside = counterAccumulationService.snapshotOf(ASSET,
+				Instant.parse("2026-08-14T05:30:00Z"));
+		AssetSnapshot firstHourOutside = counterAccumulationService.snapshotOf(ASSET,
+				Instant.parse("2026-08-14T06:30:00Z"));
+
+		assertEquals(THIRTY_SECONDS_IN_HOURS, lastHourInside.getRolling24hCounters().getEngineHours(), TOLERANCE);
+		assertEquals(0.0, firstHourOutside.getRolling24hCounters().getEngineHours(), TOLERANCE);
+		assertEquals(lastHourInside.getLifetimeCounters().getEngineHours(),
+				firstHourOutside.getLifetimeCounters().getEngineHours(), TOLERANCE);
 	}
 
 	/** REQ-UTILIZATION: the percentage is the quotient of the counters published beside it. */
@@ -223,19 +282,11 @@ class CounterAccumulationServiceTest {
 	}
 
 	private TelemetryMessage productiveMessage(Instant timestamp) {
-		return message(timestamp, true, 8.0, 0.6, 70.0, VibrationLevel.NORMAL, WorkingStatus.WORKING);
-	}
-
-	private TelemetryMessage transportMessage(Instant timestamp) {
-		return message(timestamp, false, 22.0, 0.2, 70.0, VibrationLevel.NORMAL, WorkingStatus.TRANSPORT);
-	}
-
-	private TelemetryMessage idleMessage(Instant timestamp) {
-		return message(timestamp, false, 0.0, 0.1, 70.0, VibrationLevel.NORMAL, WorkingStatus.IDLE);
+		return message(timestamp, true, 8.0, 0.6, 70.0, VibrationLevel.NORMAL);
 	}
 
 	private TelemetryMessage message(Instant timestamp, boolean ptoEngaged, double groundSpeedKmh, double loadFactor,
-			double temperatureC, VibrationLevel vibrationLevel, WorkingStatus workingStatus) {
+			double temperatureC, VibrationLevel vibrationLevel) {
 		TelemetryMessage message = new TelemetryMessage();
 		message.setAssetId(ASSET);
 		message.setTimestamp(timestamp);
@@ -244,7 +295,6 @@ class CounterAccumulationServiceTest {
 		message.setLoadFactor(loadFactor);
 		message.setTemperatureC(temperatureC);
 		message.setVibrationLevel(vibrationLevel);
-		message.setWorkingStatus(workingStatus);
 		return message;
 	}
 }

@@ -14,7 +14,7 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 
 ## 1. Goal
 
-**REQ-GOAL-SCOPE.** The system shall monitor utilization of one tractor and three typical Austrian hay/dairy-farm implements — the fleet fixed by §2 — and shall support the decisions in §7 and no others.
+**REQ-GOAL-SCOPE.** The system shall monitor utilization of exactly the four assets in §2 — one tractor and three typical Austrian hay/dairy-farm implements — and shall support the decisions in §7 and no others. The system shall not register or discover assets.
 
 *Priority: Must · Source: NEED-MONITOR-FLEET*
 
@@ -25,10 +25,6 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 ---
 
 ## 2. Assets
-
-**REQ-FLEET-FIXED.** The fleet shall be exactly the four assets in the table below. The system shall not register or discover assets.
-
-*Priority: Must · Source: NEED-MONITOR-FLEET*
 
 | Asset | Role |
 |-------|------|
@@ -43,20 +39,15 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 
 ### 3.1 Message
 
-**REQ-TELEMETRY-CADENCE.** Outside the §3.2 startup burst, each asset shall publish one telemetry message every 5–10 seconds, independently of the other assets.
-
-*Priority: Should · Source: NEED-STABLE-INTERFACE*
-
 ```json
 {
-  "assetId": "BALER",
+  "assetId": "TRACTOR",
   "timestamp": "2026-07-31T01:15:00Z",
   "ptoEngaged": true,
-  "groundSpeedKmh": 8.4,
-  "loadFactor": 0.78,
-  "temperatureC": 87.2,
-  "vibrationLevel": "ELEVATED",
-  "workingStatus": "WORKING"
+  "groundSpeedKmh": 10.0,
+  "loadFactor": 0.80,
+  "temperatureC": 94.0,
+  "vibrationLevel": "NORMAL"
 }
 ```
 
@@ -69,84 +60,52 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 | `loadFactor` | number | 0.0–1.0 |
 | `temperatureC` | number | — |
 | `vibrationLevel` | string | `NORMAL`, `ELEVATED` or `HIGH` |
-| `workingStatus` | string | `WORKING`, `TRANSPORT` or `IDLE` |
 
-**REQ-TELEMETRY-SHAPE.** A telemetry message shall have exactly the fields and constraints in the table above.
+**REQ-TELEMETRY-SHAPE.** A telemetry message shall have exactly the fields and constraints in the table above. Outside the §3.2 startup burst, each asset shall publish one message every 5–10 seconds, independently of the other assets.
 
 *Priority: Must · Source: NEED-STABLE-INTERFACE*
 
-**REQ-TELEMETRY-WORKING-STATUS.** The simulator shall set `workingStatus` to `WORKING` exactly when `ptoEngaged` is true and `groundSpeedKmh > 2`.
-
-*Priority: Should · Source: NEED-UTILIZATION-AWARENESS*
-
-**REQ-TELEMETRY-PRODUCTIVE.** Consumers shall derive productive work from `ptoEngaged` and `groundSpeedKmh > 2`, and shall use `workingStatus` only to separate `TRANSPORT` from `IDLE` (§4.1). Consumers shall not treat `workingStatus` as proof of productive work.
-
-*Priority: Must · Source: NEED-UTILIZATION-AWARENESS*
-
 ### 3.2 Simulator behaviour
 
-**REQ-SIM-ONLY-SOURCE.** The simulator shall be the only source of telemetry. It is not a physics model. The ranges in this section are the contract.
+**REQ-SIM-SCHEDULE.** The simulator shall be the only source of telemetry. Each asset shall repeat the fixed schedule in the table below, without randomness. The position in the schedule shall be the message timestamp modulo the cycle length, counted from the Unix epoch, so the same instant always produces the same message. Field values shall be constant within a segment. Simulator state shall be in memory only.
 
 *Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
-
-**REQ-SIM-CYCLE.** Each asset shall independently follow the state cycle, the field values, and the per-asset rates in the tables below. The working `loadFactor` band and the two excursion rates shall be the only per-asset differences a §4.1 counter reads. No counter or threshold shall use the per-asset `groundSpeedKmh` difference.
-
-*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
-
-Each asset walks this cycle:
-
-| State | Dwell | Next state |
-|-------|-------|------------|
-| `WORKING` | 20–60 min | `TRANSPORT` (60 %) or `IDLE` (40 %) |
-| `TRANSPORT` | 3–10 min | `WORKING` (70 %) or `IDLE` (30 %) |
-| `IDLE` | 5–30 min | `WORKING` (80 %) or `TRANSPORT` (20 %) |
 
 Field values per state:
 
-| State | `ptoEngaged` | `groundSpeedKmh` | `loadFactor` |
-|-------|--------------|------------------|--------------|
-| `WORKING` | `true` | `TRACTOR` 6–14, `MOWER` 8–13, `BALER` 6–10, `MIXER` 3–5 | per asset, see below |
-| `TRANSPORT` | `false` | 12–30 (`MIXER` 8–18) | 0.15–0.35 |
-| `IDLE` | `false` | 0 | 0.05–0.15 |
+| State | `ptoEngaged` | `groundSpeedKmh` | `loadFactor` | `temperatureC` | `vibrationLevel` |
+|-------|--------------|------------------|--------------|----------------|------------------|
+| `WORKING` | `true` | `TRACTOR` 10, `MOWER` 11, `BALER` 8, `MIXER` 4 | per segment | 80 | `NORMAL` |
+| `TRANSPORT` | `false` | 20 | 0.25 | 65 | `NORMAL` |
+| `IDLE` | `false` | 0 | 0.10 | 50 | `NORMAL` |
 
-Per-asset working `loadFactor` and excursion rates:
+Schedule per asset. A segment overrides a state value only where the table says so.
 
-| Asset | working `loadFactor` | thermal excursion chance | vibration excursion chance |
-|-------|----------------------|--------------------------|----------------------------|
-| `TRACTOR` | 0.30–0.90 | 1.5 % | 1.0 % |
-| `BALER` | 0.25–0.81 | 0.15 % | 0.15 % |
-| `MOWER` | 0.25–0.78 | 0.15 % | 0.8 % |
-| `MIXER` | 0.25–0.72 | 0.15 % | 0.15 % |
+| Asset | Cycle | Segments in order |
+|-------|-------|-------------------|
+| `TRACTOR` | 120 min | `WORKING` 60 min, load 0.80 · `WORKING` 10 min, load 0.80, **94 °C** · `TRANSPORT` 20 min · `IDLE` 30 min |
+| `BALER` | 120 min | `WORKING` 15 min, load 0.80 · `WORKING` 45 min, load 0.60 · `TRANSPORT` 20 min · `IDLE` 40 min |
+| `MOWER` | 420 min | `WORKING` 180 min, load 0.60 · `WORKING` 18 min, load 0.60, **vibration `HIGH`** · `TRANSPORT` 42 min · `IDLE` 180 min |
+| `MIXER` | 120 min | `WORKING` 40 min, load 0.50 · `IDLE` 80 min |
 
-**REQ-SIM-DEMO.** The per-asset rates and the default burst window shall be aimed at these anchors over a full window: `TRACTOR` at `CRITICAL` on the rolling flags, `BALER` at `WATCH` on `HEAVY_RECENT_USE` alone, `MIXER` at `GOOD`, and `MOWER` able to move between `GOOD`, `WATCH`, and `CRITICAL` as `MECHANICAL_ATTENTION` comes and goes. A single random run is not required to land on every anchor. The §5 flags shall be reachable within a demo session.
-
-*Priority: Could · Source: NEED-REPRODUCIBLE-DEMO*
-
-`MOWER` moves because its only flag driver is the vibration excursion, and a window holds fewer than ten excursions of 2–15 minutes each — too few to average out. The `ELEVATED`-from-load path is the only low-variance route to `vibrationAlertHours`, and REQ-SIM-ELEVATED keeps that path accruing `highLoadHours` on the same messages. The three anchors are what make the §5.4 ranking meaningful; `MOWER` is what makes it visibly live.
-
-**REQ-SIM-TEMPERATURE.** Outside a thermal excursion, `temperatureC` shall drift smoothly within 70–85 °C while `WORKING`, 55–70 °C while `TRANSPORT`, and towards 45–60 °C while `IDLE`. Independently of the state cycle, each asset shall enter a thermal excursion at 91–98 °C at its rate in the per-asset table, for 2–15 minutes.
-
-*Priority: Should · Source: NEED-REPRODUCIBLE-DEMO*
-
-**REQ-SIM-VIBRATION.** `vibrationLevel` shall be `NORMAL` by default, `ELEVATED` while `loadFactor ≥ 0.85`, and `HIGH` during a vibration excursion. Each asset shall enter a vibration excursion at its rate in the per-asset table, for 2–15 minutes.
-
-*Priority: Should · Source: NEED-REPRODUCIBLE-DEMO*
-
-**REQ-SIM-EXCURSION-RATE.** Both excursion rates shall be applied per minute of working time, not per emitted message. The startup burst and the live cadence shall therefore wear a machine at the same speed.
-
-*Priority: Should · Source: NEED-REPRODUCIBLE-DEMO*
-
-**REQ-SIM-ELEVATED.** `ELEVATED` from load alone shall be possible only for an asset whose working `loadFactor` band can reach the `ELEVATED` condition in REQ-SIM-VIBRATION. That condition shall stay strictly above the `highLoadHours` condition in §4.1, so every such message also accrues `highLoadHours`. The bands and thresholds shall not be retuned so that `ELEVATED` from load can occur without accruing `highLoadHours`.
-
-*Priority: Should · Source: NEED-REPRODUCIBLE-DEMO*
-
-**REQ-SIM-BURST.** Each asset shall open its run by publishing one message per simulated minute across a configurable window of the immediately preceding hours, ending at the present, and only then switch to the §3.1 cadence. The step shall be exactly 60 seconds, which §4.2 credits, so the burst can fill the window in the time it takes to publish. Timestamps shall be true wall-clock instants. Nothing shall be backdated beyond the window. The window shall default to 24 hours. It is a calibration knob, not a threshold: shortening it only moves a run's starting point along the same ramp.
+**REQ-SIM-DEMO.** Over a full rolling window, the schedule shall produce these outcomes: `TRACTOR` at `CRITICAL`, `BALER` at `WATCH` on `HEAVY_RECENT_USE` alone, `MIXER` at `GOOD`, and `MOWER` moving between `GOOD` and `WATCH` as `MECHANICAL_ATTENTION` comes and goes.
 
 *Priority: Could · Source: NEED-REPRODUCIBLE-DEMO*
 
-**REQ-SIM-MEMORY.** Simulator state shall be in memory only and shall start fresh on every run, the burst included.
+Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
-*Priority: Should · Source: NEED-REPRODUCIBLE-DEMO*
+| Asset | `highLoadHours` | `tempExcursionHours` | `vibrationAlertHours` | Active flags |
+|-------|-----------------|----------------------|------------------------|--------------|
+| `TRACTOR` | ≈ 13–14 h | ≈ 1.8–2 h | 0 | `HEAVY_RECENT_USE`, `THERMAL_LOAD`, `HIGH_CUMULATIVE_LOAD` |
+| `BALER` | ≈ 2.8–3 h | 0 | 0 | `HEAVY_RECENT_USE` |
+| `MOWER` | 0 | 0 | 0.9–1.2 h | `MECHANICAL_ATTENTION` part of the time |
+| `MIXER` | 0 | 0 | 0 | none |
+
+`MOWER` moves because its 420-minute cycle does not divide 24 hours: the window holds three or four of its 18-minute vibration segments depending on the time of day, which is 0.9 h or 1.2 h around the 1.0 h threshold.
+
+**REQ-SIM-BURST.** Each asset shall open its run by publishing one message per simulated minute across a configurable window of the immediately preceding hours, ending at the present, and only then switch to the §3.1 cadence. The step shall be exactly 60 seconds, which §4.2 credits, so the burst can fill the window in the time it takes to publish. Timestamps shall be true wall-clock instants. The window shall default to 24 hours.
+
+*Priority: Could · Source: NEED-REPRODUCIBLE-DEMO*
 
 ---
 
@@ -154,7 +113,7 @@ Per-asset working `loadFactor` and excursion rates:
 
 ### 4.1 Counter set
 
-**REQ-COUNTER-SET.** Each asset shall maintain the eight hour-counters in the table below, and shall accrue each counter only on the condition in that table. Productive work shall mean the `totalWorkingHours` condition.
+**REQ-COUNTER-SET.** Each asset shall maintain the five hour-counters in the table below, and shall accrue each counter only on the condition in that table. Productive work shall mean `ptoEngaged` **and** `groundSpeedKmh > 2`. As a consequence, `engineHours` ≥ `totalWorkingHours` ≥ `highLoadHours` shall always hold.
 
 *Priority: Must · Source: NEED-UTILIZATION-AWARENESS, NEED-TRACEABLE-RULES*
 
@@ -163,17 +122,10 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 | Counter | Accumulates on a message when |
 |---------|-------------------------------|
 | `engineHours` | always (the asset is switched on and reporting) |
-| `totalWorkingHours` | `ptoEngaged` **and** `groundSpeedKmh > 2` |
-| `transportHours` | not productive work **and** `workingStatus` = `TRANSPORT` |
-| `idleHours` | not productive work **and** `workingStatus` ≠ `TRANSPORT` |
-| `loadedHours` | productive work **and** `loadFactor ≥ 0.55` |
+| `totalWorkingHours` | productive work |
 | `highLoadHours` | productive work **and** `loadFactor ≥ 0.75` |
 | `tempExcursionHours` | `temperatureC > 90` (regardless of working state) |
 | `vibrationAlertHours` | `vibrationLevel` is `ELEVATED` or `HIGH` (regardless of working state) |
-
-**REQ-COUNTER-INVARIANT.** `engineHours` shall equal `totalWorkingHours` + `transportHours` + `idleHours`. `totalWorkingHours` shall be greater than or equal to `loadedHours`, which shall be greater than or equal to `highLoadHours`. Both relations follow from the conditions in the table above.
-
-*Priority: Must · Source: NEED-TRACEABLE-RULES*
 
 ### 4.2 Accumulation rule
 
@@ -188,9 +140,9 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 
 ### 4.3 Hourly buckets and the rolling 24-hour window
 
-**REQ-BUCKETS.** Counter contributions shall be accumulated into hourly buckets aligned to whole hours in `Europe/Vienna`. A bucket holds the amount each of the eight counters accrued within that hour. A message's whole Δt shall be credited to the bucket containing its own timestamp. Because credited Δt is at most 60 seconds, at most one minute of a message can fall in the neighbouring hour.
+**REQ-BUCKETS.** Counter contributions shall be accumulated into hourly buckets aligned to whole hours in `Europe/Vienna`. A bucket holds the exact seconds each of the five counters accrued within that hour, so threshold comparisons are exact. A message's whole Δt shall be credited to the bucket containing its own timestamp. Because credited Δt is at most 60 seconds, at most one minute of a message can fall in the neighbouring hour.
 
-*Priority: Must · Source: NEED-HISTORY-REVIEW*
+*Priority: Must · Source: NEED-HISTORY-REVIEW, NEED-TRACEABLE-RULES*
 
 **REQ-SCOPES.** Two scopes are derived from the buckets:
 
@@ -199,26 +151,22 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 - **Rolling 24 h** — the current, still-open bucket plus the 23 completed buckets before it. Coverage is therefore between 23 and 24 hours depending on the position within the current hour. This is deliberate: the window reacts to load within the current hour.
 - **Lifetime** — the §4.4 baseline plus everything accrued since the process started.
 
-**REQ-BUCKET-EXACT.** Bucket contents shall be exact seconds, so threshold comparisons are exact. Only the edge of the rolling window shall be quantised to the hour.
-
-*Priority: Should · Source: NEED-TRACEABLE-RULES*
-
 DST transitions (23- and 25-hour local days) are not handled specially — out of scope.
 
 ### 4.4 Seeded lifetime baselines
 
-**REQ-BASELINES.** The lifetime flag thresholds in §5.1 are unreachable in a demo that starts from zero. Each asset shall therefore start from the fixed lifetime baseline in the table below, loaded at startup. Baselines shall apply to the lifetime scope only. The rolling 24-hour window shall start empty. Lifetime counters shall not be carried across restarts; every run shall start from this table, so a demo run is reproducible.
+**REQ-BASELINES.** The lifetime flag threshold in §5.1 is unreachable in a demo that starts from zero. Each asset shall therefore start from the fixed lifetime baseline in the table below, loaded at startup. Baselines shall apply to the lifetime scope only. The rolling 24-hour window shall start empty. Lifetime counters shall not be carried across restarts; every run shall start from this table, so a demo run is reproducible.
 
 *Priority: Could · Source: NEED-LIFETIME-HOURS, NEED-REPRODUCIBLE-DEMO*
 
-| Asset | `engineHours` | `totalWorkingHours` | `transportHours` | `idleHours` | `loadedHours` | `highLoadHours` | `tempExcursionHours` | `vibrationAlertHours` |
-|-------|---------------|---------------------|------------------|-------------|---------------|-----------------|----------------------|------------------------|
-| `TRACTOR` | 6200 | 3400 | 1500 | 1300 | 980 | 410 | 26 | 58 |
-| `MOWER` | 950 | 640 | 210 | 100 | 310 | 95 | 4 | 12 |
-| `BALER` | 1480 | 1010 | 300 | 170 | 620 | 240 | 11 | 46 |
-| `MIXER` | 1120 | 860 | 60 | 200 | 415 | 130 | 7 | 19 |
+| Asset | `engineHours` | `totalWorkingHours` | `highLoadHours` | `tempExcursionHours` | `vibrationAlertHours` |
+|-------|---------------|---------------------|-----------------|----------------------|------------------------|
+| `TRACTOR` | 6200 | 3400 | 410 | 26 | 58 |
+| `MOWER` | 950 | 640 | 95 | 4 | 12 |
+| `BALER` | 1480 | 1010 | 240 | 11 | 46 |
+| `MIXER` | 1120 | 860 | 130 | 7 | 19 |
 
-Every row satisfies REQ-COUNTER-INVARIANT. On the baselines alone, before any telemetry, §5 puts `TRACTOR` at `WATCH` on its single lifetime flag and the other three at `GOOD`, with no asset at `CRITICAL` from its history. The §3.2 burst then fills the rolling window. These baselines make the lifetime flag reachable; they are not the whole of the first screen.
+Every row satisfies the order in REQ-COUNTER-SET. On the baselines alone, before any telemetry, §5 puts `TRACTOR` at `WATCH` on its lifetime flag and the other three at `GOOD`. The §3.2 burst then fills the rolling window.
 
 ### 4.5 Utilization
 
@@ -237,36 +185,25 @@ Every row satisfies REQ-COUNTER-INVARIANT. On the baselines alone, before any te
 
 ### 5.1 Flag definitions
 
-**REQ-FLAGS.** The system shall evaluate the flags in the tables below. Each named flag shall be inactive, or active at the highest threshold it currently meets, so the eight rows produce at most four active flags. Every active flag shall be published with the counter, the scope, the value, and the threshold that triggered it. An inactive flag shall be absent.
+**REQ-FLAGS.** The system shall evaluate the four flags in the table below. A flag shall be active when its counter, in its scope, is greater than or equal to its threshold, and inactive otherwise. Every active flag shall be published with the counter, the scope, the value, and the threshold. An inactive flag shall be absent.
 
 *Priority: Must · Source: NEED-PRIORITISE-MAINTENANCE, NEED-FLAG-REASON*
 
-Evaluated on the rolling 24-hour window:
-
-| Flag | Condition | Severity |
-|------|-----------|----------|
-| `HEAVY_RECENT_USE` | `highLoadHours` (24 h) ≥ 1.5 h | `MODERATE` |
-| `HEAVY_RECENT_USE` | `highLoadHours` (24 h) ≥ 2.5 h | `SEVERE` |
-| `THERMAL_LOAD` | `tempExcursionHours` (24 h) ≥ 0.8 h | `MODERATE` |
-| `THERMAL_LOAD` | `tempExcursionHours` (24 h) ≥ 1.5 h | `SEVERE` |
-| `MECHANICAL_ATTENTION` | `vibrationAlertHours` (24 h) ≥ 1.0 h | `MODERATE` |
-| `MECHANICAL_ATTENTION` | `vibrationAlertHours` (24 h) ≥ 2.0 h | `SEVERE` |
-
-Evaluated on the lifetime scope:
-
-| Flag | Condition | Severity |
-|------|-----------|----------|
-| `HIGH_CUMULATIVE_LOAD` | `loadedHours` (lifetime) ≥ 850 h | `MODERATE` |
-| `HIGH_CUMULATIVE_LOAD` | `loadedHours` (lifetime) ≥ 1200 h | `SEVERE` |
+| Flag | Counter | Scope | Threshold |
+|------|---------|-------|-----------|
+| `HEAVY_RECENT_USE` | `highLoadHours` | rolling 24 h | 1.5 h |
+| `THERMAL_LOAD` | `tempExcursionHours` | rolling 24 h | 0.8 h |
+| `MECHANICAL_ATTENTION` | `vibrationAlertHours` | rolling 24 h | 1.0 h |
+| `HIGH_CUMULATIVE_LOAD` | `highLoadHours` | lifetime | 400 h |
 
 ### 5.2 Status
 
-**REQ-STATUS.** Counting each active flag once, at its current severity, status shall be exactly one of the three cases below. The cases are exhaustive and mutually exclusive.
+**REQ-STATUS.** Status shall be exactly one of the three cases below, by the number of active flags.
 
 *Priority: Must · Source: NEED-PRIORITISE-MAINTENANCE*
 
-- `CRITICAL` — at least one `SEVERE` flag **or** two or more `MODERATE` flags
-- `WATCH` — exactly one `MODERATE` flag and no `SEVERE` flag
+- `CRITICAL` — two or more active flags
+- `WATCH` — exactly one active flag
 - `GOOD` — no active flag
 
 ### 5.3 Live condition
@@ -286,16 +223,15 @@ Status is an integral over 24 hours and therefore cannot answer whether the mach
 
 ### 5.4 Priority ranking
 
-**REQ-RANK.** Whenever ranks are assigned, all four assets shall be ranked together. Sort by the criteria below, in order. An asset with no flags sorts to the bottom by those criteria, not by an extra rule. `priorityRank` shall be 1-based in that order.
+**REQ-RANK.** Whenever ranks are assigned, all four assets shall be ranked together. Sort by the criteria below, in order. `priorityRank` shall be 1-based in that order.
 
 *Priority: Must · Source: NEED-PRIORITISE-MAINTENANCE*
 
-1. number of `SEVERE` flags, descending
-2. number of `MODERATE` flags, descending
-3. `highLoadHours` (24 h) + `tempExcursionHours` (24 h) + `vibrationAlertHours` (24 h), descending
-4. `assetId`, ascending
+1. number of active flags, descending
+2. `highLoadHours` (24 h) + `tempExcursionHours` (24 h) + `vibrationAlertHours` (24 h), descending
+3. `assetId`, ascending
 
-Criterion 3 is a deliberate heuristic: the three counters can overlap on the same message, so the sum is a tie-breaking magnitude, not a physical quantity. Criterion 4 guarantees a fully deterministic order.
+Criterion 2 is a deliberate heuristic: the three counters can overlap on the same message, so the sum is a tie-breaking magnitude, not a physical quantity. Criterion 3 guarantees a fully deterministic order.
 
 ### 5.5 Service recommendation
 
@@ -326,11 +262,11 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
 | `GET /api/history` | Hourly aggregates for a requested period. |
 | `GET /api/telemetry/latest` | The most recent telemetry message per asset. |
 
-### 6.1 `GET /api/assets`
+### 6.1 `GET /api/assets` and `GET /api/assets/{assetId}`
 
-**REQ-API-ASSETS.** `GET /api/assets` shall return `200` with `assets` ordered by `priorityRank`, in the shape of the example below. An asset that has not reported in this run shall still be listed, with its §4.4 baselines as `lifetimeCounters`, zeroed `rolling24hCounters`, `liveCondition` `STALE`, and both percentages `null`. The response shall be `503` when no state has been published yet. That `503` is a startup condition, not an empty fleet (§2).
+**REQ-API-ASSETS.** `GET /api/assets` shall return `200` with `assets` ordered by `priorityRank`, in the shape of the example below. An asset that has not reported in this run shall still be listed, with its §4.4 baselines as `lifetimeCounters`, zeroed `rolling24hCounters`, `liveCondition` `STALE`, and both percentages `null`. The response shall be `503` when no state has been published yet; that is a startup condition, not an empty fleet. `GET /api/assets/{assetId}` shall return `200` with one asset object in the same shape, `404` when `assetId` is not one of the §2 assets, and `503` when the asset is known but no state has been published for it.
 
-*Priority: Must · Source: NEED-PRIORITISE-MAINTENANCE*
+*Priority: Must · Source: NEED-PRIORITISE-MAINTENANCE, NEED-FLAG-REASON*
 
 ```json
 {
@@ -345,32 +281,25 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
       "flags": [
         {
           "flag": "HIGH_CUMULATIVE_LOAD",
-          "severity": "MODERATE",
-          "counter": "loadedHours",
+          "counter": "highLoadHours",
           "scope": "LIFETIME",
-          "value": 981.4,
-          "threshold": 850.0
+          "value": 411.2,
+          "threshold": 400.0
         }
       ],
       "lifetimeCounters": {
         "engineHours": 6203.1,
         "totalWorkingHours": 3401.8,
-        "transportHours": 1500.6,
-        "idleHours": 1300.7,
-        "loadedHours": 981.4,
         "highLoadHours": 411.2,
         "tempExcursionHours": 26.0,
-        "vibrationAlertHours": 58.3
+        "vibrationAlertHours": 58.0
       },
       "rolling24hCounters": {
         "engineHours": 3.1,
         "totalWorkingHours": 1.8,
-        "transportHours": 0.6,
-        "idleHours": 0.7,
-        "loadedHours": 1.4,
         "highLoadHours": 1.2,
         "tempExcursionHours": 0.0,
-        "vibrationAlertHours": 0.3
+        "vibrationAlertHours": 0.0
       },
       "windowCoverageHours": 3.1,
       "utilizationPercent": 58.1,
@@ -380,13 +309,7 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
 }
 ```
 
-### 6.2 `GET /api/assets/{assetId}`
-
-**REQ-API-ASSET.** `GET /api/assets/{assetId}` shall return `200` with one asset object in the same shape as one element of §6.1 `assets`. It shall return `404` only when `assetId` is not one of the §2 assets. It shall return `503` when `assetId` is one of those assets but no state has been published for it. A known asset with missing state is `503`, not `404`.
-
-*Priority: Should · Source: NEED-FLAG-REASON*
-
-### 6.3 `GET /api/history`
+### 6.2 `GET /api/history`
 
 **REQ-API-HISTORY.** `GET /api/history` shall accept the parameters in the table below. It shall return one row per asset per hour that overlaps the requested period, ordered by `hourStart` ascending then `assetId` ascending. Counter values shall be the amount accrued within that hour, not running totals. Hours shall be aligned to `Europe/Vienna` local hours (§4.3) and reported as the UTC instant at which the local hour began. It shall return `400` when `from` or `to` is missing or unparseable, when `from` is not before `to`, or when the range exceeds 7 days. A range of exactly 7 days shall be accepted. It shall return `404` when `assetId` is given but is not one of the §2 assets. An empty `rows` array shall be `200`, not an error.
 
@@ -409,23 +332,20 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
       "assetId": "BALER",
       "hourStart": "2026-08-13T06:00:00Z",
       "engineHours": 1.0,
-      "totalWorkingHours": 0.82,
-      "transportHours": 0.11,
-      "idleHours": 0.07,
-      "loadedHours": 0.74,
-      "highLoadHours": 0.51,
+      "totalWorkingHours": 0.5,
+      "highLoadHours": 0.25,
       "tempExcursionHours": 0.0,
-      "vibrationAlertHours": 0.19
+      "vibrationAlertHours": 0.0
     }
   ]
 }
 ```
 
-### 6.4 `GET /api/telemetry/latest`
+### 6.3 `GET /api/telemetry/latest`
 
 The live telemetry strip is intended to be polled every few seconds. That interval is not a requirement.
 
-**REQ-API-LATEST.** `GET /api/telemetry/latest` shall return `200` in the shape below, including before any state has been published. It shall not return `503`. `telemetry` shall be `null` only for an asset that has never reported in this run, and that asset's `liveCondition` shall be `STALE`. An asset that reported and then fell silent shall be `STALE` and shall keep its last reading, so the last activity stays visible. All four assets shall be present, ordered by `assetId` ascending. Before any state is published, that `200` body is all four assets at `STALE` with `telemetry` `null`.
+**REQ-API-LATEST.** `GET /api/telemetry/latest` shall return `200` in the shape below, including before any state has been published. It shall not return `503`. `telemetry` shall be `null` only for an asset that has never reported in this run, and that asset's `liveCondition` shall be `STALE`. An asset that reported and then fell silent shall be `STALE` and shall keep its last reading, so the last activity stays visible. All four assets shall be present, ordered by `assetId` ascending.
 
 *Priority: Should · Source: NEED-OPERATIONAL-RISK*
 
@@ -436,17 +356,16 @@ The live telemetry strip is intended to be polled every few seconds. That interv
   "generatedAt": "2026-08-13T09:41:12Z",
   "assets": [
     {
-      "assetId": "BALER",
+      "assetId": "TRACTOR",
       "liveCondition": "CAUTION",
       "telemetry": {
-        "assetId": "BALER",
-        "timestamp": "2026-07-31T01:15:00Z",
+        "assetId": "TRACTOR",
+        "timestamp": "2026-08-13T09:41:07Z",
         "ptoEngaged": true,
-        "groundSpeedKmh": 8.4,
-        "loadFactor": 0.78,
-        "temperatureC": 87.2,
-        "vibrationLevel": "ELEVATED",
-        "workingStatus": "WORKING"
+        "groundSpeedKmh": 10.0,
+        "loadFactor": 0.80,
+        "temperatureC": 94.0,
+        "vibrationLevel": "NORMAL"
       }
     }
   ]
@@ -467,5 +386,5 @@ The live telemetry strip is intended to be polled every few seconds. That interv
 2. **Short-term operational risk** — is it advisable to keep working this machine hard?
    Backed by: `liveCondition` (§5.3) for the current instant, and the rolling 24-hour flags (§5.1) for sustained recent load.
 
-3. **Basic utilization awareness** — which machines are doing productive work versus mostly idling or only transporting?
-   Backed by: `utilizationPercent` and `productiveSharePercent` (§4.5), and the `totalWorkingHours` / `transportHours` / `idleHours` split (§4.1).
+3. **Basic utilization awareness** — which machines are doing productive work versus mostly running without working?
+   Backed by: `utilizationPercent` and `productiveSharePercent` (§4.5), and `totalWorkingHours` against `engineHours` (§4.1).

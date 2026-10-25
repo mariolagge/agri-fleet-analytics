@@ -39,15 +39,17 @@ flowchart LR
 
 ## Engineering artifacts
 
+The first seven rows are a guided tour: read them in order, each builds on the one before.
+
 | Method | Artifact |
 |--------|----------|
-| Stakeholder analysis | [`docs/STAKEHOLDERS.md`](docs/STAKEHOLDERS.md) |
-| Business process modeling (BPMN 2.0, as-is / to-be) | [`docs/PROCESS.md`](docs/PROCESS.md) |
-| User story mapping (backbone from the to-be process, MoSCoW release slices) | [`docs/USER-STORY-MAP.md`](docs/USER-STORY-MAP.md) |
-| Requirements engineering (35 requirements with MoSCoW priority and source) | [`docs/SPEC.md`](docs/SPEC.md) |
-| Traceability (needs → user stories → requirements → code → tests) | [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
-| System modeling (SysML-style views) | [`docs/SYSTEM-MODEL.md`](docs/SYSTEM-MODEL.md) |
-| Architecture (modules, messaging, persistence) | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| 1. Business process modeling (BPMN 2.0, as-is / to-be) | [`docs/PROCESS.md`](docs/PROCESS.md) |
+| 2. Stakeholder analysis | [`docs/STAKEHOLDERS.md`](docs/STAKEHOLDERS.md) |
+| 3. User story mapping (backbone from the to-be process, MoSCoW release slices) | [`docs/USER-STORY-MAP.md`](docs/USER-STORY-MAP.md) |
+| 4. Requirements engineering (22 requirements with MoSCoW priority and source) | [`docs/SPEC.md`](docs/SPEC.md) |
+| 5. System modeling (SysML-style views) | [`docs/SYSTEM-MODEL.md`](docs/SYSTEM-MODEL.md) |
+| 6. Traceability and verification (needs → user stories → requirements → code → tests, with a verification method per requirement) | [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
+| 7. Architecture (modules, messaging, persistence) | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Naming | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) |
 | Project management (milestone and work packages) | [Milestone M1 issues](https://github.com/mariolagge/agri-fleet-analytics/issues?q=milestone%3A%22M1+Application-ready+portfolio%22) |
 | Running and testing | [`docs/RUNNING.md`](docs/RUNNING.md) |

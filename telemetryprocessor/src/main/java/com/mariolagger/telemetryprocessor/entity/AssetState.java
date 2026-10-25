@@ -3,10 +3,8 @@ package com.mariolagger.telemetryprocessor.entity;
 import java.time.Instant;
 
 import com.mariolagger.telemetryprocessor.dto.AssetStatus;
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 import com.mariolagger.telemetryprocessor.dto.LiveCondition;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
-import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,15 +28,6 @@ public class AssetState {
 	@Column(name = "lifetime_total_working_hours")
 	private double lifetimeTotalWorkingHours;
 
-	@Column(name = "lifetime_transport_hours")
-	private double lifetimeTransportHours;
-
-	@Column(name = "lifetime_idle_hours")
-	private double lifetimeIdleHours;
-
-	@Column(name = "lifetime_loaded_hours")
-	private double lifetimeLoadedHours;
-
 	@Column(name = "lifetime_high_load_hours")
 	private double lifetimeHighLoadHours;
 
@@ -54,15 +43,6 @@ public class AssetState {
 
 	@Column(name = "rolling_24h_total_working_hours")
 	private double rolling24hTotalWorkingHours;
-
-	@Column(name = "rolling_24h_transport_hours")
-	private double rolling24hTransportHours;
-
-	@Column(name = "rolling_24h_idle_hours")
-	private double rolling24hIdleHours;
-
-	@Column(name = "rolling_24h_loaded_hours")
-	private double rolling24hLoadedHours;
 
 	@Column(name = "rolling_24h_high_load_hours")
 	private double rolling24hHighLoadHours;
@@ -98,20 +78,12 @@ public class AssetState {
 	@Column(name = "priority_rank")
 	private int priorityRank;
 
-	// REQ-FLAGS flags; NULL severity means the flag is inactive
-	@Enumerated(EnumType.STRING)
-	@Column(name = "heavy_recent_use_severity")
-	private FlagSeverity heavyRecentUseSeverity;
-
+	// REQ-FLAGS flags; NULL value means the flag is inactive
 	@Column(name = "heavy_recent_use_value")
 	private Double heavyRecentUseValue;
 
 	@Column(name = "heavy_recent_use_threshold")
 	private Double heavyRecentUseThreshold;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "thermal_load_severity")
-	private FlagSeverity thermalLoadSeverity;
 
 	@Column(name = "thermal_load_value")
 	private Double thermalLoadValue;
@@ -119,19 +91,11 @@ public class AssetState {
 	@Column(name = "thermal_load_threshold")
 	private Double thermalLoadThreshold;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "mechanical_attention_severity")
-	private FlagSeverity mechanicalAttentionSeverity;
-
 	@Column(name = "mechanical_attention_value")
 	private Double mechanicalAttentionValue;
 
 	@Column(name = "mechanical_attention_threshold")
 	private Double mechanicalAttentionThreshold;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "high_cumulative_load_severity")
-	private FlagSeverity highCumulativeLoadSeverity;
 
 	@Column(name = "high_cumulative_load_value")
 	private Double highCumulativeLoadValue;
@@ -158,10 +122,6 @@ public class AssetState {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "latest_vibration_level")
 	private VibrationLevel latestVibrationLevel;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "latest_working_status")
-	private WorkingStatus latestWorkingStatus;
 
 	@Column(name = "updated_at")
 	private Instant updatedAt;
@@ -191,30 +151,6 @@ public class AssetState {
 
 	public void setLifetimeTotalWorkingHours(double lifetimeTotalWorkingHours) {
 		this.lifetimeTotalWorkingHours = lifetimeTotalWorkingHours;
-	}
-
-	public double getLifetimeTransportHours() {
-		return lifetimeTransportHours;
-	}
-
-	public void setLifetimeTransportHours(double lifetimeTransportHours) {
-		this.lifetimeTransportHours = lifetimeTransportHours;
-	}
-
-	public double getLifetimeIdleHours() {
-		return lifetimeIdleHours;
-	}
-
-	public void setLifetimeIdleHours(double lifetimeIdleHours) {
-		this.lifetimeIdleHours = lifetimeIdleHours;
-	}
-
-	public double getLifetimeLoadedHours() {
-		return lifetimeLoadedHours;
-	}
-
-	public void setLifetimeLoadedHours(double lifetimeLoadedHours) {
-		this.lifetimeLoadedHours = lifetimeLoadedHours;
 	}
 
 	public double getLifetimeHighLoadHours() {
@@ -255,30 +191,6 @@ public class AssetState {
 
 	public void setRolling24hTotalWorkingHours(double rolling24hTotalWorkingHours) {
 		this.rolling24hTotalWorkingHours = rolling24hTotalWorkingHours;
-	}
-
-	public double getRolling24hTransportHours() {
-		return rolling24hTransportHours;
-	}
-
-	public void setRolling24hTransportHours(double rolling24hTransportHours) {
-		this.rolling24hTransportHours = rolling24hTransportHours;
-	}
-
-	public double getRolling24hIdleHours() {
-		return rolling24hIdleHours;
-	}
-
-	public void setRolling24hIdleHours(double rolling24hIdleHours) {
-		this.rolling24hIdleHours = rolling24hIdleHours;
-	}
-
-	public double getRolling24hLoadedHours() {
-		return rolling24hLoadedHours;
-	}
-
-	public void setRolling24hLoadedHours(double rolling24hLoadedHours) {
-		this.rolling24hLoadedHours = rolling24hLoadedHours;
 	}
 
 	public double getRolling24hHighLoadHours() {
@@ -361,14 +273,6 @@ public class AssetState {
 		this.priorityRank = priorityRank;
 	}
 
-	public FlagSeverity getHeavyRecentUseSeverity() {
-		return heavyRecentUseSeverity;
-	}
-
-	public void setHeavyRecentUseSeverity(FlagSeverity heavyRecentUseSeverity) {
-		this.heavyRecentUseSeverity = heavyRecentUseSeverity;
-	}
-
 	public Double getHeavyRecentUseValue() {
 		return heavyRecentUseValue;
 	}
@@ -383,14 +287,6 @@ public class AssetState {
 
 	public void setHeavyRecentUseThreshold(Double heavyRecentUseThreshold) {
 		this.heavyRecentUseThreshold = heavyRecentUseThreshold;
-	}
-
-	public FlagSeverity getThermalLoadSeverity() {
-		return thermalLoadSeverity;
-	}
-
-	public void setThermalLoadSeverity(FlagSeverity thermalLoadSeverity) {
-		this.thermalLoadSeverity = thermalLoadSeverity;
 	}
 
 	public Double getThermalLoadValue() {
@@ -409,14 +305,6 @@ public class AssetState {
 		this.thermalLoadThreshold = thermalLoadThreshold;
 	}
 
-	public FlagSeverity getMechanicalAttentionSeverity() {
-		return mechanicalAttentionSeverity;
-	}
-
-	public void setMechanicalAttentionSeverity(FlagSeverity mechanicalAttentionSeverity) {
-		this.mechanicalAttentionSeverity = mechanicalAttentionSeverity;
-	}
-
 	public Double getMechanicalAttentionValue() {
 		return mechanicalAttentionValue;
 	}
@@ -431,14 +319,6 @@ public class AssetState {
 
 	public void setMechanicalAttentionThreshold(Double mechanicalAttentionThreshold) {
 		this.mechanicalAttentionThreshold = mechanicalAttentionThreshold;
-	}
-
-	public FlagSeverity getHighCumulativeLoadSeverity() {
-		return highCumulativeLoadSeverity;
-	}
-
-	public void setHighCumulativeLoadSeverity(FlagSeverity highCumulativeLoadSeverity) {
-		this.highCumulativeLoadSeverity = highCumulativeLoadSeverity;
 	}
 
 	public Double getHighCumulativeLoadValue() {
@@ -503,14 +383,6 @@ public class AssetState {
 
 	public void setLatestVibrationLevel(VibrationLevel latestVibrationLevel) {
 		this.latestVibrationLevel = latestVibrationLevel;
-	}
-
-	public WorkingStatus getLatestWorkingStatus() {
-		return latestWorkingStatus;
-	}
-
-	public void setLatestWorkingStatus(WorkingStatus latestWorkingStatus) {
-		this.latestWorkingStatus = latestWorkingStatus;
 	}
 
 	public Instant getUpdatedAt() {

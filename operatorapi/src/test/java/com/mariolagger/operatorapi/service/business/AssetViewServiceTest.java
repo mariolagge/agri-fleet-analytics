@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,14 +28,12 @@ import com.mariolagger.operatorapi.dto.AssetStatus;
 import com.mariolagger.operatorapi.dto.AssetView;
 import com.mariolagger.operatorapi.dto.Flag;
 import com.mariolagger.operatorapi.dto.FlagScope;
-import com.mariolagger.operatorapi.dto.FlagSeverity;
 import com.mariolagger.operatorapi.dto.FlagView;
 import com.mariolagger.operatorapi.dto.LatestTelemetryEntry;
 import com.mariolagger.operatorapi.dto.LatestTelemetryResponse;
 import com.mariolagger.operatorapi.dto.LiveCondition;
 import com.mariolagger.operatorapi.dto.TelemetryView;
 import com.mariolagger.operatorapi.dto.VibrationLevel;
-import com.mariolagger.operatorapi.dto.WorkingStatus;
 import com.mariolagger.operatorapi.entity.AssetState;
 import com.mariolagger.operatorapi.repository.AssetStateRepository;
 
@@ -71,9 +70,9 @@ class AssetViewServiceTest {
 		assertReasonIsNotEmpty(thrown);
 	}
 
-	/** Bug 7: 404 is reserved for an id outside the four REQ-FLEET-FIXED assets. */
+	/** Bug 7: 404 is reserved for an id outside the fixed fleet; nothing is registered or discovered. */
 	@Test
-	@DisplayName("REQ-API-ASSET: get asset throws 404 for an unknown asset id without querying the repository")
+	@DisplayName("REQ-GOAL-SCOPE: an asset id outside the fixed fleet is 404 without querying the repository")
 	void getAssetThrows404ForAnUnknownAssetIdWithoutQueryingTheRepository() {
 		ResponseStatusException thrown = assertThrows(ResponseStatusException.class,
 				() -> assetViewService.getAsset("BULLDOZER"));
@@ -83,9 +82,23 @@ class AssetViewServiceTest {
 		verifyNoInteractions(assetStateRepository);
 	}
 
+	/** The fleet is fixed by the code, not by what the database happens to hold. */
+	@Test
+	@DisplayName("REQ-GOAL-SCOPE: the fleet is exactly the four fixed assets even before any state is published")
+	void theFleetIsExactlyTheFourFixedAssetsEvenBeforeAnyStateIsPublished() {
+		when(assetStateRepository.findAll()).thenReturn(List.of());
+
+		List<AssetId> assetIds = new ArrayList<>();
+		for (LatestTelemetryEntry entry : assetViewService.getLatestTelemetry().getAssets()) {
+			assetIds.add(entry.getAssetId());
+		}
+
+		assertEquals(List.of(AssetId.BALER, AssetId.MIXER, AssetId.MOWER, AssetId.TRACTOR), assetIds);
+	}
+
 	/** Bug 7: a known asset with no row is the same server-side gap as an empty fleet. */
 	@Test
-	@DisplayName("REQ-API-ASSET: get asset throws 503 when the known asset has no stored row")
+	@DisplayName("REQ-API-ASSETS: get asset throws 503 when the known asset has no stored row")
 	void getAssetThrows503WhenTheKnownAssetHasNoStoredRow() {
 		when(assetStateRepository.findById(AssetId.TRACTOR.name())).thenReturn(Optional.empty());
 
@@ -151,7 +164,6 @@ class AssetViewServiceTest {
 		reported.setLatestLoadFactor(0.5);
 		reported.setLatestTemperatureC(70.0);
 		reported.setLatestVibrationLevel(VibrationLevel.NORMAL);
-		reported.setLatestWorkingStatus(WorkingStatus.WORKING);
 		when(assetStateRepository.findAll()).thenReturn(List.of(reported));
 
 		TelemetryView telemetry = entryOf(assetViewService.getLatestTelemetry(), AssetId.MOWER).getTelemetry();
@@ -162,10 +174,10 @@ class AssetViewServiceTest {
 		assertEquals(0.5, telemetry.getLoadFactor());
 	}
 
-	/** GLOSSARY §5: an inactive flag has no severity and is absent from the response. */
+	/** GLOSSARY §5: an inactive flag has no value and is absent from the response. */
 	@Test
-	@DisplayName("REQ-FLAGS: an asset with no flag severity set produces an empty flags list")
-	void anAssetWithNoFlagSeveritySetProducesAnEmptyFlagsList() {
+	@DisplayName("REQ-FLAGS: an asset with no flag value set produces an empty flags list")
+	void anAssetWithNoFlagValueSetProducesAnEmptyFlagsList() {
 		AssetState unflagged = assetStateRow(AssetId.MIXER);
 		when(assetStateRepository.findById(AssetId.MIXER.name())).thenReturn(Optional.of(unflagged));
 
@@ -181,10 +193,8 @@ class AssetViewServiceTest {
 	void anActiveFlagCarriesItsCounterScopeValueAndThresholdRoundedToTwoDecimals() {
 		AssetState flagged = assetStateRow(AssetId.TRACTOR);
 		flagged.setStatus(AssetStatus.WATCH);
-		flagged.setHeavyRecentUseSeverity(FlagSeverity.MODERATE);
 		flagged.setHeavyRecentUseValue(7.126666);
 		flagged.setHeavyRecentUseThreshold(6.0);
-		flagged.setHighCumulativeLoadSeverity(FlagSeverity.SEVERE);
 		flagged.setHighCumulativeLoadValue(4801.994);
 		flagged.setHighCumulativeLoadThreshold(4500.0);
 		when(assetStateRepository.findById(AssetId.TRACTOR.name())).thenReturn(Optional.of(flagged));
@@ -194,15 +204,13 @@ class AssetViewServiceTest {
 		assertEquals(2, flags.size());
 
 		FlagView heavyRecentUse = flagOf(flags, Flag.HEAVY_RECENT_USE);
-		assertEquals(FlagSeverity.MODERATE, heavyRecentUse.getSeverity());
 		assertEquals("highLoadHours", heavyRecentUse.getCounter());
 		assertEquals(FlagScope.ROLLING_24H, heavyRecentUse.getScope());
 		assertEquals(7.13, heavyRecentUse.getValue());
 		assertEquals(6.0, heavyRecentUse.getThreshold());
 
 		FlagView highCumulativeLoad = flagOf(flags, Flag.HIGH_CUMULATIVE_LOAD);
-		assertEquals(FlagSeverity.SEVERE, highCumulativeLoad.getSeverity());
-		assertEquals("loadedHours", highCumulativeLoad.getCounter());
+		assertEquals("highLoadHours", highCumulativeLoad.getCounter());
 		assertEquals(FlagScope.LIFETIME, highCumulativeLoad.getScope());
 		assertEquals(4801.99, highCumulativeLoad.getValue());
 		assertEquals(4500.0, highCumulativeLoad.getThreshold());

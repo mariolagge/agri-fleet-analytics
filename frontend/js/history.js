@@ -1,7 +1,7 @@
 // Hourly history table. The period is validated by the API (REQ-API-HISTORY) — a bad or
 // too-long range comes back as 400 and its message is shown in the table itself.
 
-const HISTORY_COLUMN_COUNT = 10;
+const HISTORY_COLUMN_COUNT = 7;
 
 function historyRowHtml(row) {
   const counterCells = COUNTER_ORDER

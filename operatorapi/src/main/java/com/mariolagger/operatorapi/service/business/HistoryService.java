@@ -76,9 +76,6 @@ public class HistoryService {
 		row.setHourStart(hourlyAggregate.getHourStart());
 		row.setEngineHours(round2(hourlyAggregate.getEngineHours()));
 		row.setTotalWorkingHours(round2(hourlyAggregate.getTotalWorkingHours()));
-		row.setTransportHours(round2(hourlyAggregate.getTransportHours()));
-		row.setIdleHours(round2(hourlyAggregate.getIdleHours()));
-		row.setLoadedHours(round2(hourlyAggregate.getLoadedHours()));
 		row.setHighLoadHours(round2(hourlyAggregate.getHighLoadHours()));
 		row.setTempExcursionHours(round2(hourlyAggregate.getTempExcursionHours()));
 		row.setVibrationAlertHours(round2(hourlyAggregate.getVibrationAlertHours()));
@@ -98,7 +95,7 @@ public class HistoryService {
 		}
 	}
 
-	/** REQ-API-HISTORY: 404 when assetId is given but is not one of the four REQ-FLEET-FIXED assets. */
+	/** REQ-API-HISTORY: 404 when assetId is given but is not one of the four REQ-GOAL-SCOPE assets. */
 	private AssetId requireKnownAsset(String assetId) {
 		try {
 			return AssetId.valueOf(assetId);

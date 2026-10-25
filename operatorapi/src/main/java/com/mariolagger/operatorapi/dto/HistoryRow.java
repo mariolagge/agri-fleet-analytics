@@ -13,9 +13,6 @@ public class HistoryRow {
 	private Instant hourStart;
 	private double engineHours;
 	private double totalWorkingHours;
-	private double transportHours;
-	private double idleHours;
-	private double loadedHours;
 	private double highLoadHours;
 	private double tempExcursionHours;
 	private double vibrationAlertHours;
@@ -53,30 +50,6 @@ public class HistoryRow {
 
 	public void setTotalWorkingHours(double totalWorkingHours) {
 		this.totalWorkingHours = totalWorkingHours;
-	}
-
-	public double getTransportHours() {
-		return transportHours;
-	}
-
-	public void setTransportHours(double transportHours) {
-		this.transportHours = transportHours;
-	}
-
-	public double getIdleHours() {
-		return idleHours;
-	}
-
-	public void setIdleHours(double idleHours) {
-		this.idleHours = idleHours;
-	}
-
-	public double getLoadedHours() {
-		return loadedHours;
-	}
-
-	public void setLoadedHours(double loadedHours) {
-		this.loadedHours = loadedHours;
 	}
 
 	public double getHighLoadHours() {

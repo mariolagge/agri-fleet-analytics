@@ -12,7 +12,6 @@ public class TelemetryView {
 	private Double loadFactor;
 	private Double temperatureC;
 	private VibrationLevel vibrationLevel;
-	private WorkingStatus workingStatus;
 
 	public TelemetryView() {
 	}
@@ -71,13 +70,5 @@ public class TelemetryView {
 
 	public void setVibrationLevel(VibrationLevel vibrationLevel) {
 		this.vibrationLevel = vibrationLevel;
-	}
-
-	public WorkingStatus getWorkingStatus() {
-		return workingStatus;
-	}
-
-	public void setWorkingStatus(WorkingStatus workingStatus) {
-		this.workingStatus = workingStatus;
 	}
 }

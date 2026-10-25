@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 import com.mariolagger.simulator.dto.AssetId;
 
 /**
- * The four simulated assets, shared by the startup backfill and the live scheduler so
- * that the live cadence continues the same state machines the burst left behind.
- * In memory only, fresh on every run (REQ-SIM-MEMORY).
+ * The four simulated assets, shared by the startup backfill and the live scheduler.
+ * In memory only, fresh on every run (REQ-SIM-SCHEDULE).
  */
 @Component
 public class SimulatedFleet {

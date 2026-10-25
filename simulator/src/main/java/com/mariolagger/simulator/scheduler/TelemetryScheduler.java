@@ -14,7 +14,7 @@ import com.mariolagger.simulator.service.messaging.TelemetryPublisher;
 @Component
 public class TelemetryScheduler {
 
-	// REQ-TELEMETRY-CADENCE: one message per asset every 5-10 s. Each asset carries its own due
+	// REQ-TELEMETRY-SHAPE: one message per asset every 5-10 s. Each asset carries its own due
 	// time, which is what makes the four independent of one another; a single tick
 	// then serves all of them.
 	private static final int MINIMUM_INTERVAL_SECONDS = 5;
@@ -42,7 +42,7 @@ public class TelemetryScheduler {
 			if (state.getNextDueAt() != null && state.getNextDueAt().isAfter(now)) {
 				continue;
 			}
-			telemetryPublisher.publish(telemetryGenerator.generate(state, now));
+			telemetryPublisher.publish(telemetryGenerator.generate(state.getAssetId(), now));
 			state.setNextDueAt(now.plusSeconds(nextIntervalSeconds()));
 		}
 	}

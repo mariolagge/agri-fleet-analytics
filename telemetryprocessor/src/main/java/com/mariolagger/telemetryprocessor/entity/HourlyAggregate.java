@@ -27,15 +27,6 @@ public class HourlyAggregate {
 	@Column(name = "total_working_hours")
 	private double totalWorkingHours;
 
-	@Column(name = "transport_hours")
-	private double transportHours;
-
-	@Column(name = "idle_hours")
-	private double idleHours;
-
-	@Column(name = "loaded_hours")
-	private double loadedHours;
-
 	@Column(name = "high_load_hours")
 	private double highLoadHours;
 
@@ -78,30 +69,6 @@ public class HourlyAggregate {
 
 	public void setTotalWorkingHours(double totalWorkingHours) {
 		this.totalWorkingHours = totalWorkingHours;
-	}
-
-	public double getTransportHours() {
-		return transportHours;
-	}
-
-	public void setTransportHours(double transportHours) {
-		this.transportHours = transportHours;
-	}
-
-	public double getIdleHours() {
-		return idleHours;
-	}
-
-	public void setIdleHours(double idleHours) {
-		this.idleHours = idleHours;
-	}
-
-	public double getLoadedHours() {
-		return loadedHours;
-	}
-
-	public void setLoadedHours(double loadedHours) {
-		this.loadedHours = loadedHours;
 	}
 
 	public double getHighLoadHours() {

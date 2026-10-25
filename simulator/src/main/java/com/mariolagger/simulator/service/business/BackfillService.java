@@ -42,7 +42,7 @@ public class BackfillService {
 			for (AssetSimulationState state : fleet.getAssets()) {
 				Instant timestamp = backfillStart;
 				while (!timestamp.isAfter(startedAt)) {
-					telemetryPublisher.publish(telemetryGenerator.generate(state, timestamp));
+					telemetryPublisher.publish(telemetryGenerator.generate(state.getAssetId(), timestamp));
 					publishedMessages++;
 					timestamp = timestamp.plusSeconds(BACKFILL_STEP_SECONDS);
 				}

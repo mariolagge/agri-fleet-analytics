@@ -7,7 +7,6 @@ package com.mariolagger.operatorapi.dto;
 public class FlagView {
 
 	private Flag flag;
-	private FlagSeverity severity;
 	private String counter;
 	private FlagScope scope;
 	private Double value;
@@ -22,14 +21,6 @@ public class FlagView {
 
 	public void setFlag(Flag flag) {
 		this.flag = flag;
-	}
-
-	public FlagSeverity getSeverity() {
-		return severity;
-	}
-
-	public void setSeverity(FlagSeverity severity) {
-		this.severity = severity;
 	}
 
 	public String getCounter() {

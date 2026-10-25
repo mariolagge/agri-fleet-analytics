@@ -2,47 +2,45 @@ package com.mariolagger.telemetryprocessor.service.business;
 
 import java.util.List;
 
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
-
 /**
- * One REQ-FLAGS flag as it stands right now: its severity, the counter value behind it and
- * the threshold that value crossed, so the reason survives all the way into the response.
- * An inactive flag carries no severity, no value and no threshold — GLOSSARY §5 gives it
- * no representation at all.
+ * One REQ-FLAGS flag as it stands right now: whether it is active, the counter value behind
+ * it and the threshold that value reached, so the reason survives all the way into the
+ * response. An inactive flag carries no value and no threshold — GLOSSARY §5 gives it no
+ * representation at all.
  */
 public class FlagEvaluation {
 
-	private final FlagSeverity severity;
+	private final boolean active;
 	private final Double value;
 	private final Double threshold;
 
-	private FlagEvaluation(FlagSeverity severity, Double value, Double threshold) {
-		this.severity = severity;
+	private FlagEvaluation(boolean active, Double value, Double threshold) {
+		this.active = active;
 		this.value = value;
 		this.threshold = threshold;
 	}
 
 	public static FlagEvaluation inactive() {
-		return new FlagEvaluation(null, null, null);
+		return new FlagEvaluation(false, null, null);
 	}
 
-	public static FlagEvaluation active(FlagSeverity severity, double value, double threshold) {
-		return new FlagEvaluation(severity, value, threshold);
+	public static FlagEvaluation active(double value, double threshold) {
+		return new FlagEvaluation(true, value, threshold);
 	}
 
-	/** How many of these flags currently sit at one severity — REQ-STATUS and REQ-RANK both count. */
-	public static int countAtSeverity(List<FlagEvaluation> flags, FlagSeverity severity) {
+	/** How many of these flags are active — REQ-STATUS and REQ-RANK both count. */
+	public static int countActive(List<FlagEvaluation> flags) {
 		int count = 0;
 		for (FlagEvaluation flag : flags) {
-			if (flag.getSeverity() == severity) {
+			if (flag.isActive()) {
 				count++;
 			}
 		}
 		return count;
 	}
 
-	public FlagSeverity getSeverity() {
-		return severity;
+	public boolean isActive() {
+		return active;
 	}
 
 	public Double getValue() {

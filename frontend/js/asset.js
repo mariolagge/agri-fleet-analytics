@@ -7,7 +7,6 @@ function flagReasonHtml(flag) {
     <div class="flag-reason">
       <div class="flag-reason-head">
         <span class="flag-reason-name">${escapeHtml(flagDisplayName(flag.flag))}</span>
-        <span class="flag-chip ${severityClass(flag.severity)}">${escapeHtml(severityDisplayName(flag.severity))}</span>
       </div>
       <div class="flag-reason-evidence">
         ${escapeHtml(counterDisplayName(flag.counter))}

@@ -10,11 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.AssetStatus;
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 import com.mariolagger.telemetryprocessor.dto.LiveCondition;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
-import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
 /**
  * No mocks and no clock: liveCondition is handed the now it should measure against, so every
@@ -96,33 +94,30 @@ class AssetAssessmentServiceTest {
 
 	/** REQ-STATUS. */
 	@Test
-	@DisplayName("REQ-STATUS: one severe flag is critical")
-	void oneSevereFlagIsCritical() {
-		assertEquals(AssetStatus.CRITICAL,
-				assetAssessmentService.status(flags(FlagSeverity.SEVERE, null, null, null)));
+	@DisplayName("REQ-STATUS: four active flags are critical")
+	void fourActiveFlagsAreCritical() {
+		assertEquals(AssetStatus.CRITICAL, assetAssessmentService.status(flags(true, true, true, true)));
 	}
 
 	/** REQ-STATUS. */
 	@Test
-	@DisplayName("REQ-STATUS: two moderate flags are critical")
-	void twoModerateFlagsAreCritical() {
-		assertEquals(AssetStatus.CRITICAL,
-				assetAssessmentService.status(flags(FlagSeverity.MODERATE, FlagSeverity.MODERATE, null, null)));
+	@DisplayName("REQ-STATUS: two active flags are critical")
+	void twoActiveFlagsAreCritical() {
+		assertEquals(AssetStatus.CRITICAL, assetAssessmentService.status(flags(false, true, false, true)));
 	}
 
 	/** REQ-STATUS. */
 	@Test
-	@DisplayName("REQ-STATUS: one moderate flag is watch")
-	void oneModerateFlagIsWatch() {
-		assertEquals(AssetStatus.WATCH,
-				assetAssessmentService.status(flags(FlagSeverity.MODERATE, null, null, null)));
+	@DisplayName("REQ-STATUS: one active flag is watch")
+	void oneActiveFlagIsWatch() {
+		assertEquals(AssetStatus.WATCH, assetAssessmentService.status(flags(false, false, true, false)));
 	}
 
 	/** REQ-STATUS. */
 	@Test
 	@DisplayName("REQ-STATUS: no active flag is good")
 	void noActiveFlagIsGood() {
-		assertEquals(AssetStatus.GOOD, assetAssessmentService.status(flags(null, null, null, null)));
+		assertEquals(AssetStatus.GOOD, assetAssessmentService.status(flags(false, false, false, false)));
 	}
 
 	/** REQ-RECOMMEND, verbatim — en dash included. */
@@ -137,16 +132,16 @@ class AssetAssessmentServiceTest {
 				assetAssessmentService.recommendation(AssetStatus.GOOD));
 	}
 
-	private List<FlagEvaluation> flags(FlagSeverity heavyRecentUse, FlagSeverity thermalLoad,
-			FlagSeverity mechanicalAttention, FlagSeverity highCumulativeLoad) {
+	private List<FlagEvaluation> flags(boolean heavyRecentUse, boolean thermalLoad, boolean mechanicalAttention,
+			boolean highCumulativeLoad) {
 		return List.of(flag(heavyRecentUse), flag(thermalLoad), flag(mechanicalAttention), flag(highCumulativeLoad));
 	}
 
-	private FlagEvaluation flag(FlagSeverity severity) {
-		if (severity == null) {
+	private FlagEvaluation flag(boolean active) {
+		if (!active) {
 			return FlagEvaluation.inactive();
 		}
-		return FlagEvaluation.active(severity, 3.0, 2.0);
+		return FlagEvaluation.active(3.0, 2.0);
 	}
 
 	private TelemetryMessage message(Instant timestamp, double loadFactor, double temperatureC,
@@ -159,7 +154,6 @@ class AssetAssessmentServiceTest {
 		message.setLoadFactor(loadFactor);
 		message.setTemperatureC(temperatureC);
 		message.setVibrationLevel(vibrationLevel);
-		message.setWorkingStatus(WorkingStatus.WORKING);
 		return message;
 	}
 }

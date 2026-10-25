@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.mariolagger.telemetryprocessor.dto.AssetId;
 import com.mariolagger.telemetryprocessor.dto.TelemetryMessage;
 import com.mariolagger.telemetryprocessor.dto.VibrationLevel;
-import com.mariolagger.telemetryprocessor.dto.WorkingStatus;
 
 /**
  * The one place REQ-ACCUMULATE exists. Owns the four accumulators, credits every accepted
@@ -35,7 +34,6 @@ public class CounterAccumulationService {
 
 	// REQ-COUNTER-SET thresholds.
 	private static final double PRODUCTIVE_GROUND_SPEED_KMH = 2.0;
-	private static final double LOADED_LOAD_FACTOR = 0.55;
 	private static final double HIGH_LOAD_FACTOR = 0.75;
 	private static final double TEMP_EXCURSION_C = 90.0;
 
@@ -97,22 +95,11 @@ public class CounterAccumulationService {
 		CounterSet contribution = new CounterSet();
 		contribution.addEngineHours(hours);
 
-		// REQ-TELEMETRY-PRODUCTIVE: productive work is derived from the condition itself, never from the
-		// simulator's workingStatus, which only separates TRANSPORT from IDLE.
+		// REQ-COUNTER-SET: productive work is pto engaged and moving. Each condition below includes
+		// the one above it, so engineHours >= totalWorkingHours >= highLoadHours by construction.
 		boolean productiveWork = message.isPtoEngaged() && message.getGroundSpeedKmh() > PRODUCTIVE_GROUND_SPEED_KMH;
-
-		// One if/else-if/else, so the §4.1 invariant engineHours = working + transport +
-		// idle holds by construction rather than by arithmetic luck.
 		if (productiveWork) {
 			contribution.addTotalWorkingHours(hours);
-		} else if (message.getWorkingStatus() == WorkingStatus.TRANSPORT) {
-			contribution.addTransportHours(hours);
-		} else {
-			contribution.addIdleHours(hours);
-		}
-
-		if (productiveWork && message.getLoadFactor() >= LOADED_LOAD_FACTOR) {
-			contribution.addLoadedHours(hours);
 		}
 		if (productiveWork && message.getLoadFactor() >= HIGH_LOAD_FACTOR) {
 			contribution.addHighLoadHours(hours);

@@ -8,63 +8,65 @@ This document is a derived view, built by hand from the *Source* attributes in `
 
 | Need | Stakeholder | User stories | Requirements |
 |------|-------------|--------------|--------------|
-| `NEED-MONITOR-FLEET` | `STK-FARMER` | `US-VIEW-FLEET` | `REQ-GOAL-SCOPE`<br>`REQ-FLEET-FIXED` |
+| `NEED-MONITOR-FLEET` | `STK-FARMER` | `US-VIEW-FLEET` | `REQ-GOAL-SCOPE` |
 | `NEED-PRIORITISE-MAINTENANCE` | `STK-FARMER` | `US-VIEW-FLEET`<br>`US-RANK-FLEET`<br>`US-SEE-STATUS`<br>`US-SEE-FLAG-REASONS` | `REQ-FLAGS`<br>`REQ-STATUS`<br>`REQ-RANK`<br>`REQ-RECOMMEND`<br>`REQ-API-ASSETS`<br>`REQ-DECISIONS` |
 | `NEED-OPERATIONAL-RISK` | `STK-FARMER` | `US-CHECK-LIVE-CONDITION`<br>`US-JUDGE-RECENT-LOAD`<br>`US-WATCH-LIVE-STRIP` | `REQ-SCOPES`<br>`REQ-LIVE`<br>`REQ-API-LATEST`<br>`REQ-DECISIONS` |
-| `NEED-UTILIZATION-AWARENESS` | `STK-FARMER` | `US-COMPARE-UTILIZATION`<br>`US-REALISTIC-TELEMETRY` | `REQ-TELEMETRY-WORKING-STATUS`<br>`REQ-TELEMETRY-PRODUCTIVE`<br>`REQ-COUNTER-SET`<br>`REQ-UTILIZATION`<br>`REQ-DECISIONS` |
-| `NEED-FLAG-REASON` | `STK-WORKSHOP` | `US-SEE-FLAG-REASONS`<br>`US-RECEIVE-FLAG-REASONS`<br>`US-OPEN-ASSET-DETAIL` | `REQ-GOAL-TRACE`<br>`REQ-FLAGS`<br>`REQ-API-ASSET` |
+| `NEED-UTILIZATION-AWARENESS` | `STK-FARMER` | `US-COMPARE-UTILIZATION` | `REQ-COUNTER-SET`<br>`REQ-UTILIZATION`<br>`REQ-DECISIONS` |
+| `NEED-FLAG-REASON` | `STK-WORKSHOP` | `US-SEE-FLAG-REASONS`<br>`US-OPEN-ASSET-DETAIL`<br>`US-RECEIVE-FLAG-REASONS` | `REQ-GOAL-TRACE`<br>`REQ-FLAGS`<br>`REQ-API-ASSETS` |
 | `NEED-HISTORY-REVIEW` | `STK-WORKSHOP` | `US-RECORD-USAGE-HOURLY`<br>`US-REVIEW-HOURLY-HISTORY` | `REQ-BUCKETS`<br>`REQ-API-HISTORY` |
 | `NEED-LIFETIME-HOURS` | `STK-WORKSHOP` | `US-READ-LIFETIME-HOURS`<br>`US-SEED-SERVICE-HISTORY` | `REQ-SCOPES`<br>`REQ-BASELINES` |
-| `NEED-TRACEABLE-RULES` | `STK-ADMIN` | `US-TRACE-EVERY-NUMBER`<br>`US-EXACT-THRESHOLDS` | `REQ-GOAL-TRACE`<br>`REQ-COUNTER-SET`<br>`REQ-COUNTER-INVARIANT`<br>`REQ-ACCUMULATE`<br>`REQ-BUCKET-EXACT` |
-| `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | `US-SIMULATE-TELEMETRY`<br>`US-REALISTIC-TELEMETRY`<br>`US-SEED-SERVICE-HISTORY`<br>`US-DEMO-EVERY-STATUS` | `REQ-SIM-ONLY-SOURCE`<br>`REQ-SIM-CYCLE`<br>`REQ-SIM-DEMO`<br>`REQ-SIM-TEMPERATURE`<br>`REQ-SIM-VIBRATION`<br>`REQ-SIM-EXCURSION-RATE`<br>`REQ-SIM-ELEVATED`<br>`REQ-SIM-BURST`<br>`REQ-SIM-MEMORY`<br>`REQ-BASELINES` |
-| `NEED-STABLE-INTERFACE` | `STK-ADMIN` | `US-STABLE-INTERFACES`<br>`US-REALISTIC-TELEMETRY` | `REQ-TELEMETRY-CADENCE`<br>`REQ-TELEMETRY-SHAPE`<br>`REQ-API-COMMON` |
+| `NEED-TRACEABLE-RULES` | `STK-ADMIN` | `US-TRACE-EVERY-NUMBER` | `REQ-GOAL-TRACE`<br>`REQ-COUNTER-SET`<br>`REQ-ACCUMULATE`<br>`REQ-BUCKETS` |
+| `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | `US-SIMULATE-TELEMETRY`<br>`US-SEED-SERVICE-HISTORY`<br>`US-DEMO-EVERY-STATUS` | `REQ-SIM-SCHEDULE`<br>`REQ-SIM-DEMO`<br>`REQ-SIM-BURST`<br>`REQ-BASELINES` |
+| `NEED-STABLE-INTERFACE` | `STK-ADMIN` | `US-STABLE-INTERFACES` | `REQ-TELEMETRY-SHAPE`<br>`REQ-API-COMMON` |
 
 ---
 
 ## 2. Requirements → implementation → verification
 
-| Requirement | Priority | Implemented in | Verified by |
-|-------------|----------|----------------|-------------|
-| `REQ-GOAL-SCOPE` | Must | — | — |
-| `REQ-GOAL-TRACE` | Must | TelemetryProcessor: AssetSnapshot | — |
-| `REQ-FLEET-FIXED` | Must | OperatorApi: AssetViewService<br>OperatorApi: HistoryService<br>frontend: index.html | — |
-| `REQ-TELEMETRY-CADENCE` | Should | Simulator: TelemetryScheduler | — |
-| `REQ-TELEMETRY-SHAPE` | Must | Simulator: SimulatorApplication<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>OperatorApi: TelemetryView<br>docker: database-script.sql | TelemetryGeneratorTest (1) |
-| `REQ-TELEMETRY-WORKING-STATUS` | Should | Simulator: TelemetryGenerator | TelemetryGeneratorTest (1) |
-| `REQ-TELEMETRY-PRODUCTIVE` | Must | TelemetryProcessor: CounterAccumulationService | CounterAccumulationServiceTest (1) |
-| `REQ-SIM-ONLY-SOURCE` | Must | — | — |
-| `REQ-SIM-CYCLE` | Must | Simulator: TelemetryGenerator<br>Simulator: application.properties | — |
-| `REQ-SIM-DEMO` | Could | Simulator: application.properties | — |
-| `REQ-SIM-TEMPERATURE` | Should | Simulator: TelemetryGenerator | — |
-| `REQ-SIM-VIBRATION` | Should | Simulator: TelemetryGenerator | — |
-| `REQ-SIM-EXCURSION-RATE` | Should | Simulator: TelemetryGenerator | — |
-| `REQ-SIM-ELEVATED` | Should | — | — |
-| `REQ-SIM-BURST` | Could | Simulator: application.properties | — |
-| `REQ-SIM-MEMORY` | Should | Simulator: AssetSimulationState<br>Simulator: SimulatedFleet | — |
-| `REQ-COUNTER-SET` | Must | Simulator: TelemetryGenerator<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>OperatorApi: AssetState<br>OperatorApi: CounterSetView<br>frontend: format.js<br>docker: database-script.sql | — |
-| `REQ-COUNTER-INVARIANT` | Must | — | CounterAccumulationServiceTest (1) |
-| `REQ-ACCUMULATE` | Must | Simulator: BackfillService<br>Simulator: SimulatedFleet<br>TelemetryProcessor: CounterAccumulationService | CounterAccumulationServiceTest (4) |
-| `REQ-BUCKETS` | Must | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: CounterSet<br>OperatorApi: HistoryRow<br>frontend: format.js | AssetStatePublisherTest (1) |
-| `REQ-SCOPES` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: FlagScope<br>docker: database-script.sql | — |
-| `REQ-BUCKET-EXACT` | Should | — | — |
-| `REQ-BASELINES` | Could | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: AssetBaselines<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>docker: database-script.sql | AssetStatePublisherTest (1) |
-| `REQ-UTILIZATION` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: AssetView<br>frontend: format.js<br>docker: database-script.sql | CounterAccumulationServiceTest (2) |
-| `REQ-FLAGS` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: FlagEvaluation<br>TelemetryProcessor: FlagEvaluationService<br>TelemetryProcessor: FlagSeverity<br>OperatorApi: AssetState<br>OperatorApi: Flag<br>OperatorApi: FlagSeverity<br>OperatorApi: FlagView<br>docker: database-script.sql | FlagEvaluationServiceTest (6)<br>AssetViewServiceTest (2) |
-| `REQ-STATUS` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStatus<br>TelemetryProcessor: FlagEvaluation<br>OperatorApi: AssetState<br>OperatorApi: AssetStatus<br>docker: database-script.sql | AssetAssessmentServiceTest (4) |
-| `REQ-LIVE` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: LiveCondition<br>OperatorApi: AssetState<br>OperatorApi: LiveCondition<br>frontend: app.css<br>frontend: format.js<br>docker: database-script.sql | AssetAssessmentServiceTest (8) |
-| `REQ-RANK` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: FlagEvaluation<br>TelemetryProcessor: FleetRankingService<br>OperatorApi: AssetState<br>frontend: fleet.js<br>docker: database-script.sql | AssetStatePublisherTest (1)<br>FleetRankingServiceTest (5) |
-| `REQ-RECOMMEND` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>docker: database-script.sql | AssetAssessmentServiceTest (1) |
-| `REQ-API-COMMON` | Must | OperatorApi: application.properties<br>frontend: api.js<br>frontend: format.js | — |
-| `REQ-API-ASSETS` | Must | OperatorApi: AssetController<br>OperatorApi: AssetStateRepository<br>OperatorApi: AssetView<br>OperatorApi: AssetViewService<br>OperatorApi: FleetResponse | AssetViewServiceTest (2) |
-| `REQ-API-ASSET` | Should | OperatorApi: AssetController<br>OperatorApi: AssetView<br>OperatorApi: AssetViewService<br>frontend: api.js | AssetViewServiceTest (2) |
-| `REQ-API-HISTORY` | Should | OperatorApi: HistoryController<br>OperatorApi: HistoryResponse<br>OperatorApi: HistoryRow<br>OperatorApi: HistoryService<br>OperatorApi: HourlyAggregateRepository<br>OperatorApi: application.properties<br>frontend: history.js | HistoryServiceTest (8) |
-| `REQ-API-LATEST` | Should | TelemetryProcessor: AssetStatePublisher<br>OperatorApi: AssetViewService<br>OperatorApi: LatestTelemetryEntry<br>OperatorApi: LatestTelemetryResponse<br>OperatorApi: TelemetryController<br>OperatorApi: TelemetryView<br>frontend: telemetry.js | AssetViewServiceTest (3) |
-| `REQ-DECISIONS` | Must | frontend: asset.js | — |
+**Verification method** says how the requirement is checked:
+
+- `Test` — automated unit test; the *Verified by* column names the test classes and how many tests in each start their `@DisplayName` with the REQ ID.
+- `Inspection` — review of code or documents against the requirement; §3 says what is inspected.
+- `Demonstration` — shown on the running system (`RUNNING.md`); §3 says what is shown.
+
+| Requirement | Priority | Implemented in | Verification method | Verified by |
+|-------------|----------|----------------|---------------------|-------------|
+| `REQ-GOAL-SCOPE` | Must | OperatorApi: AssetViewService<br>OperatorApi: HistoryService<br>frontend: index.html | Test | AssetViewServiceTest (2) |
+| `REQ-GOAL-TRACE` | Must | TelemetryProcessor: AssetSnapshot | Inspection | §3 |
+| `REQ-TELEMETRY-SHAPE` | Must | Simulator: SimulatorApplication<br>Simulator: TelemetryScheduler<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>OperatorApi: TelemetryView<br>docker: database-script.sql | Test | TelemetryGeneratorTest (1) |
+| `REQ-SIM-SCHEDULE` | Must | Simulator: AssetSimulationState<br>Simulator: ScheduleSegment<br>Simulator: SimulatedFleet<br>Simulator: TelemetryGenerator<br>Simulator: WorkingStatus | Test | TelemetryGeneratorTest (2) |
+| `REQ-SIM-BURST` | Could | Simulator: application.properties | Demonstration | §3 |
+| `REQ-SIM-DEMO` | Could | Simulator: application.properties | Test | TelemetryGeneratorTest (2) |
+| `REQ-COUNTER-SET` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>OperatorApi: AssetState<br>OperatorApi: CounterSetView<br>frontend: format.js<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (4) |
+| `REQ-ACCUMULATE` | Must | Simulator: BackfillService<br>Simulator: SimulatedFleet<br>TelemetryProcessor: CounterAccumulationService | Test | CounterAccumulationServiceTest (4) |
+| `REQ-BUCKETS` | Must | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: CounterSet<br>OperatorApi: HistoryRow<br>frontend: format.js | Test | AssetStatePublisherTest (1) |
+| `REQ-SCOPES` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: FlagScope<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (2) |
+| `REQ-BASELINES` | Could | TelemetryProcessor: AssetAccumulator<br>TelemetryProcessor: AssetBaselines<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: CounterAccumulationService<br>TelemetryProcessor: CounterSet<br>docker: database-script.sql | Test | AssetStatePublisherTest (1) |
+| `REQ-UTILIZATION` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: CounterAccumulationService<br>OperatorApi: AssetState<br>OperatorApi: AssetView<br>frontend: format.js<br>docker: database-script.sql | Test | CounterAccumulationServiceTest (2) |
+| `REQ-FLAGS` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: FlagEvaluation<br>TelemetryProcessor: FlagEvaluationService<br>OperatorApi: AssetState<br>OperatorApi: Flag<br>OperatorApi: FlagView<br>docker: database-script.sql | Test | FlagEvaluationServiceTest (6)<br>AssetStatePublisherTest (1)<br>AssetViewServiceTest (2) |
+| `REQ-STATUS` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStatus<br>TelemetryProcessor: FlagEvaluation<br>OperatorApi: AssetState<br>OperatorApi: AssetStatus<br>docker: database-script.sql | Test | AssetAssessmentServiceTest (4) |
+| `REQ-LIVE` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStateRefreshScheduler<br>TelemetryProcessor: LiveCondition<br>OperatorApi: AssetState<br>OperatorApi: LiveCondition<br>frontend: app.css<br>frontend: format.js<br>docker: database-script.sql | Test | AssetAssessmentServiceTest (8) |
+| `REQ-RANK` | Must | TelemetryProcessor: AssetState<br>TelemetryProcessor: AssetStatePublisher<br>TelemetryProcessor: FlagEvaluation<br>TelemetryProcessor: FleetRankingService<br>OperatorApi: AssetState<br>frontend: fleet.js<br>docker: database-script.sql | Test | FleetRankingServiceTest (4)<br>AssetStatePublisherTest (1) |
+| `REQ-RECOMMEND` | Must | TelemetryProcessor: AssetAssessmentService<br>TelemetryProcessor: AssetState<br>OperatorApi: AssetState<br>docker: database-script.sql | Test | AssetAssessmentServiceTest (1) |
+| `REQ-API-COMMON` | Must | OperatorApi: application.properties<br>frontend: api.js<br>frontend: format.js | Inspection | §3 |
+| `REQ-API-ASSETS` | Must | OperatorApi: AssetController<br>OperatorApi: AssetStateRepository<br>OperatorApi: AssetView<br>OperatorApi: AssetViewService<br>OperatorApi: FleetResponse<br>frontend: api.js | Test | AssetViewServiceTest (3) |
+| `REQ-API-HISTORY` | Should | OperatorApi: HistoryController<br>OperatorApi: HistoryResponse<br>OperatorApi: HistoryRow<br>OperatorApi: HistoryService<br>OperatorApi: HourlyAggregateRepository<br>OperatorApi: application.properties<br>frontend: history.js | Test | HistoryServiceTest (8) |
+| `REQ-API-LATEST` | Should | TelemetryProcessor: AssetStatePublisher<br>OperatorApi: AssetViewService<br>OperatorApi: LatestTelemetryEntry<br>OperatorApi: LatestTelemetryResponse<br>OperatorApi: TelemetryController<br>OperatorApi: TelemetryView<br>frontend: telemetry.js | Test | AssetViewServiceTest (3) |
+| `REQ-DECISIONS` | Must | frontend: asset.js | Demonstration | §3 |
 
 ---
 
 ## 3. Coverage
 
-- 17 of 35 REQs have at least one test.
-- `Must` REQs with no test: `REQ-GOAL-SCOPE`, `REQ-GOAL-TRACE`, `REQ-FLEET-FIXED`, `REQ-SIM-ONLY-SOURCE`, `REQ-SIM-CYCLE`, `REQ-COUNTER-SET`, `REQ-SCOPES`, `REQ-API-COMMON`, `REQ-DECISIONS`.
+- All 22 REQs have a verification method. 18 are verified by unit tests; 4 by inspection or demonstration.
+- Every `Must` REQ whose rule can be checked in a unit test has at least one test.
+- Inspections and demonstrations:
+
+| Requirement | Method | What is checked |
+|-------------|--------|-----------------|
+| `REQ-GOAL-TRACE` | Inspection | Every value in the `SPEC.md` §6 responses is a counter, a quotient of counters (§4.5) or a value derived from counters by a §5 rule. No module contains a score, weight or model. |
+| `REQ-API-COMMON` | Inspection | The controllers map only `GET` endpoints, there is no security configuration, and errors use `ResponseStatusException` with Spring's default body. |
+| `REQ-SIM-BURST` | Demonstration | On startup the Simulator logs `Backfill: published 5764 messages covering 24 h` (one per asset per minute, ends included) and then starts the live cadence; the dashboard shows a full rolling window right away. |
+| `REQ-DECISIONS` | Demonstration | The dashboard shows, for each machine, the inputs of the three decisions and nothing else: rank, status, flags with reasons and recommendation; live condition and 24 h flags; the two utilization percentages. |
+
 - Tests labelled `ARCHITECTURE §4` verify `ARCHITECTURE.md` rules and are not listed above.

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.mariolagger.telemetryprocessor.dto.AssetId;
-import com.mariolagger.telemetryprocessor.dto.FlagSeverity;
 
 /**
  * REQ-RANK. All four assets are ranked every time; an asset with no flags simply sorts to
@@ -30,18 +29,13 @@ public class FleetRankingService {
 		return priorityRanks;
 	}
 
-	/** The four REQ-RANK criteria, in order. Criterion 4 makes the order fully deterministic. */
+	/** The three REQ-RANK criteria, in order. Criterion 3 makes the order fully deterministic. */
 	private int compare(AssetId left, AssetId right, Map<AssetId, List<FlagEvaluation>> flagsByAsset,
 			Map<AssetId, CounterSet> rolling24hCountersByAsset) {
-		int bySevereCount = Integer.compare(severityCount(right, flagsByAsset, FlagSeverity.SEVERE),
-				severityCount(left, flagsByAsset, FlagSeverity.SEVERE));
-		if (bySevereCount != 0) {
-			return bySevereCount;
-		}
-		int byModerateCount = Integer.compare(severityCount(right, flagsByAsset, FlagSeverity.MODERATE),
-				severityCount(left, flagsByAsset, FlagSeverity.MODERATE));
-		if (byModerateCount != 0) {
-			return byModerateCount;
+		int byActiveCount = Integer.compare(FlagEvaluation.countActive(flagsByAsset.get(right)),
+				FlagEvaluation.countActive(flagsByAsset.get(left)));
+		if (byActiveCount != 0) {
+			return byActiveCount;
 		}
 		int byCounterSum = Double.compare(counterSum(rolling24hCountersByAsset.get(right)),
 				counterSum(rolling24hCountersByAsset.get(left)));
@@ -51,12 +45,8 @@ public class FleetRankingService {
 		return left.name().compareTo(right.name());
 	}
 
-	private int severityCount(AssetId assetId, Map<AssetId, List<FlagEvaluation>> flagsByAsset, FlagSeverity severity) {
-		return FlagEvaluation.countAtSeverity(flagsByAsset.get(assetId), severity);
-	}
-
 	/**
-	 * REQ-RANK criterion 3: a deliberate tie-breaking magnitude, not a physical quantity —
+	 * REQ-RANK criterion 2: a deliberate tie-breaking magnitude, not a physical quantity —
 	 * the three counters can all be credited by the same message.
 	 */
 	private double counterSum(CounterSet rolling24hCounters) {

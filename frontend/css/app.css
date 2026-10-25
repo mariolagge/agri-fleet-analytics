@@ -577,9 +577,6 @@ header {
   flex-shrink: 0;
 }
 
-.severity-moderate { background: var(--watch-soft); color: var(--watch); }
-.severity-severe { background: var(--critical-soft); color: var(--critical); }
-
 .flag-chips-empty {
   font-size: 10.5px;
   color: var(--text-tertiary);

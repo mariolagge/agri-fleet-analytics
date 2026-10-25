@@ -159,9 +159,6 @@ public class AssetStatePublisher {
 		row.setHourStart(hourStart);
 		row.setEngineHours(counters.getEngineHours());
 		row.setTotalWorkingHours(counters.getTotalWorkingHours());
-		row.setTransportHours(counters.getTransportHours());
-		row.setIdleHours(counters.getIdleHours());
-		row.setLoadedHours(counters.getLoadedHours());
 		row.setHighLoadHours(counters.getHighLoadHours());
 		row.setTempExcursionHours(counters.getTempExcursionHours());
 		row.setVibrationAlertHours(counters.getVibrationAlertHours());
@@ -171,9 +168,6 @@ public class AssetStatePublisher {
 	private void applyLifetimeCounters(AssetState row, CounterSet counters) {
 		row.setLifetimeEngineHours(counters.getEngineHours());
 		row.setLifetimeTotalWorkingHours(counters.getTotalWorkingHours());
-		row.setLifetimeTransportHours(counters.getTransportHours());
-		row.setLifetimeIdleHours(counters.getIdleHours());
-		row.setLifetimeLoadedHours(counters.getLoadedHours());
 		row.setLifetimeHighLoadHours(counters.getHighLoadHours());
 		row.setLifetimeTempExcursionHours(counters.getTempExcursionHours());
 		row.setLifetimeVibrationAlertHours(counters.getVibrationAlertHours());
@@ -182,32 +176,25 @@ public class AssetStatePublisher {
 	private void applyRolling24hCounters(AssetState row, CounterSet counters) {
 		row.setRolling24hEngineHours(counters.getEngineHours());
 		row.setRolling24hTotalWorkingHours(counters.getTotalWorkingHours());
-		row.setRolling24hTransportHours(counters.getTransportHours());
-		row.setRolling24hIdleHours(counters.getIdleHours());
-		row.setRolling24hLoadedHours(counters.getLoadedHours());
 		row.setRolling24hHighLoadHours(counters.getHighLoadHours());
 		row.setRolling24hTempExcursionHours(counters.getTempExcursionHours());
 		row.setRolling24hVibrationAlertHours(counters.getVibrationAlertHours());
 	}
 
-	/** An inactive flag leaves all three of its columns NULL — it has no representation. */
+	/** An inactive flag leaves both of its columns NULL — it has no representation. */
 	private void applyFlags(AssetState row, FlagEvaluation heavyRecentUse, FlagEvaluation thermalLoad,
 			FlagEvaluation mechanicalAttention, FlagEvaluation highCumulativeLoad) {
-		row.setHeavyRecentUseSeverity(heavyRecentUse.getSeverity());
 		row.setHeavyRecentUseValue(heavyRecentUse.getValue());
 		row.setHeavyRecentUseThreshold(heavyRecentUse.getThreshold());
-		row.setThermalLoadSeverity(thermalLoad.getSeverity());
 		row.setThermalLoadValue(thermalLoad.getValue());
 		row.setThermalLoadThreshold(thermalLoad.getThreshold());
-		row.setMechanicalAttentionSeverity(mechanicalAttention.getSeverity());
 		row.setMechanicalAttentionValue(mechanicalAttention.getValue());
 		row.setMechanicalAttentionThreshold(mechanicalAttention.getThreshold());
-		row.setHighCumulativeLoadSeverity(highCumulativeLoad.getSeverity());
 		row.setHighCumulativeLoadValue(highCumulativeLoad.getValue());
 		row.setHighCumulativeLoadThreshold(highCumulativeLoad.getThreshold());
 	}
 
-	/** All seven columns stay NULL until the asset reports (REQ-API-LATEST). */
+	/** All six columns stay NULL until the asset reports (REQ-API-LATEST). */
 	private void applyLatestMessage(AssetState row, TelemetryMessage latestMessage) {
 		if (latestMessage == null) {
 			return;
@@ -218,6 +205,5 @@ public class AssetStatePublisher {
 		row.setLatestLoadFactor(latestMessage.getLoadFactor());
 		row.setLatestTemperatureC(latestMessage.getTemperatureC());
 		row.setLatestVibrationLevel(latestMessage.getVibrationLevel());
-		row.setLatestWorkingStatus(latestMessage.getWorkingStatus());
 	}
 }

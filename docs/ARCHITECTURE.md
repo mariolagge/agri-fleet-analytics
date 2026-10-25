@@ -52,8 +52,8 @@ PostgreSQL database `agri-fleet-analytics-db` (user/password `admin`/`admin`). S
 
 | Table | Written by | Read by | Contents |
 |-------|------------|---------|----------|
-| `asset_state` | `TelemetryProcessor` | `OperatorApi` | One row per asset: the eight counters in both scopes, the four flags each with the severity, triggering counter, scope, value and threshold behind it, the derived figures of `SPEC.md` §4.5, status, recommendation, live condition, priority rank, and the most recent telemetry message. |
-| `hourly_aggregate` | `TelemetryProcessor` | `OperatorApi` | One row per asset per completed hour: the eight counters' per-hour deltas, keyed by asset and hour start. |
+| `asset_state` | `TelemetryProcessor` | `OperatorApi` | One row per asset: the five counters in both scopes, the four flags each with the value and threshold behind it (both NULL when the flag is inactive), the derived figures of `SPEC.md` §4.5, status, recommendation, live condition, priority rank, and the most recent telemetry message. |
+| `hourly_aggregate` | `TelemetryProcessor` | `OperatorApi` | One row per asset per completed hour: the five counters' per-hour deltas, keyed by asset and hour start. |
 
 Raw telemetry is not persisted; only the latest message per asset survives, inside `asset_state`.
 

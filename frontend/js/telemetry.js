@@ -13,7 +13,6 @@ function telemetryReadingsHtml(telemetry) {
 
   return `
     <div class="telemetry-readings">
-      ${telemetryReadingHtml('Mode', workingStatusDisplayName(telemetry.workingStatus))}
       ${telemetryReadingHtml('PTO', formatBoolean(telemetry.ptoEngaged))}
       ${telemetryReadingHtml('Speed', `${formatNumber(telemetry.groundSpeedKmh, 1)} km/h`)}
       ${telemetryReadingHtml('Load', formatNumber(telemetry.loadFactor, 2))}

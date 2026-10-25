@@ -113,29 +113,31 @@ Source: `ARCHITECTURE.md` §1, §3–§5.
 
 ---
 
-## 4. State machine: simulator working cycle
+## 4. State machine: simulator schedule (TRACTOR)
 
-The working cycle each simulated asset walks, with dwell times and transition probabilities.
+The fixed cycle the simulated TRACTOR repeats every 120 minutes. All transitions are time-triggered and deterministic; there are no probabilities.
 
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> IDLE
-    IDLE --> WORKING : after 5–30 min, p = 0.8
-    IDLE --> TRANSPORT : after 5–30 min, p = 0.2
-    WORKING --> TRANSPORT : after 20–60 min, p = 0.6
-    WORKING --> IDLE : after 20–60 min, p = 0.4
-    TRANSPORT --> WORKING : after 3–10 min, p = 0.7
-    TRANSPORT --> IDLE : after 3–10 min, p = 0.3
-    note right of WORKING
-        ptoEngaged = true
-        loadFactor from the per-asset band
+    state "WORKING<br/>load 0.80, 80 °C" as WorkingHeavy
+    state "WORKING<br/>load 0.80, 94 °C" as WorkingHot
+    state "TRANSPORT<br/>20 km/h, 65 °C" as Transport
+    state "IDLE<br/>0 km/h, 50 °C" as Idle
+    [*] --> WorkingHeavy
+    WorkingHeavy --> WorkingHot : after 60 min
+    WorkingHot --> Transport : after 10 min
+    Transport --> Idle : after 20 min
+    Idle --> WorkingHeavy : after 30 min
+    note right of WorkingHot
+        temperatureC > 90 accrues tempExcursionHours
+        and makes liveCondition CAUTION
     end note
 ```
 
-Each of the four assets runs its own instance of this machine. The initial state `IDLE` is an implementation choice in `AssetSimulationState`; REQ-SIM-CYCLE does not fix it.
+Each of the four assets runs its own instance with its own segments and cycle length (`SPEC.md` §3.2). The machine stores no current state: `TelemetryGenerator` computes the segment from the message timestamp modulo the cycle length, so the startup burst and the live phase are always in the same state at the same instant. The initial transition therefore enters whichever segment contains the start time.
 
-Source: REQ-SIM-CYCLE.
+Source: REQ-SIM-SCHEDULE.
 
 ---
 
@@ -155,17 +157,17 @@ requirementDiagram
 
     functionalRequirement REQ_FLAGS {
         id: "REQ-FLAGS"
-        text: "Evaluate four flags, each published with counter, scope, value and threshold."
+        text: "Evaluate four flags, one threshold each, published with counter, scope, value and threshold."
     }
 
     functionalRequirement REQ_STATUS {
         id: "REQ-STATUS"
-        text: "Derive GOOD, WATCH or CRITICAL from the active flags."
+        text: "Derive GOOD, WATCH or CRITICAL from the number of active flags."
     }
 
     functionalRequirement REQ_RANK {
         id: "REQ-RANK"
-        text: "Rank all four assets by severe flags, moderate flags, counter sum, assetId."
+        text: "Rank all four assets by active flag count, counter sum, assetId."
     }
 
     functionalRequirement REQ_RECOMMEND {
