@@ -1,6 +1,6 @@
 # docs\STAKEHOLDERS.md
 
-This document owns the stakeholders and their needs. Every requirement in `SPEC.md` names the needs it serves in its *Source* attribute.
+This document owns the stakeholders and their needs. Every requirement in `SPEC.md` names the needs it serves in its *Source* attribute. `NEED-SYSTEM-HEALTH` and `NEED-ADAPTABLE-THRESHOLDS` are served only by backlog stories in `USER-STORY-MAP.md` and have no requirements yet.
 
 ---
 
@@ -28,6 +28,8 @@ This document owns the stakeholders and their needs. Every requirement in `SPEC.
 | `NEED-TRACEABLE-RULES` | `STK-ADMIN` | The admin needs every number the system shows to be traceable to counters and telemetry, with no hidden scoring. |
 | `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | The admin needs every run to start from the same known state and to show every status within one demo session. |
 | `NEED-STABLE-INTERFACE` | `STK-ADMIN` | The admin needs a fixed telemetry message format and a documented, read-only API contract. |
+| `NEED-SYSTEM-HEALTH` | `STK-ADMIN` | The admin needs to see whether each module is running. |
+| `NEED-ADAPTABLE-THRESHOLDS` | `STK-ADMIN` | The admin needs to adapt the flag thresholds to another farm without changing code. |
 
 ---
 

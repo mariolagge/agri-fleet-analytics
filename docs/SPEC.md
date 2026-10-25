@@ -6,7 +6,7 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 
 - `Must` — part of the implemented release.
 - `Should` — not implemented; makes results correct or robust, but every decision still works without it.
-- `Could` — not implemented; demo tuning only.
+- `Could` — not implemented; a nice-to-have.
 
 **Source** lists the stakeholder needs (`NEED-…`, `STAKEHOLDERS.md` §2) the requirement serves.
 

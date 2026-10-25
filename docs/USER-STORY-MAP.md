@@ -8,10 +8,10 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 
 - **Personas** are the stakeholders in `STAKEHOLDERS.md` §1: the farmer (`STK-FARMER`), the workshop technician (`STK-WORKSHOP`) and the system administrator (`STK-ADMIN`). The workshop never uses the system; its stories describe what it receives through the farmer.
 - **Epics.** Epics E1–E6 are the activities of the to-be BPMN model in `PROCESS.md` §3. They are grouped by persona: the farmer (E1–E5), then the workshop technician (E6), then the system administrator (E7). Within each group, epics follow the order of the to-be process. Epic E7 holds the system administrator's stories: they make the other epics possible but are not steps of the farmer's process. Each epic names its BPMN element and the decision in REQ-DECISIONS it supports.
-- **Numbering.** A story's ID is `US-<epic>.<story>`, so `US-2.1` is the first story of epic E2. Within an epic, stories follow the order of the to-be process. E7 has no process, so its stories follow the data flow through the system: simulator, then processor, then API.
-- **Slices.** A story's slice is the MoSCoW priority of its requirements in `SPEC.md`. All requirements of one story share the same priority. *Must* is the implemented release; it supports all three decisions in REQ-DECISIONS. *Should* would make the results more correct and robust. *Could* is demo tuning only. Every story in this map is implemented, so the Should and Could slices are currently empty. *Won't* marks deliberate scope boundaries, not planned work (§4).
-- **Story points** are relative estimates on the Fibonacci scale 1, 2, 3, 5, 8. They were made in retrospect from the implemented scope and compare stories with each other; they are not hours.
-- **Traceability.** Each story names the stakeholder needs it serves (*Source*) and the requirements that realise it. Every need it names is a *Source* of at least one of those requirements. Code and tests are reached through `TRACEABILITY.md`.
+- **Numbering.** A story's ID is `US-<epic>.<story>`, so `US-2.1` is the first story of epic E2. Within an epic, stories are ordered by slice (Must, then Should, then Could) and then by the order of the to-be process. E7 has no process, so its stories follow the data flow through the system: simulator, then processor, then API.
+- **Slices.** *Must* is the implemented release; it supports all three decisions in REQ-DECISIONS. A Must story's slice is the MoSCoW priority of its requirements in `SPEC.md`, and all requirements of one story share the same priority. *Should* and *Could* stories form the backlog: they are not implemented and have no requirements in `SPEC.md` yet, so their slice is set in this map. *Should* makes the system more useful in daily work, but every decision still works without it. *Could* is a nice-to-have. *Won't* marks deliberate scope boundaries, not planned work (§4).
+- **Story points** are relative estimates on the Fibonacci scale 1, 2, 3, 5, 8. Must stories were estimated in retrospect from the implemented scope; backlog stories were estimated up front. Points compare stories with each other; they are not hours.
+- **Traceability.** Each story names the stakeholder needs it serves (*Source*) and the requirements that realise it. For a Must story, every need it names is a *Source* of at least one of those requirements. A backlog story lists its requirements as *not yet specified* and is added to `TRACEABILITY.md` once they are written. Code and tests are reached through `TRACEABILITY.md`.
 - **Acceptance.** A story is accepted through its requirements: the *shall* statements in `SPEC.md` are the acceptance criteria, and `TRACEABILITY.md` §2 names the test or other method that verifies each one.
 
 ---
@@ -21,9 +21,9 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 | Slice | Stories | Points |
 |-------|---------|--------|
 | Must | 18 | 63 |
-| Should | 0 | 0 |
-| Could | 0 | 0 |
-| **Total** | **18** | **63** |
+| Should | 3 | 8 |
+| Could | 6 | 22 |
+| **Total** | **27** | **93** |
 
 ---
 
@@ -83,6 +83,12 @@ To-be BPMN: *Open asset detail: flags with reasons, live condition* · Decision:
 - Source: NEED-PRIORITISE-MAINTENANCE, NEED-FLAG-REASON
 - Requirements: REQ-FLAGS, REQ-GOAL-TRACE
 
+**US-3.3** As a farmer, I want to see since when each flag has been active, so that I can tell a new warning from one I have ignored for days.
+
+- Slice: Should · Points: 3
+- Source: NEED-PRIORITISE-MAINTENANCE, NEED-FLAG-REASON
+- Requirements: not yet specified
+
 ### E4 Plan machine use
 
 The farmer decides which machines to work today and how hard.
@@ -101,6 +107,12 @@ To-be BPMN: *Plan machine use from live condition and 24 h flags* · Decision: 2
 - Source: NEED-OPERATIONAL-RISK
 - Requirements: REQ-SCOPES, REQ-DECISIONS
 
+**US-4.3** As a farmer, I want a chart of a machine's load over the past days, so that I can see whether the strain is rising or falling.
+
+- Slice: Could · Points: 3
+- Source: NEED-OPERATIONAL-RISK
+- Requirements: not yet specified
+
 ### E5 Review utilization
 
 The farmer knows how the fleet is used over the longer term.
@@ -112,6 +124,12 @@ To-be BPMN: annotation *Usage is recorded automatically (counters, hourly histor
 - Slice: Must · Points: 5
 - Source: NEED-UTILIZATION-AWARENESS
 - Requirements: REQ-COUNTER-SET, REQ-UTILIZATION, REQ-DECISIONS
+
+**US-5.2** As a farmer, I want to compare utilization over a period I choose, such as one season, so that I can plan which machine to keep, share or sell.
+
+- Slice: Could · Points: 5
+- Source: NEED-UTILIZATION-AWARENESS
+- Requirements: not yet specified
 
 ### E6 Hand over to the workshop
 
@@ -142,6 +160,24 @@ To-be BPMN: *Send flag reasons to workshop* · Decision: 1 Maintenance prioritis
 - Slice: Must · Points: 3
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-API-HISTORY
+
+**US-6.5** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
+
+- Slice: Should · Points: 2
+- Source: NEED-FLAG-REASON, NEED-LIFETIME-HOURS
+- Requirements: not yet specified
+
+**US-6.6** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
+
+- Slice: Could · Points: 5
+- Source: NEED-HISTORY-REVIEW, NEED-FLAG-REASON
+- Requirements: not yet specified
+
+**US-6.7** As a workshop technician, I want a machine's hourly history as a CSV file, so that I can analyse it in my own tools.
+
+- Slice: Could · Points: 2
+- Source: NEED-HISTORY-REVIEW
+- Requirements: not yet specified
 
 ### E7 Run and trace the system
 
@@ -178,6 +214,24 @@ To-be BPMN: none (the system administrator has no runtime interface) · Decision
 - Slice: Must · Points: 3
 - Source: NEED-STABLE-INTERFACE
 - Requirements: REQ-TELEMETRY-SHAPE, REQ-API-COMMON
+
+**US-7.6** As a system administrator, I want to see whether the simulator, processor and API are running, so that I can find a stopped module before the farmer notices stale data.
+
+- Slice: Should · Points: 3
+- Source: NEED-SYSTEM-HEALTH
+- Requirements: not yet specified
+
+**US-7.7** As a system administrator, I want to start the simulator with a chosen scenario, such as one machine going CRITICAL, so that I can show a specific case on request.
+
+- Slice: Could · Points: 5
+- Source: NEED-REPRODUCIBLE-DEMO
+- Requirements: not yet specified
+
+**US-7.8** As a system administrator, I want the flag thresholds in a configuration file, so that I can adapt them to another farm without changing code.
+
+- Slice: Could · Points: 2
+- Source: NEED-ADAPTABLE-THRESHOLDS
+- Requirements: not yet specified
 
 ---
 
