@@ -8,7 +8,7 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 - `Should` — not implemented; makes results correct or robust, but every decision still works without it.
 - `Could` — not implemented; a nice-to-have.
 
-**Source** lists the stakeholder needs (`NEED-…`, `STAKEHOLDERS.md` §2) the requirement serves.
+**Source** lists the stakeholder needs (`NEED-…`, `STAKEHOLDERS.md` §2) the requirement serves. `technical` marks a requirement that serves no stakeholder need directly but is needed to build, run or demonstrate the system.
 
 ---
 
@@ -20,7 +20,7 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 
 **REQ-GOAL-TRACE.** Every number the system shows shall be traceable to a counter, and every counter shall be traceable to telemetry. The system shall not use hidden scoring, machine learning, or opaque weighting.
 
-*Priority: Must · Source: NEED-TRACEABLE-RULES, NEED-FLAG-REASON*
+*Priority: Must · Source: NEED-FLAG-REASON*
 
 ---
 
@@ -63,13 +63,13 @@ Each requirement (`REQ-…`) is followed by two attributes. **Priority** uses Mo
 
 **REQ-TELEMETRY-SHAPE.** A telemetry message shall have exactly the fields and constraints in the table above. Outside the §3.2 startup burst, each asset shall publish one message every 5–10 seconds, independently of the other assets.
 
-*Priority: Must · Source: NEED-STABLE-INTERFACE*
+*Priority: Must · Source: technical*
 
 ### 3.2 Simulator behaviour
 
 **REQ-SIM-SCHEDULE.** The simulator shall be the only source of telemetry. Each asset shall repeat the fixed schedule in the table below, without randomness. The position in the schedule shall be the message timestamp modulo the cycle length, counted from the Unix epoch, so the same instant always produces the same message. Field values shall be constant within a segment. Simulator state shall be in memory only.
 
-*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: technical*
 
 Field values per state:
 
@@ -90,7 +90,7 @@ Schedule per asset. A segment overrides a state value only where the table says 
 
 **REQ-SIM-DEMO.** Over a full rolling window, the schedule shall produce these outcomes: `TRACTOR` at `CRITICAL`, `BALER` at `WATCH` on `HEAVY_RECENT_USE` alone, `MIXER` at `GOOD`, and `MOWER` moving between `GOOD` and `WATCH` as `MECHANICAL_ATTENTION` comes and goes.
 
-*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: technical*
 
 Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
@@ -105,7 +105,7 @@ Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
 **REQ-SIM-BURST.** Each asset shall open its run by publishing one message per simulated minute across a configurable window of the immediately preceding hours, ending at the present, and only then switch to the §3.1 cadence. The step shall be exactly 60 seconds, which §4.2 credits, so the burst can fill the window in the time it takes to publish. Timestamps shall be true wall-clock instants. The window shall default to 24 hours.
 
-*Priority: Must · Source: NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: technical*
 
 ---
 
@@ -115,7 +115,7 @@ Why the schedule lands on these outcomes, in a window of 23–24 h (§4.3):
 
 **REQ-COUNTER-SET.** Each asset shall maintain the five hour-counters in the table below, and shall accrue each counter only on the condition in that table. Productive work shall mean `ptoEngaged` **and** `groundSpeedKmh > 2`. As a consequence, `engineHours` ≥ `totalWorkingHours` ≥ `highLoadHours` shall always hold.
 
-*Priority: Must · Source: NEED-UTILIZATION-AWARENESS, NEED-TRACEABLE-RULES*
+*Priority: Must · Source: NEED-UTILIZATION-AWARENESS*
 
 Temperature and vibration stay ungated because an idle machine can still overheat or vibrate. Load stays gated because it has meaning only during productive work.
 
@@ -131,7 +131,7 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 
 **REQ-ACCUMULATE.** On each telemetry message for an asset, the processor shall apply the four steps below in order.
 
-*Priority: Must · Source: NEED-TRACEABLE-RULES*
+*Priority: Must · Source: technical*
 
 1. If the message `timestamp` is less than or equal to the last processed timestamp for that asset, discard the message entirely (out-of-order or duplicate delivery). It updates nothing.
 2. Compute Δt = `timestamp` − last processed timestamp, in seconds. For the first message of an asset, Δt is undefined.
@@ -142,7 +142,7 @@ Temperature and vibration stay ungated because an idle machine can still overhea
 
 **REQ-BUCKETS.** Counter contributions shall be accumulated into hourly buckets aligned to whole hours in `Europe/Vienna`. A bucket holds the exact seconds each of the five counters accrued within that hour, so threshold comparisons are exact. A message's whole Δt shall be credited to the bucket containing its own timestamp. Because credited Δt is at most 60 seconds, at most one minute of a message can fall in the neighbouring hour.
 
-*Priority: Must · Source: NEED-HISTORY-REVIEW, NEED-TRACEABLE-RULES*
+*Priority: Must · Source: NEED-HISTORY-REVIEW*
 
 **REQ-SCOPES.** Two scopes are derived from the buckets:
 
@@ -157,7 +157,7 @@ DST transitions (23- and 25-hour local days) are not handled specially — out o
 
 **REQ-BASELINES.** The lifetime flag threshold in §5.1 is unreachable in a demo that starts from zero. Each asset shall therefore start from the fixed lifetime baseline in the table below, loaded at startup. Baselines shall apply to the lifetime scope only. The rolling 24-hour window shall start empty. Lifetime counters shall not be carried across restarts; every run shall start from this table, so a demo run is reproducible.
 
-*Priority: Must · Source: NEED-LIFETIME-HOURS, NEED-REPRODUCIBLE-DEMO*
+*Priority: Must · Source: NEED-LIFETIME-HOURS*
 
 | Asset | `engineHours` | `totalWorkingHours` | `highLoadHours` | `tempExcursionHours` | `vibrationAlertHours` |
 |-------|---------------|---------------------|-----------------|----------------------|------------------------|
@@ -253,7 +253,7 @@ Exposed by OperatorApi (see `ARCHITECTURE.md` §2 for the module and port).
 
 **REQ-API-COMMON.** The API shall expose only the read-only endpoints in the table below. There shall be no authentication. No endpoint shall change system state. Timestamps in requests and responses shall be ISO-8601 instants in UTC. Errors shall use Spring's default error body with the status code and message given in this section. There shall be no custom error DTO.
 
-*Priority: Must · Source: NEED-STABLE-INTERFACE*
+*Priority: Must · Source: technical*
 
 | Method & Path | Description |
 |---------------|-------------|

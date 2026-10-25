@@ -6,9 +6,9 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 
 ## 1. How to read this map
 
-- **Personas** are the stakeholders in `STAKEHOLDERS.md` §1: the farmer (`STK-FARMER`), the workshop technician (`STK-WORKSHOP`) and the system administrator (`STK-ADMIN`). The workshop never uses the system; its stories describe what it receives through the farmer.
-- **Epics.** Epics E1–E6 are the activities of the to-be BPMN model in `PROCESS.md` §3. They are grouped by persona: the farmer (E1–E5), then the workshop technician (E6), then the system administrator (E7). Within each group, epics follow the order of the to-be process. Epic E7 holds the system administrator's stories: they make the other epics possible but are not steps of the farmer's process. Each epic names its BPMN element and the decision in REQ-DECISIONS it supports.
-- **Numbering.** A story's ID is `US-<epic>.<story>`, so `US-2.1` is the first story of epic E2. Within an epic, stories are ordered by slice (Must, then Should, then Could) and then by the order of the to-be process. E7 has no process, so its stories follow the data flow through the system: simulator, then processor, then API.
+- **Personas** are the stakeholders in `STAKEHOLDERS.md` §1: the farmer (`STK-FARMER`) and the workshop technician (`STK-WORKSHOP`). The workshop never uses the system; its stories describe what it receives through the farmer.
+- **Epics.** Epics E1–E5 are the activities of the to-be BPMN model in `PROCESS.md` §3. They are grouped by persona: the farmer (E1–E4), then the workshop technician (E5). Within each group, epics follow the order of the to-be process. Each epic names its BPMN element and the decision in REQ-DECISIONS it supports.
+- **Numbering.** A story's ID is `US-<epic>.<story>`, so `US-2.1` is the first story of epic E2. Within an epic, stories are ordered by slice (Must, then Should, then Could) and then by the order of the to-be process.
 - **Slices.** *Must* is the implemented release; it supports all three decisions in REQ-DECISIONS. A Must story's slice is the MoSCoW priority of its requirements in `SPEC.md`, and all requirements of one story share the same priority. *Should* and *Could* stories form the backlog: they are not implemented and have no requirements in `SPEC.md` yet, so their slice is set in this map. *Should* makes the system more useful in daily work, but every decision still works without it. *Could* is a nice-to-have. *Won't* marks deliberate scope boundaries, not planned work (§4).
 - **Story points** are relative estimates on the Fibonacci scale 1, 2, 3, 5, 8. Must stories were estimated in retrospect from the implemented scope; backlog stories were estimated up front. Points compare stories with each other; they are not hours.
 - **Traceability.** Each story names the stakeholder needs it serves (*Source*) and the requirements that realise it. For a Must story, every need it names is a *Source* of at least one of those requirements. A backlog story lists its requirements as *not yet specified* and is added to `TRACEABILITY.md` once they are written. Code and tests are reached through `TRACEABILITY.md`.
@@ -20,10 +20,10 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 
 | Slice | Stories | Points |
 |-------|---------|--------|
-| Must | 18 | 63 |
-| Should | 3 | 8 |
-| Could | 6 | 22 |
-| **Total** | **27** | **93** |
+| Must | 11 | 33 |
+| Should | 4 | 9 |
+| Could | 4 | 13 |
+| **Total** | **19** | **55** |
 
 ---
 
@@ -137,37 +137,37 @@ To-be BPMN: *Plan machine use from live condition and 24 h flags* · Decision: 2
 - Source: NEED-OPERATIONAL-RISK
 - Requirements: not yet specified
 
-### E6 Hand over to the workshop
+### E5 Hand over to the workshop
 
 The workshop technician receives the facts behind a repair without relying on the farmer's memory.
 
 To-be BPMN: *Send flag reasons to workshop* · Decision: 1 Maintenance prioritisation
 
-**US-6.1** As a workshop technician, I want to receive the counter, value and threshold behind each flag, so that I know why the machine was brought in without relying on a verbal description.
+**US-5.1** As a workshop technician, I want to receive the counter, value and threshold behind each flag, so that I know why the machine was brought in without relying on a verbal description.
 
 - Slice: Must · Points: 1
 - Source: NEED-FLAG-REASON
 - Requirements: REQ-FLAGS, REQ-GOAL-TRACE
 
-**US-6.2** As a workshop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
+**US-5.2** As a workshop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
 
 - Slice: Must · Points: 5
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-BUCKETS
 
-**US-6.3** As a workshop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
+**US-5.3** As a workshop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
 
 - Slice: Must · Points: 3
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-API-HISTORY
 
-**US-6.4** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
+**US-5.4** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
 
 - Slice: Should · Points: 2
 - Source: NEED-FLAG-REASON, NEED-LIFETIME-HOURS
 - Requirements: not yet specified
 
-**US-6.5** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
+**US-5.5** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
 
 - Slice: Could · Points: 5
 - Source: NEED-HISTORY-REVIEW, NEED-FLAG-REASON
@@ -183,10 +183,10 @@ These are deliberate limits of the system, not planned work.
 |------------|------|-----|--------|
 | Notifications | E1 | The farmer checks the dashboard every morning; the system sends nothing. | `PROCESS.md` §4 |
 | Manufacturer service intervals | E2 | The hour-meter check of the as-is process continues unchanged. | `PROCESS.md` §4 |
-| Maintenance log | E5 | Usage is recorded; performed maintenance is not. | `PROCESS.md` §4 |
-| Workshop access | E6 | The workshop never uses the system and gets the flag reasons only through the farmer. | `PROCESS.md` §4 |
-| Asset registration | E7 | The fleet is fixed to four machines. | REQ-GOAL-SCOPE |
-| Write access, authentication | E7 | The API is read-only and open. | REQ-API-COMMON |
+| Maintenance log | — | Usage is recorded; performed maintenance is not. | `PROCESS.md` §4 |
+| Workshop access | E5 | The workshop never uses the system and gets the flag reasons only through the farmer. | `PROCESS.md` §4 |
+| Asset registration | — | The fleet is fixed to four machines. | REQ-GOAL-SCOPE |
+| Write access, authentication | — | The API is read-only and open. | REQ-API-COMMON |
 
 ---
 

@@ -28,8 +28,6 @@ flowchart LR
     farmer -. "flag reasons (counter, value, threshold)" .-> workshop
 ```
 
-The admin (`STK-ADMIN`) has no runtime interface and is therefore not shown.
-
 Source: `SPEC.md` §1–§2, `STAKEHOLDERS.md` §1.
 
 ---
