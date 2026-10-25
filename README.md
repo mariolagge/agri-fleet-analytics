@@ -43,8 +43,9 @@ flowchart LR
 |--------|----------|
 | Stakeholder analysis | [`docs/STAKEHOLDERS.md`](docs/STAKEHOLDERS.md) |
 | Business process modeling (BPMN 2.0, as-is / to-be) | [`docs/PROCESS.md`](docs/PROCESS.md) |
+| User story mapping (backbone from the to-be process, MoSCoW release slices) | [`docs/USER-STORY-MAP.md`](docs/USER-STORY-MAP.md) |
 | Requirements engineering (35 requirements with MoSCoW priority and source) | [`docs/SPEC.md`](docs/SPEC.md) |
-| Traceability (needs → requirements → code → tests) | [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
+| Traceability (needs → user stories → requirements → code → tests) | [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
 | System modeling (SysML-style views) | [`docs/SYSTEM-MODEL.md`](docs/SYSTEM-MODEL.md) |
 | Architecture (modules, messaging, persistence) | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Naming | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) |

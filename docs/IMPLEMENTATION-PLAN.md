@@ -104,7 +104,7 @@ Do not re-open these. They were settled with the owner before the plan was writt
 | To-be trigger | The farmer checks AgriFleet every morning before work. |
 | Project management artifacts | GitHub milestone + one issue per phase. The owner creates them by hand from §5.2. No charter, WBS, risk register or sprint log. |
 | Business case | None. |
-| Stakeholders | Three: farmer (owner/manager), independent workshop technician, developer/maintainer. |
+| Stakeholders | Three: farmer (owner/manager), independent workshop technician, system administrator. |
 | Stakeholder needs | A new layer above the REQs, in `docs/STAKEHOLDERS.md`. Content is fixed in §6.1. |
 | REQ attributes | Two only: **Priority** (MoSCoW) and **Source** (stakeholder needs). Written inline under each REQ in `SPEC.md`. No verification-method attribute. Values are fixed in §6.2. |
 | MoSCoW assignment | Proposed by rule in §6.2; the owner reviews that table as part of reviewing this plan. No `Won't` items are added. |
@@ -257,7 +257,7 @@ Fixed content used by several phases. Agents copy from here; they do not invent 
 |----|-------------|----------------------------|---------------|
 | `STK-FARMER` | Farmer (owner and manager of the farm) | Primary user; checks the dashboard every morning | Decide which machine to service and how hard to work each machine |
 | `STK-WORKSHOP` | Independent workshop technician | Indirect; never uses the system, receives flag reasons from the farmer | Understand why a machine was brought in |
-| `STK-DEVELOPER` | Developer / maintainer | Builds and maintains the system | Rules that are traceable, testable and reproducible |
+| `STK-ADMIN` | System administrator | Installs, starts and configures the system | Rules that are traceable, testable and reproducible |
 
 | ID | Stakeholder | Need |
 |----|-------------|------|
@@ -268,9 +268,9 @@ Fixed content used by several phases. Agents copy from here; they do not invent 
 | `NEED-FLAG-REASON` | `STK-WORKSHOP` | The workshop technician needs the measured reason behind a warning — which counter, its value and the threshold it crossed — not only that the machine is critical. |
 | `NEED-HISTORY-REVIEW` | `STK-WORKSHOP` | The workshop technician needs to review how a machine was used hour by hour over the past days. |
 | `NEED-LIFETIME-HOURS` | `STK-WORKSHOP` | The workshop technician needs the accumulated lifetime hours of a machine, including its hours under load. |
-| `NEED-TRACEABLE-RULES` | `STK-DEVELOPER` | The developer needs every number the system shows to be traceable to counters and telemetry, with no hidden scoring. |
-| `NEED-REPRODUCIBLE-DEMO` | `STK-DEVELOPER` | The developer needs every run to start from the same known state and to show every status within one demo session. |
-| `NEED-STABLE-INTERFACE` | `STK-DEVELOPER` | The developer needs a fixed telemetry message format and a documented, read-only API contract. |
+| `NEED-TRACEABLE-RULES` | `STK-ADMIN` | The admin needs every number the system shows to be traceable to counters and telemetry, with no hidden scoring. |
+| `NEED-REPRODUCIBLE-DEMO` | `STK-ADMIN` | The admin needs every run to start from the same known state and to show every status within one demo session. |
+| `NEED-STABLE-INTERFACE` | `STK-ADMIN` | The admin needs a fixed telemetry message format and a documented, read-only API contract. |
 
 ### 6.2 REQ attributes (used by P4, P7)
 
@@ -944,7 +944,7 @@ flowchart LR
     farmer -. "flag reasons (counter, value, threshold)" .-> workshop
 ```
 
-Below the diagram, the sentence: "The developer (`STK-DEVELOPER`) has no runtime interface
+Below the diagram, the sentence: "The admin (`STK-ADMIN`) has no runtime interface
 and is therefore not shown."
 
 **§2 Block definition diagram** — source: `ARCHITECTURE.md` §1–§3.

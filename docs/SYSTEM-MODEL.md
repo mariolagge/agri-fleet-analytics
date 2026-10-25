@@ -28,7 +28,7 @@ flowchart LR
     farmer -. "flag reasons (counter, value, threshold)" .-> workshop
 ```
 
-The developer (`STK-DEVELOPER`) has no runtime interface and is therefore not shown.
+The admin (`STK-ADMIN`) has no runtime interface and is therefore not shown.
 
 Source: `SPEC.md` §1–§2, `STAKEHOLDERS.md` §1.
 
