@@ -45,7 +45,7 @@ The first seven rows are a guided tour: read them in order, each builds on the o
 |--------|----------|
 | 1. Business process modeling (BPMN 2.0, as-is / to-be) | [`docs/PROCESS.md`](docs/PROCESS.md) |
 | 2. Stakeholder analysis | [`docs/STAKEHOLDERS.md`](docs/STAKEHOLDERS.md) |
-| 3. User story mapping (backbone from the to-be process, MoSCoW release slices) | [`docs/USER-STORY-MAP.md`](docs/USER-STORY-MAP.md) |
+| 3. User story mapping (epics from the to-be process, numbered user stories, MoSCoW release slices) | [`docs/USER-STORY-MAP.md`](docs/USER-STORY-MAP.md) |
 | 4. Requirements engineering (22 requirements with MoSCoW priority and source) | [`docs/SPEC.md`](docs/SPEC.md) |
 | 5. System modeling (SysML-style views) | [`docs/SYSTEM-MODEL.md`](docs/SYSTEM-MODEL.md) |
 | 6. Traceability and verification (needs → user stories → requirements → code → tests, with a verification method per requirement) | [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
