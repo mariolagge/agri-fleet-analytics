@@ -47,6 +47,18 @@ To-be BPMN: *Check fleet ranking and live telemetry strip* · Decision: 1 Mainte
 - Source: NEED-OPERATIONAL-RISK
 - Requirements: REQ-API-LATEST
 
+**US-1.3** As a farmer, I want to see when the dashboard last received new data, so that I know I am not planning from an old picture.
+
+- Slice: Should · Points: 2
+- Source: NEED-MONITOR-FLEET
+- Requirements: not yet specified
+
+**US-1.4** As a farmer, I want a high-contrast view, so that I can read the dashboard on a tablet in bright sunlight.
+
+- Slice: Could · Points: 2
+- Source: NEED-MONITOR-FLEET
+- Requirements: not yet specified
+
 ### E2 Prioritise by status
 
 The farmer knows which machine needs attention first and what kind of attention it needs.
@@ -64,6 +76,18 @@ To-be BPMN: *Asset status?*, *Plan inspection within the next 15–20 engine hou
 - Slice: Must · Points: 2
 - Source: NEED-PRIORITISE-MAINTENANCE
 - Requirements: REQ-STATUS, REQ-RECOMMEND
+
+**US-2.3** As a farmer, I want to see why a machine ranks above the next one, so that I can trust the order and not second-guess it.
+
+- Slice: Should · Points: 2
+- Source: NEED-PRIORITISE-MAINTENANCE
+- Requirements: not yet specified
+
+**US-2.4** As a farmer, I want to see how many engine hours are left in a WATCH machine's 15–20 hour inspection window, so that I can schedule the inspection before it runs out.
+
+- Slice: Could · Points: 3
+- Source: NEED-PRIORITISE-MAINTENANCE
+- Requirements: not yet specified
 
 ### E3 Inspect asset detail
 
@@ -113,24 +137,6 @@ To-be BPMN: *Plan machine use from live condition and 24 h flags* · Decision: 2
 - Source: NEED-OPERATIONAL-RISK
 - Requirements: not yet specified
 
-### E5 Review utilization
-
-The farmer knows how the fleet is used over the longer term.
-
-To-be BPMN: annotation *Usage is recorded automatically (counters, hourly history)*; not a task of the daily process · Decision: 3 Basic utilization awareness
-
-**US-5.1** As a farmer, I want to see which machines do productive work and which mostly run without working, so that I can plan how the fleet is used.
-
-- Slice: Must · Points: 5
-- Source: NEED-UTILIZATION-AWARENESS
-- Requirements: REQ-COUNTER-SET, REQ-UTILIZATION, REQ-DECISIONS
-
-**US-5.2** As a farmer, I want to compare utilization over a period I choose, such as one season, so that I can plan which machine to keep, share or sell.
-
-- Slice: Could · Points: 5
-- Source: NEED-UTILIZATION-AWARENESS
-- Requirements: not yet specified
-
 ### E6 Hand over to the workshop
 
 The workshop technician receives the facts behind a repair without relying on the farmer's memory.
@@ -143,94 +149,28 @@ To-be BPMN: *Send flag reasons to workshop* · Decision: 1 Maintenance prioritis
 - Source: NEED-FLAG-REASON
 - Requirements: REQ-FLAGS, REQ-GOAL-TRACE
 
-**US-6.2** As a workshop technician, I want the lifetime hours of a machine, including its hours under heavy load, so that I can judge its wear.
-
-- Slice: Must · Points: 2
-- Source: NEED-LIFETIME-HOURS
-- Requirements: REQ-SCOPES
-
-**US-6.3** As a workshop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
+**US-6.2** As a workshop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
 
 - Slice: Must · Points: 5
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-BUCKETS
 
-**US-6.4** As a workshop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
+**US-6.3** As a workshop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
 
 - Slice: Must · Points: 3
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-API-HISTORY
 
-**US-6.5** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
+**US-6.4** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
 
 - Slice: Should · Points: 2
 - Source: NEED-FLAG-REASON, NEED-LIFETIME-HOURS
 - Requirements: not yet specified
 
-**US-6.6** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
+**US-6.5** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
 
 - Slice: Could · Points: 5
 - Source: NEED-HISTORY-REVIEW, NEED-FLAG-REASON
-- Requirements: not yet specified
-
-**US-6.7** As a workshop technician, I want a machine's hourly history as a CSV file, so that I can analyse it in my own tools.
-
-- Slice: Could · Points: 2
-- Source: NEED-HISTORY-REVIEW
-- Requirements: not yet specified
-
-### E7 Run and trace the system
-
-The system administrator can run, demonstrate and explain the system without real machines.
-
-To-be BPMN: none (the system administrator has no runtime interface) · Decision: none (enables E1–E6)
-
-**US-7.1** As a system administrator, I want a simulator that is the only telemetry source and repeats a fixed schedule per machine, so that the system can be run and shown without real machines.
-
-- Slice: Must · Points: 5
-- Source: NEED-REPRODUCIBLE-DEMO
-- Requirements: REQ-SIM-SCHEDULE
-
-**US-7.2** As a system administrator, I want the simulator to fill the last 24 hours at startup and land each machine on a known status, so that one demo session shows GOOD, WATCH and CRITICAL.
-
-- Slice: Must · Points: 5
-- Source: NEED-REPRODUCIBLE-DEMO
-- Requirements: REQ-SIM-DEMO, REQ-SIM-BURST
-
-**US-7.3** As a system administrator, I want every run to start from a fixed service history per machine, so that the lifetime flag is reachable in a demo and every run starts the same way.
-
-- Slice: Must · Points: 2
-- Source: NEED-LIFETIME-HOURS, NEED-REPRODUCIBLE-DEMO
-- Requirements: REQ-BASELINES
-
-**US-7.4** As a system administrator, I want every number on the dashboard to come from a counter accrued by one fixed, exact rule, so that I can explain and check any result by hand.
-
-- Slice: Must · Points: 8
-- Source: NEED-TRACEABLE-RULES
-- Requirements: REQ-GOAL-TRACE, REQ-COUNTER-SET, REQ-ACCUMULATE, REQ-BUCKETS
-
-**US-7.5** As a system administrator, I want a fixed telemetry message format and a read-only REST API, so that the modules and the frontend can be changed without breaking each other.
-
-- Slice: Must · Points: 3
-- Source: NEED-STABLE-INTERFACE
-- Requirements: REQ-TELEMETRY-SHAPE, REQ-API-COMMON
-
-**US-7.6** As a system administrator, I want to see whether the simulator, processor and API are running, so that I can find a stopped module before the farmer notices stale data.
-
-- Slice: Should · Points: 3
-- Source: NEED-SYSTEM-HEALTH
-- Requirements: not yet specified
-
-**US-7.7** As a system administrator, I want to start the simulator with a chosen scenario, such as one machine going CRITICAL, so that I can show a specific case on request.
-
-- Slice: Could · Points: 5
-- Source: NEED-REPRODUCIBLE-DEMO
-- Requirements: not yet specified
-
-**US-7.8** As a system administrator, I want the flag thresholds in a configuration file, so that I can adapt them to another farm without changing code.
-
-- Slice: Could · Points: 2
-- Source: NEED-ADAPTABLE-THRESHOLDS
 - Requirements: not yet specified
 
 ---
