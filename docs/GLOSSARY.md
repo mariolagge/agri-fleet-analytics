@@ -19,7 +19,7 @@ This document owns **naming only**: which identifiers exist and what they are ca
 | Epic IDs | `E` plus the epic number. Each ID is declared once, in `USER-STORY-MAP.md`, and is not listed in this file | `E2` |
 | User story IDs | `US-` plus the epic number, a dot and the story number within the epic. Each ID is declared once, in `USER-STORY-MAP.md`, and is not listed in this file | `US-2.1` |
 
-Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. The dashboard has an English/German toggle; every English and German text lives in `frontend/js/i18n.js`, and the German display names are listed next to the English ones here. Table names are in `ARCHITECTURE.md` §4.
+Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
 
 A module's name is `PascalCase` and is carried by its Maven `artifactId` and `<name>`; the modules are listed in `ARCHITECTURE.md` §2. Its package and its directory are that name lowercased, words concatenated, so `TelemetryProcessor` lives in the `telemetryprocessor/` directory under the package `com.mariolagger.telemetryprocessor`. The package segment is lowercased because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules; the directory follows it so that one lowercase spelling works on a case-sensitive filesystem. `frontend/` is a static asset directory rather than a module and is lowercase for the same reason.
 
@@ -31,12 +31,12 @@ Rules: `SPEC.md` §2.
 
 **Asset** — one of the four monitored machines. `assetId` carries the value.
 
-| Value | Display name | German |
-|-------|--------------|--------|
-| `TRACTOR` | Tractor | Traktor |
-| `MOWER` | Mower | Mähwerk |
-| `BALER` | Baler | Ballenpresse |
-| `MIXER` | Feed mixer | Mischwagen |
+| Value | Display name |
+|-------|--------------|
+| `TRACTOR` | Tractor |
+| `MOWER` | Mower |
+| `BALER` | Baler |
+| `MIXER` | Feed mixer |
 
 ---
 
@@ -56,11 +56,11 @@ Rules: `SPEC.md` §3.
 
 ### `vibrationLevel`
 
-| Value | Display name | German |
-|-------|--------------|--------|
-| `NORMAL` | Normal | Normal |
-| `ELEVATED` | Elevated | Erhöht |
-| `HIGH` | High | Hoch |
+| Value | Display name |
+|-------|--------------|
+| `NORMAL` | Normal |
+| `ELEVATED` | Elevated |
+| `HIGH` | High |
 
 ---
 
@@ -70,13 +70,13 @@ Rules: `SPEC.md` §4.
 
 All counters are named `…Hours` and hold hours as a decimal number.
 
-| Counter | Display name | German | Gloss |
-|---------|--------------|--------|-------|
-| `engineHours` | Engine | Motor | Time the machine was switched on and reporting. |
-| `totalWorkingHours` | Working | Arbeit | Time spent in productive work. |
-| `highLoadHours` | High load | Hohe Last | Working time under heavy load. |
-| `tempExcursionHours` | Temp excursion | Übertemperatur | Time above the temperature limit. |
-| `vibrationAlertHours` | Vibration alert | Vibrationsalarm | Time at elevated **or** high vibration. The name says "alert", not "elevated", because both levels count. |
+| Counter | Gloss |
+|---------|-------|
+| `engineHours` | Time the machine was switched on and reporting. |
+| `totalWorkingHours` | Time spent in productive work. |
+| `highLoadHours` | Working time under heavy load. |
+| `tempExcursionHours` | Time above the temperature limit. |
+| `vibrationAlertHours` | Time at elevated **or** high vibration. The name says "alert", not "elevated", because both levels count. |
 
 ### Counter scopes
 
@@ -101,12 +101,12 @@ Counter names are identical in both scopes; the container distinguishes them. In
 
 Rules: `SPEC.md` §5.1.
 
-| Flag | Display name | German | Gloss |
-|------|--------------|--------|-------|
-| `HEAVY_RECENT_USE` | Heavy recent use | Hohe aktuelle Nutzung | Sustained heavy load in the recent window. |
-| `THERMAL_LOAD` | Thermal load | Thermische Belastung | Repeated or prolonged overheating. |
-| `MECHANICAL_ATTENTION` | Mechanical attention | Mechanische Auffälligkeit | Sustained abnormal vibration. |
-| `HIGH_CUMULATIVE_LOAD` | High cumulative load | Hohe Gesamtbelastung | A long working life under heavy load. |
+| Flag | Display name | Gloss |
+|------|--------------|-------|
+| `HEAVY_RECENT_USE` | Heavy recent use | Sustained heavy load in the recent window. |
+| `THERMAL_LOAD` | Thermal load | Repeated or prolonged overheating. |
+| `MECHANICAL_ATTENTION` | Mechanical attention | Sustained abnormal vibration. |
+| `HIGH_CUMULATIVE_LOAD` | High cumulative load | A long working life under heavy load. |
 
 A flag is either active or absent from the response; there is no severity and no `INACTIVE` value.
 
@@ -128,29 +128,29 @@ Rules: `SPEC.md` §5.2–§5.5.
 
 ### `status`
 
-| Value | Display name | German | Gloss |
-|-------|--------------|--------|-------|
-| `GOOD` | Good | Gut | No active flag. |
-| `WATCH` | Watch | Beobachten | Worth planning an inspection. |
-| `CRITICAL` | Critical | Kritisch | Should be looked at first. |
+| Value | Display name | Gloss |
+|-------|--------------|-------|
+| `GOOD` | Good | No active flag. |
+| `WATCH` | Watch | Worth planning an inspection. |
+| `CRITICAL` | Critical | Should be looked at first. |
 
 ### `liveCondition`
 
 Derived from the latest message only, and deliberately kept separate from `status`.
 
-| Value | Display name | German | Gloss |
-|-------|--------------|--------|-------|
-| `NORMAL` | Normal | Normal | Nothing unusual in the latest reading. |
-| `CAUTION` | Caution | Vorsicht | The latest reading is outside comfortable operating range. |
-| `ALERT` | Alert | Alarm | The latest reading indicates immediate strain. |
-| `STALE` | No signal | Kein Signal | Nothing received recently from this asset. |
+| Value | Display name | Gloss |
+|-------|--------------|-------|
+| `NORMAL` | Normal | Nothing unusual in the latest reading. |
+| `CAUTION` | Caution | The latest reading is outside comfortable operating range. |
+| `ALERT` | Alert | The latest reading indicates immediate strain. |
+| `STALE` | No signal | Nothing received recently from this asset. |
 
 ### Other fields
 
 | Field | Gloss |
 |-------|-------|
 | `priorityRank` | 1-based position in the maintenance ranking; 1 is most urgent. |
-| `recommendation` | The service sentence shown to the farmer. The API sends one fixed English sentence per `status`; the German dashboard shows the matching German sentence for that status. |
+| `recommendation` | The service sentence shown to the farmer. |
 
 ---
 
