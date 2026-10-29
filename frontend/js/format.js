@@ -1,13 +1,7 @@
 // Display text and value formatting. The API returns raw enum values; every display
-// name below comes from GLOSSARY.md (§2 assets, §3 telemetry, §5 flags, §6 status and
-// live condition). Nothing here derives a product rule — it only renames and formats.
-
-const ASSET_DISPLAY_NAMES = {
-  TRACTOR: 'Tractor',
-  MOWER: 'Mower',
-  BALER: 'Baler',
-  MIXER: 'Feed mixer',
-};
+// name comes from i18n.js, which follows GLOSSARY.md (§2 assets, §3 telemetry, §5 flags,
+// §6 status and live condition). Nothing here derives a product rule — it only renames
+// and formats.
 
 const ASSET_ICONS = {
   TRACTOR: 'tractor',
@@ -16,30 +10,10 @@ const ASSET_ICONS = {
   MIXER: 'blender',
 };
 
-const STATUS_DISPLAY_NAMES = {
-  GOOD: 'Good',
-  WATCH: 'Watch',
-  CRITICAL: 'Critical',
-};
-
 const STATUS_ICONS = {
   GOOD: 'circle-check',
   WATCH: 'alert-triangle',
   CRITICAL: 'alert-octagon',
-};
-
-const LIVE_CONDITION_DISPLAY_NAMES = {
-  NORMAL: 'Normal',
-  CAUTION: 'Caution',
-  ALERT: 'Alert',
-  STALE: 'No signal',
-};
-
-const FLAG_DISPLAY_NAMES = {
-  HEAVY_RECENT_USE: 'Heavy recent use',
-  THERMAL_LOAD: 'Thermal load',
-  MECHANICAL_ATTENTION: 'Mechanical attention',
-  HIGH_CUMULATIVE_LOAD: 'High cumulative load',
 };
 
 const FLAG_ICONS = {
@@ -47,19 +21,6 @@ const FLAG_ICONS = {
   THERMAL_LOAD: 'flame',
   MECHANICAL_ATTENTION: 'activity',
   HIGH_CUMULATIVE_LOAD: 'hourglass',
-};
-
-const SCOPE_DISPLAY_NAMES = {
-  LIFETIME: 'lifetime',
-  ROLLING_24H: '24 h',
-};
-
-const COUNTER_DISPLAY_NAMES = {
-  engineHours: 'Engine',
-  totalWorkingHours: 'Working',
-  highLoadHours: 'High load',
-  tempExcursionHours: 'Temp excursion',
-  vibrationAlertHours: 'Vibration alert',
 };
 
 // Fixed order for the counter panels, matching REQ-COUNTER-SET.
@@ -71,16 +32,17 @@ const COUNTER_ORDER = [
   'vibrationAlertHours',
 ];
 
-const VIBRATION_LEVEL_DISPLAY_NAMES = {
-  NORMAL: 'Normal',
-  ELEVATED: 'Elevated',
-  HIGH: 'High',
-};
-
 const EM_DASH = '—';
 
+// The display name for an enum value, e.g. displayName('status', 'GOOD') -> t('status.GOOD').
+// A value i18n.js does not know gets the fallback instead of its raw key.
+function displayName(prefix, value, fallback) {
+  const key = `${prefix}.${value}`;
+  return TRANSLATIONS.en[key] ? t(key) : fallback;
+}
+
 function assetDisplayName(assetId) {
-  return ASSET_DISPLAY_NAMES[assetId] || assetId || EM_DASH;
+  return displayName('asset', assetId, assetId || EM_DASH);
 }
 
 function assetIcon(assetId) {
@@ -88,7 +50,13 @@ function assetIcon(assetId) {
 }
 
 function statusDisplayName(status) {
-  return STATUS_DISPLAY_NAMES[status] || EM_DASH;
+  return displayName('status', status, EM_DASH);
+}
+
+// The backend sends one fixed English sentence per status, so the translation is looked
+// up by status. An unknown status keeps whatever text the API sent.
+function recommendationText(status, apiRecommendation) {
+  return displayName('recommendation', status, apiRecommendation || EM_DASH);
 }
 
 function statusIcon(status) {
@@ -104,7 +72,7 @@ function statusClass(status) {
 }
 
 function liveConditionDisplayName(liveCondition) {
-  return LIVE_CONDITION_DISPLAY_NAMES[liveCondition] || EM_DASH;
+  return displayName('live', liveCondition, EM_DASH);
 }
 
 function liveConditionClass(liveCondition) {
@@ -115,7 +83,7 @@ function liveConditionClass(liveCondition) {
 }
 
 function flagDisplayName(flag) {
-  return FLAG_DISPLAY_NAMES[flag] || flag || EM_DASH;
+  return displayName('flag', flag, flag || EM_DASH);
 }
 
 function flagIcon(flag) {
@@ -123,15 +91,15 @@ function flagIcon(flag) {
 }
 
 function scopeDisplayName(scope) {
-  return SCOPE_DISPLAY_NAMES[scope] || scope || EM_DASH;
+  return displayName('scope', scope, scope || EM_DASH);
 }
 
 function counterDisplayName(counter) {
-  return COUNTER_DISPLAY_NAMES[counter] || counter || EM_DASH;
+  return displayName('counter', counter, counter || EM_DASH);
 }
 
 function vibrationLevelDisplayName(vibrationLevel) {
-  return VIBRATION_LEVEL_DISPLAY_NAMES[vibrationLevel] || EM_DASH;
+  return displayName('vibration', vibrationLevel, EM_DASH);
 }
 
 // A missing value is an em dash, never a zero: REQ-UTILIZATION publishes null percentages
@@ -140,7 +108,7 @@ function formatNumber(value, fractionDigits = 1) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
     return EM_DASH;
   }
-  return Number(value).toLocaleString(undefined, {
+  return Number(value).toLocaleString(currentLocale(), {
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
   });
@@ -173,7 +141,7 @@ function formatInstant(value) {
   if (Number.isNaN(date.getTime())) {
     return EM_DASH;
   }
-  return date.toLocaleString(undefined, {
+  return date.toLocaleString(currentLocale(), {
     timeZone: FARM_ZONE,
     year: 'numeric',
     month: '2-digit',
@@ -191,7 +159,7 @@ function formatTimeOfDay(value) {
   if (Number.isNaN(date.getTime())) {
     return EM_DASH;
   }
-  return date.toLocaleTimeString(undefined, {
+  return date.toLocaleTimeString(currentLocale(), {
     timeZone: FARM_ZONE,
     hour: '2-digit',
     minute: '2-digit',
@@ -203,7 +171,7 @@ function formatBoolean(value) {
   if (value === null || value === undefined) {
     return EM_DASH;
   }
-  return value ? 'Yes' : 'No';
+  return value ? t('common.yes') : t('common.no');
 }
 
 function escapeHtml(text) {
@@ -234,7 +202,7 @@ function assetChipHtml(assetId) {
 
 function flagChipsHtml(flags) {
   if (!Array.isArray(flags) || flags.length === 0) {
-    return '<span class="flag-chips-empty">No active flags</span>';
+    return `<span class="flag-chips-empty">${escapeHtml(t('flag.none'))}</span>`;
   }
   const chips = flags.map((flag) => `<span class="flag-chip">`
     + `${tablerIcon(flagIcon(flag.flag), { size: 11 })}${escapeHtml(flagDisplayName(flag.flag))}</span>`);

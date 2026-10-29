@@ -11,14 +11,17 @@ function flagReasonHtml(flag) {
       <div class="flag-reason-evidence">
         ${escapeHtml(counterDisplayName(flag.counter))}
         <span class="flag-reason-scope">(${escapeHtml(scopeDisplayName(flag.scope))})</span>
-        ${escapeHtml(formatHours(flag.value))} of ${escapeHtml(formatHours(flag.threshold))}
+        ${escapeHtml(t('detail.valueOfThreshold', {
+          value: formatHours(flag.value),
+          threshold: formatHours(flag.threshold),
+        }))}
       </div>
     </div>`;
 }
 
 function flagReasonsHtml(flags) {
   if (!Array.isArray(flags) || flags.length === 0) {
-    return '<div class="detail-empty">No active flags.</div>';
+    return `<div class="detail-empty">${escapeHtml(t('detail.noFlags'))}</div>`;
   }
   return `<div class="flag-reason-list">${flags.map(flagReasonHtml).join('')}</div>`;
 }
@@ -27,7 +30,7 @@ function renderAssetDetail(asset) {
   const container = document.getElementById('asset-detail');
 
   if (!asset) {
-    container.innerHTML = '<div class="detail-empty">Select a machine in the fleet ranking.</div>';
+    container.innerHTML = `<div class="detail-empty">${escapeHtml(t('detail.empty'))}</div>`;
     return;
   }
 
@@ -38,32 +41,32 @@ function renderAssetDetail(asset) {
       ${statusPillHtml(asset.status)}
     </div>
 
-    <div class="detail-recommendation">${escapeHtml(asset.recommendation || EM_DASH)}</div>
+    <div class="detail-recommendation">${escapeHtml(recommendationText(asset.status, asset.recommendation))}</div>
 
     <dl class="data-list">
       <div class="data-row">
-        <dt>Priority rank</dt>
+        <dt>${escapeHtml(t('detail.priorityRank'))}</dt>
         <dd>${escapeHtml(String(asset.priorityRank ?? EM_DASH))}</dd>
       </div>
       <div class="data-row">
-        <dt>Live condition</dt>
+        <dt>${escapeHtml(t('detail.liveCondition'))}</dt>
         <dd>${liveConditionHtml(asset.liveCondition)}</dd>
       </div>
       <div class="data-row">
-        <dt>Utilization</dt>
+        <dt>${escapeHtml(t('detail.utilization'))}</dt>
         <dd>${escapeHtml(formatPercent(asset.utilizationPercent))}</dd>
       </div>
       <div class="data-row">
-        <dt>Productive share</dt>
+        <dt>${escapeHtml(t('detail.productiveShare'))}</dt>
         <dd>${escapeHtml(formatPercent(asset.productiveSharePercent))}</dd>
       </div>
       <div class="data-row">
-        <dt>Window coverage</dt>
+        <dt>${escapeHtml(t('detail.windowCoverage'))}</dt>
         <dd>${escapeHtml(formatHours(asset.windowCoverageHours))}</dd>
       </div>
     </dl>
 
-    <div class="section-label section-label-spaced">Why it is flagged</div>
+    <div class="section-label section-label-spaced">${escapeHtml(t('detail.whyFlagged'))}</div>
     ${flagReasonsHtml(asset.flags)}`;
 }
 
@@ -82,8 +85,9 @@ function renderCounterCards(asset) {
   const lifetimeAsset = document.getElementById('lifetime-counters-asset');
 
   if (!asset) {
-    rolling.innerHTML = '<div class="section-loading">No machine selected.</div>';
-    lifetime.innerHTML = '<div class="section-loading">No machine selected.</div>';
+    const noMachineHtml = `<div class="section-loading">${escapeHtml(t('counters.noMachine'))}</div>`;
+    rolling.innerHTML = noMachineHtml;
+    lifetime.innerHTML = noMachineHtml;
     rollingAsset.textContent = EM_DASH;
     lifetimeAsset.textContent = EM_DASH;
     return;

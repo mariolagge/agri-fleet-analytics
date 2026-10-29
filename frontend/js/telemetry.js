@@ -8,17 +8,17 @@ function telemetryReadingHtml(label, value) {
 
 function telemetryReadingsHtml(telemetry) {
   if (!telemetry) {
-    return `<div class="telemetry-readings">${telemetryReadingHtml('No reading in this run', '')}</div>`;
+    return `<div class="telemetry-readings">${telemetryReadingHtml(t('telemetry.noReading'), '')}</div>`;
   }
 
   return `
     <div class="telemetry-readings">
-      ${telemetryReadingHtml('PTO', formatBoolean(telemetry.ptoEngaged))}
-      ${telemetryReadingHtml('Speed', `${formatNumber(telemetry.groundSpeedKmh, 1)} km/h`)}
-      ${telemetryReadingHtml('Load', formatNumber(telemetry.loadFactor, 2))}
-      ${telemetryReadingHtml('Temp', `${formatNumber(telemetry.temperatureC, 1)} °C`)}
-      ${telemetryReadingHtml('Vibration', vibrationLevelDisplayName(telemetry.vibrationLevel))}
-      ${telemetryReadingHtml('At', formatTimeOfDay(telemetry.timestamp))}
+      ${telemetryReadingHtml(t('telemetry.pto'), formatBoolean(telemetry.ptoEngaged))}
+      ${telemetryReadingHtml(t('telemetry.speed'), `${formatNumber(telemetry.groundSpeedKmh, 1)} km/h`)}
+      ${telemetryReadingHtml(t('telemetry.load'), formatNumber(telemetry.loadFactor, 2))}
+      ${telemetryReadingHtml(t('telemetry.temp'), `${formatNumber(telemetry.temperatureC, 1)} °C`)}
+      ${telemetryReadingHtml(t('telemetry.vibration'), vibrationLevelDisplayName(telemetry.vibrationLevel))}
+      ${telemetryReadingHtml(t('telemetry.at'), formatTimeOfDay(telemetry.timestamp))}
     </div>`;
 }
 

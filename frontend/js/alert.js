@@ -6,7 +6,7 @@ function showAlert(message) {
   placeholder.innerHTML = `
     <div class="alert alert-danger" role="alert">
       <span>${escapeHtml(message)}</span>
-      <button type="button" class="btn-close" aria-label="Close">${tablerIcon('x', { size: 14 })}</button>
+      <button type="button" class="btn-close" aria-label="${escapeHtml(t('common.close'))}">${tablerIcon('x', { size: 14 })}</button>
     </div>`;
   placeholder.querySelector('.btn-close').addEventListener('click', clearAlerts);
 }

@@ -157,6 +157,14 @@ body::before {
   display: block;
 }
 
+/* ========== LANGUAGE TOGGLE ========== */
+.lang-toggle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
 /* ========== MAIN LAYOUT ========== */
 .main {
   display: flex;

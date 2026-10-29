@@ -35,8 +35,8 @@ function renderFleetDiagram(assets, selectedAssetId) {
     node.querySelector('.node-status').textContent = statusDisplayName(asset.status).toUpperCase();
     node.querySelector('.node-value').textContent = asset.utilizationPercent === null
       || asset.utilizationPercent === undefined
-      ? `${EM_DASH} util`
-      : `${formatNumber(asset.utilizationPercent, 0)}% util`;
+      ? `${EM_DASH} ${t('fleet.utilSuffix')}`
+      : `${formatNumber(asset.utilizationPercent, 0)}% ${t('fleet.utilSuffix')}`;
     node.querySelector('.node-rank').textContent = asset.priorityRank ?? EM_DASH;
   });
 }

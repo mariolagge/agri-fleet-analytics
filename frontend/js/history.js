@@ -3,6 +3,20 @@
 
 const HISTORY_COLUMN_COUNT = 7;
 
+// The fixed validation messages HistoryService sends, mapped to translation keys. Any
+// other message is shown as the API wrote it.
+const HISTORY_ERROR_KEYS = {
+  'from must be before to': 'history.error.fromBeforeTo',
+  'the requested range must not exceed 7 days': 'history.error.rangeTooLong',
+};
+
+let historyLoadedOnce = false;
+
+function historyErrorText(message) {
+  const key = HISTORY_ERROR_KEYS[message];
+  return key ? t(key) : message;
+}
+
 function historyRowHtml(row) {
   const counterCells = COUNTER_ORDER
     .map((counter) => `<td>${escapeHtml(formatNumber(row[counter], 2))}</td>`)
@@ -25,20 +39,31 @@ async function loadHistory() {
   const toValue = document.getElementById('history-to').value;
   const assetId = document.getElementById('history-asset').value;
 
-  showHistoryMessage('Loading hourly history…', 'history-empty');
+  historyLoadedOnce = true;
+  showHistoryMessage(t('history.loading'), 'history-empty');
 
   try {
     const response = await fetchHistory(toUtcInstant(fromValue), toUtcInstant(toValue), assetId);
     const rows = Array.isArray(response.rows) ? response.rows : [];
 
     if (rows.length === 0) {
-      showHistoryMessage('No hourly data for this period.', 'history-empty');
+      showHistoryMessage(t('history.empty'), 'history-empty');
       return;
     }
 
     document.getElementById('history-body').innerHTML = rows.map(historyRowHtml).join('');
   } catch (error) {
-    showHistoryMessage(error.message, 'history-error');
+    showHistoryMessage(historyErrorText(error.message), 'history-error');
+  }
+}
+
+// After a language switch: reload the table if the farmer already loaded a period,
+// otherwise show the prompt in the new language.
+function rerenderHistory() {
+  if (historyLoadedOnce) {
+    loadHistory();
+  } else {
+    showHistoryMessage(t('history.prompt'), 'history-empty');
   }
 }
 

@@ -48,9 +48,9 @@ async function refreshFleet() {
   } catch (error) {
     fleetAssets = [];
     renderFleet([], null, selectAsset);
-    showFleetRankingError('Could not load the fleet.');
+    showFleetRankingError(t('fleet.error'));
     renderSelection();
-    showAlert(`Could not load the fleet. ${error.message}. Check that OperatorApi is running behind the /api proxy.`);
+    showAlert(t('fleet.alert', { error: error.message }));
     return false;
   }
 }
@@ -61,7 +61,7 @@ async function refreshTelemetry() {
     renderTelemetryStrip(Array.isArray(response.assets) ? response.assets : []);
     return true;
   } catch (error) {
-    showTelemetryStripError('Could not load live telemetry.');
+    showTelemetryStripError(t('telemetry.error'));
     return false;
   }
 }
@@ -73,6 +73,16 @@ async function refreshAll() {
   }
 }
 
+// A language switch redraws what is already on screen in the new language. The fleet
+// poll result is kept in memory; the telemetry strip and history table are fetched again.
+function rerenderInNewLanguage() {
+  renderFleet(fleetAssets, selectedAssetId, selectAsset);
+  renderSelection();
+  refreshTelemetry();
+  rerenderHistory();
+}
+
+initLanguageToggle(rerenderInNewLanguage);
 initTablerIcons();
 initFleetDiagram(selectAsset, describeAsset);
 initHistory();

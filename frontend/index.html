@@ -8,6 +8,11 @@
 </head>
 <body>
   <div class="app">
+    <div class="lang-toggle" role="group" aria-label="Language / Sprache">
+      <button type="button" class="btn btn-sm lang-btn" data-language="en" aria-pressed="true">EN</button>
+      <button type="button" class="btn btn-sm lang-btn" data-language="de" aria-pressed="false">DE</button>
+    </div>
+
     <div id="alert-placeholder"></div>
 
     <div class="main">
@@ -45,7 +50,7 @@
                   <circle class="node-icon-bg" cx="-61" cy="0" r="54" />
                   <rect class="node-accent" x="-115" y="-54" width="230" height="3.5" clip-path="url(#clip-pill-source)" />
                   <g data-tabler-icon="tractor" data-tabler-size="54" data-tabler-stroke="var(--on-color)" transform="translate(-88, -27)"></g>
-                  <text class="node-label" x="10" y="-14">Tractor</text>
+                  <text class="node-label" x="10" y="-14" data-i18n="asset.TRACTOR">Tractor</text>
                   <text class="node-status" x="10" y="6">—</text>
                   <text class="node-value" x="10" y="26">—</text>
                   <circle class="node-rank-bg" cx="92" cy="-32" r="14" />
@@ -59,7 +64,7 @@
                   <circle class="node-icon-bg" cx="-57" cy="0" r="48" />
                   <rect class="node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-implement)" />
                   <g data-tabler-icon="blade" data-tabler-size="48" data-tabler-stroke="var(--on-color)" transform="translate(-81, -24)"></g>
-                  <text class="node-label" x="8" y="-13">Mower</text>
+                  <text class="node-label" x="8" y="-13" data-i18n="asset.MOWER">Mower</text>
                   <text class="node-status" x="8" y="5">—</text>
                   <text class="node-value" x="8" y="24">—</text>
                   <circle class="node-rank-bg" cx="84" cy="-28" r="13" />
@@ -73,7 +78,7 @@
                   <circle class="node-icon-bg" cx="-57" cy="0" r="48" />
                   <rect class="node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-implement)" />
                   <g data-tabler-icon="barrel" data-tabler-size="48" data-tabler-stroke="var(--on-color)" transform="translate(-81, -24)"></g>
-                  <text class="node-label" x="8" y="-13">Baler</text>
+                  <text class="node-label" x="8" y="-13" data-i18n="asset.BALER">Baler</text>
                   <text class="node-status" x="8" y="5">—</text>
                   <text class="node-value" x="8" y="24">—</text>
                   <circle class="node-rank-bg" cx="84" cy="-28" r="13" />
@@ -87,7 +92,7 @@
                   <circle class="node-icon-bg" cx="-57" cy="0" r="48" />
                   <rect class="node-accent" x="-105" y="-48" width="210" height="3" clip-path="url(#clip-pill-implement)" />
                   <g data-tabler-icon="blender" data-tabler-size="48" data-tabler-stroke="var(--on-color)" transform="translate(-81, -24)"></g>
-                  <text class="node-label" x="8" y="-13">Feed mixer</text>
+                  <text class="node-label" x="8" y="-13" data-i18n="asset.MIXER">Feed mixer</text>
                   <text class="node-status" x="8" y="5">—</text>
                   <text class="node-value" x="8" y="24">—</text>
                   <circle class="node-rank-bg" cx="84" cy="-28" r="13" />
@@ -98,7 +103,7 @@
             </div>
   
             <div class="fleet-ranking" id="fleet-ranking">
-              <div class="section-loading" id="fleet-ranking-loading">Loading fleet ranking…</div>
+              <div class="section-loading" id="fleet-ranking-loading" data-i18n="fleet.loading">Loading fleet ranking…</div>
             </div>
           </section>
 
@@ -106,33 +111,33 @@
           <section class="card data-section">
             <div class="card-header">
               <span class="card-title">
-                <span data-tabler-icon="history" data-tabler-size="13"></span> Hourly history
+                <span data-tabler-icon="history" data-tabler-size="13"></span> <span data-i18n="history.title">Hourly history</span>
               </span>
             </div>
             <div class="card-body-compact">
               <form id="history-form" class="history-form">
                 <div class="history-form-fields">
                   <div class="form-field">
-                    <label class="form-label" for="history-from">From</label>
+                    <label class="form-label" for="history-from" data-i18n="history.from">From</label>
                     <input type="datetime-local" class="form-input" id="history-from" required />
                   </div>
                   <div class="form-field">
-                    <label class="form-label" for="history-to">To</label>
+                    <label class="form-label" for="history-to" data-i18n="history.to">To</label>
                     <input type="datetime-local" class="form-input" id="history-to" required />
                   </div>
                   <div class="form-field">
-                    <label class="form-label" for="history-asset">Machine</label>
+                    <label class="form-label" for="history-asset" data-i18n="history.machine">Machine</label>
                     <select class="form-input" id="history-asset">
-                      <option value="">All machines</option>
-                      <option value="TRACTOR">Tractor</option>
-                      <option value="MOWER">Mower</option>
-                      <option value="BALER">Baler</option>
-                      <option value="MIXER">Feed mixer</option>
+                      <option value="" data-i18n="asset.all">All machines</option>
+                      <option value="TRACTOR" data-i18n="asset.TRACTOR">Tractor</option>
+                      <option value="MOWER" data-i18n="asset.MOWER">Mower</option>
+                      <option value="BALER" data-i18n="asset.BALER">Baler</option>
+                      <option value="MIXER" data-i18n="asset.MIXER">Feed mixer</option>
                     </select>
                   </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">
-                  <span data-tabler-icon="download" data-tabler-size="13"></span> Load
+                  <span data-tabler-icon="download" data-tabler-size="13"></span> <span data-i18n="history.load">Load</span>
                 </button>
               </form>
   
@@ -140,18 +145,18 @@
                 <table class="history-table">
                   <thead>
                     <tr>
-                      <th>Machine</th>
-                      <th>Hour</th>
-                      <th>Engine</th>
-                      <th>Working</th>
-                      <th>High load</th>
-                      <th>Temp excursion</th>
-                      <th>Vibration alert</th>
+                      <th data-i18n="history.machine">Machine</th>
+                      <th data-i18n="history.hour">Hour</th>
+                      <th data-i18n="counter.engineHours">Engine</th>
+                      <th data-i18n="counter.totalWorkingHours">Working</th>
+                      <th data-i18n="counter.highLoadHours">High load</th>
+                      <th data-i18n="counter.tempExcursionHours">Temp excursion</th>
+                      <th data-i18n="counter.vibrationAlertHours">Vibration alert</th>
                     </tr>
                   </thead>
                   <tbody id="history-body">
                     <tr>
-                      <td colspan="7" class="history-empty">Choose a period and click Load.</td>
+                      <td colspan="7" class="history-empty" data-i18n="history.prompt">Choose a period and click Load.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -165,11 +170,11 @@
           <aside class="card">
             <div class="card-header">
               <span class="card-title">
-                <span data-tabler-icon="tool" data-tabler-size="13"></span> Asset detail
+                <span data-tabler-icon="tool" data-tabler-size="13"></span> <span data-i18n="detail.title">Asset detail</span>
               </span>
             </div>
             <div class="card-body" id="asset-detail">
-              <div class="detail-empty">Select a machine in the fleet ranking.</div>
+              <div class="detail-empty" data-i18n="detail.empty">Select a machine in the fleet ranking.</div>
             </div>
           </aside>
 
@@ -177,13 +182,13 @@
             <div class="card">
               <div class="card-header">
                 <span class="card-title">
-                  <span data-tabler-icon="clock" data-tabler-size="13"></span> Rolling 24 h
+                  <span data-tabler-icon="clock" data-tabler-size="13"></span> <span data-i18n="counters.rolling">Rolling 24 h</span>
                 </span>
                 <span class="card-meta" id="rolling-counters-asset">—</span>
               </div>
               <div class="card-body-compact">
                 <dl class="data-list" id="rolling-counters">
-                  <div class="section-loading">No machine selected.</div>
+                  <div class="section-loading" data-i18n="counters.noMachine">No machine selected.</div>
                 </dl>
               </div>
             </div>
@@ -191,13 +196,13 @@
             <div class="card">
               <div class="card-header">
                 <span class="card-title">
-                  <span data-tabler-icon="hourglass" data-tabler-size="13"></span> Lifetime
+                  <span data-tabler-icon="hourglass" data-tabler-size="13"></span> <span data-i18n="counters.lifetime">Lifetime</span>
                 </span>
                 <span class="card-meta" id="lifetime-counters-asset">—</span>
               </div>
               <div class="card-body-compact">
                 <dl class="data-list" id="lifetime-counters">
-                  <div class="section-loading">No machine selected.</div>
+                  <div class="section-loading" data-i18n="counters.noMachine">No machine selected.</div>
                 </dl>
               </div>
             </div>
@@ -208,12 +213,12 @@
         <div class="card dashboard-telemetry">
           <div class="card-header">
             <span class="card-title">
-              <span data-tabler-icon="activity" data-tabler-size="13"></span> Live telemetry
+              <span data-tabler-icon="activity" data-tabler-size="13"></span> <span data-i18n="telemetry.title">Live telemetry</span>
             </span>
           </div>
           <div class="card-body-compact">
             <div class="component-list" id="telemetry-strip">
-              <div class="section-loading">Loading live telemetry…</div>
+              <div class="section-loading" data-i18n="telemetry.loading">Loading live telemetry…</div>
             </div>
           </div>
         </div>
@@ -223,6 +228,7 @@
 
   <div class="tooltip" id="tooltip"></div>
 
+  <script src="js/i18n.js"></script>
   <script src="js/icons.js"></script>
   <script src="js/format.js"></script>
   <script src="js/alert.js"></script>
