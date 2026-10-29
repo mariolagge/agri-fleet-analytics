@@ -17,19 +17,19 @@
   --text-secondary: #5a554c;
   --text-tertiary: #8f897e;
 
-  /* Brand accent — restrained indigo */
-  --accent: #4a4780;
-  --accent-hover: #3f3c6e;
-  --accent-deep: #3a3868;   /* gradient partner for --accent, never used alone */
-  --accent-soft: rgba(74, 71, 128, 0.07);
-  --accent-border: rgba(74, 71, 128, 0.18);
+  /* Brand accent — warm earth brown */
+  --accent: #6b4f3a;
+  --accent-hover: #5a4030;
+  --accent-deep: #4a3528;   /* gradient partner for --accent, never used alone */
+  --accent-soft: rgba(107, 79, 58, 0.08);
+  --accent-border: rgba(107, 79, 58, 0.22);
 
   /* The one foreground for text and icons sitting on a saturated fill */
   --on-color: #f8f7f4;
 
   /* Status — sophisticated, muted (GLOSSARY §6 status values) */
-  --good: #0d6b66;          /* deep refined teal */
-  --good-soft: rgba(13, 107, 102, 0.09);
+  --good: #3f5e49;          /* deep forest green */
+  --good-soft: rgba(63, 94, 73, 0.10);
   --watch: #b07d2a;         /* warm ochre / amber */
   --watch-soft: rgba(176, 125, 42, 0.10);
   --critical: #9b3535;      /* controlled deep red */
@@ -86,8 +86,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(13, 107, 102, 0.035), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 5%, rgba(74, 71, 128, 0.025), transparent 50%);
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(63, 94, 73, 0.035), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 5%, rgba(107, 79, 58, 0.025), transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -133,12 +133,12 @@ body::before {
   background: var(--accent);
   color: var(--on-color);
   border: 1px solid transparent;
-  box-shadow: 0 2px 10px rgba(74, 71, 128, 0.22);
+  box-shadow: 0 2px 10px rgba(107, 79, 58, 0.22);
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
-  box-shadow: 0 3px 14px rgba(74, 71, 128, 0.28);
+  box-shadow: 0 3px 14px rgba(107, 79, 58, 0.28);
 }
 
 .btn-sm {
@@ -324,7 +324,7 @@ body::before {
   width: 100%;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 28%, rgba(13, 107, 102, 0.02), transparent 55%),
+    radial-gradient(circle at 50% 28%, rgba(63, 94, 73, 0.02), transparent 55%),
     linear-gradient(180deg, var(--wash-top) 0%, var(--wash-bottom) 100%);
 }
 
@@ -918,7 +918,7 @@ select.form-input {
 }
 
 .history-table tbody tr:hover td {
-  background: rgba(13, 107, 102, 0.04);
+  background: rgba(63, 94, 73, 0.04);
 }
 
 .history-table tbody tr:last-child td {
