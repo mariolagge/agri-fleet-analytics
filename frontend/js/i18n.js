@@ -89,8 +89,8 @@ const TRANSLATIONS = {
     'history.error.fromBeforeTo': 'from must be before to',
     'history.error.rangeTooLong': 'the requested range must not exceed 7 days',
 
-    'demo.banner': 'Demo: sample data derived from the simulator, no backend running.',
-    'demo.sourceLink': 'View source on GitHub',
+    'demo.banner': 'Using hard coded sample data. Backend is fully implemented but not running for this demo.',
+    'demo.sourceLink': 'Project on GitHub',
   },
 
   de: {
@@ -179,8 +179,8 @@ const TRANSLATIONS = {
     'history.error.fromBeforeTo': '„Von“ muss vor „Bis“ liegen.',
     'history.error.rangeTooLong': 'Der Zeitraum darf höchstens 7 Tage umfassen.',
 
-    'demo.banner': 'Demo: Beispieldaten aus dem Simulator, kein Backend aktiv.',
-    'demo.sourceLink': 'Quellcode auf GitHub',
+    'demo.banner': 'Verwendet hard coded Beispieldaten. Das Backend ist vollständig implementiert, läuft für diese Demo aber nicht.',
+    'demo.sourceLink': 'Projekt auf GitHub',
   },
 };
 

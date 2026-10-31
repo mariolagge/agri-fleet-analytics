@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="ToBe_Definitions" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.51.1">
+  <bpmn:collaboration id="ToBe_Collaboration">
+    <bpmn:participant id="ToBe_Participant_Farmer" name="Farmer" processRef="ToBe_Process_MaintenancePlanning" />
+    <bpmn:participant id="ToBe_Participant_AgriFleet" name="AgriFleet Analytics" />
+    <bpmn:participant id="ToBe_Participant_Workshop" name="Machinery repair shop" />
+    <bpmn:messageFlow id="ToBe_Message_1" name="Ranking, status, recommendation, live condition" sourceRef="ToBe_Participant_AgriFleet" targetRef="ToBe_Task_CheckFleet" />
+    <bpmn:messageFlow id="ToBe_Message_2" name="Flags with counter, value, threshold" sourceRef="ToBe_Participant_AgriFleet" targetRef="ToBe_Task_OpenAssetDetail" />
+    <bpmn:messageFlow id="ToBe_Message_3" name="Flag reasons: counter, value, threshold" sourceRef="ToBe_Task_SendFlagReasons" targetRef="ToBe_Participant_Workshop" />
+    <bpmn:messageFlow id="ToBe_Message_4" name="Repair finished" sourceRef="ToBe_Participant_Workshop" targetRef="ToBe_Event_MachineRepaired" />
+    <bpmn:textAnnotation id="ToBe_Annotation_Repeat">
+      <bpmn:text>Repeated for each asset in rank order</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="ToBe_Association_1" sourceRef="ToBe_Gateway_AssetStatus" targetRef="ToBe_Annotation_Repeat" />
+  </bpmn:collaboration>
+  <bpmn:process id="ToBe_Process_MaintenancePlanning" isExecutable="false">
+    <bpmn:exclusiveGateway id="ToBe_Gateway_MergeCritical">
+      <bpmn:incoming>ToBe_Flow_3</bpmn:incoming>
+      <bpmn:incoming>ToBe_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="ToBe_Task_OpenAssetDetail" name="Review asset details">
+      <bpmn:incoming>ToBe_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="ToBe_Task_AssessJob" name="Assess job">
+      <bpmn:incoming>ToBe_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="ToBe_Gateway_DoItMyself" name="Do it myself?">
+      <bpmn:incoming>ToBe_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_11</bpmn:outgoing>
+      <bpmn:outgoing>ToBe_Flow_13</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="ToBe_Task_ServiceOnFarm" name="Service machine on farm">
+      <bpmn:incoming>ToBe_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lco870</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="ToBe_Task_SendFlagReasons" name="Send flag reasons">
+      <bpmn:incoming>ToBe_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="ToBe_Task_BringMachine" name="Drop off machine">
+      <bpmn:incoming>ToBe_Flow_14</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="ToBe_Event_MachineRepaired" name="Machine repaired">
+      <bpmn:incoming>ToBe_Flow_15</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_16</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="ToBe_Task_CollectMachine" name="Collect machine">
+      <bpmn:incoming>ToBe_Flow_16</bpmn:incoming>
+      <bpmn:outgoing>Flow_03vsldc</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="ToBe_Gateway_MergeOutcomes">
+      <bpmn:incoming>ToBe_Flow_5</bpmn:incoming>
+      <bpmn:incoming>ToBe_Flow_6</bpmn:incoming>
+      <bpmn:incoming>Flow_1bbo0zd</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_18</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_09t1y00">
+      <bpmn:incoming>Flow_1lco870</bpmn:incoming>
+      <bpmn:incoming>Flow_03vsldc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bbo0zd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="ToBe_Task_PlanMachineUse" name="Plan machine use">
+      <bpmn:incoming>ToBe_Flow_18</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_19</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="ToBe_End_UsePlanned" name="Machine use planned">
+      <bpmn:incoming>ToBe_Flow_19</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ToBe_Gateway_AssetStatus" name="Asset status?">
+      <bpmn:incoming>ToBe_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>ToBe_Flow_4</bpmn:outgoing>
+      <bpmn:outgoing>ToBe_Flow_6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="ToBe_Task_CheckFleet" name="Check fleet status">
+      <bpmn:incoming>ToBe_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:startEvent id="ToBe_Start_Morning" name="Every morning before work">
+      <bpmn:outgoing>ToBe_Flow_1</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="ToBe_Flow_3" name="CRITICAL" sourceRef="ToBe_Gateway_AssetStatus" targetRef="ToBe_Gateway_MergeCritical" />
+    <bpmn:sequenceFlow id="ToBe_Flow_7" sourceRef="ToBe_Start_ProblemNoticed" targetRef="ToBe_Gateway_MergeCritical" />
+    <bpmn:sequenceFlow id="ToBe_Flow_8" sourceRef="ToBe_Gateway_MergeCritical" targetRef="ToBe_Task_OpenAssetDetail" />
+    <bpmn:sequenceFlow id="ToBe_Flow_9" sourceRef="ToBe_Task_OpenAssetDetail" targetRef="ToBe_Task_AssessJob" />
+    <bpmn:sequenceFlow id="ToBe_Flow_10" sourceRef="ToBe_Task_AssessJob" targetRef="ToBe_Gateway_DoItMyself" />
+    <bpmn:sequenceFlow id="ToBe_Flow_11" name="Yes" sourceRef="ToBe_Gateway_DoItMyself" targetRef="ToBe_Task_ServiceOnFarm" />
+    <bpmn:sequenceFlow id="ToBe_Flow_13" name="No" sourceRef="ToBe_Gateway_DoItMyself" targetRef="ToBe_Task_SendFlagReasons" />
+    <bpmn:sequenceFlow id="Flow_1lco870" sourceRef="ToBe_Task_ServiceOnFarm" targetRef="Gateway_09t1y00" />
+    <bpmn:sequenceFlow id="ToBe_Flow_14" sourceRef="ToBe_Task_SendFlagReasons" targetRef="ToBe_Task_BringMachine" />
+    <bpmn:sequenceFlow id="ToBe_Flow_15" sourceRef="ToBe_Task_BringMachine" targetRef="ToBe_Event_MachineRepaired" />
+    <bpmn:sequenceFlow id="ToBe_Flow_16" sourceRef="ToBe_Event_MachineRepaired" targetRef="ToBe_Task_CollectMachine" />
+    <bpmn:sequenceFlow id="Flow_03vsldc" sourceRef="ToBe_Task_CollectMachine" targetRef="Gateway_09t1y00" />
+    <bpmn:sequenceFlow id="ToBe_Flow_5" sourceRef="ToBe_Task_PlanInspection" targetRef="ToBe_Gateway_MergeOutcomes" />
+    <bpmn:sequenceFlow id="ToBe_Flow_6" name="GOOD" sourceRef="ToBe_Gateway_AssetStatus" targetRef="ToBe_Gateway_MergeOutcomes" />
+    <bpmn:sequenceFlow id="Flow_1bbo0zd" sourceRef="Gateway_09t1y00" targetRef="ToBe_Gateway_MergeOutcomes" />
+    <bpmn:sequenceFlow id="ToBe_Flow_18" sourceRef="ToBe_Gateway_MergeOutcomes" targetRef="ToBe_Task_PlanMachineUse" />
+    <bpmn:sequenceFlow id="ToBe_Flow_19" sourceRef="ToBe_Task_PlanMachineUse" targetRef="ToBe_End_UsePlanned" />
+    <bpmn:sequenceFlow id="ToBe_Flow_4" name="WATCH" sourceRef="ToBe_Gateway_AssetStatus" targetRef="ToBe_Task_PlanInspection" />
+    <bpmn:sequenceFlow id="ToBe_Flow_2" sourceRef="ToBe_Task_CheckFleet" targetRef="ToBe_Gateway_AssetStatus" />
+    <bpmn:sequenceFlow id="ToBe_Flow_1" sourceRef="ToBe_Start_Morning" targetRef="ToBe_Task_CheckFleet" />
+    <bpmn:startEvent id="ToBe_Start_ProblemNoticed" name="Problem noticed during work">
+      <bpmn:outgoing>ToBe_Flow_7</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression" />
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:task id="ToBe_Task_PlanInspection" name="Schedule inspection">
+      <bpmn:incoming>ToBe_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>ToBe_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="ToBe_Diagram">
+    <bpmndi:BPMNPlane id="ToBe_Plane" bpmnElement="ToBe_Collaboration">
+      <bpmndi:BPMNShape id="ToBe_Participant_Farmer_di" bpmnElement="ToBe_Participant_Farmer" isHorizontal="true">
+        <dc:Bounds x="160" y="50" width="1190" height="450" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Gateway_MergeCritical_di" bpmnElement="ToBe_Gateway_MergeCritical" isMarkerVisible="true">
+        <dc:Bounds x="425" y="265" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_OpenAssetDetail_di" bpmnElement="ToBe_Task_OpenAssetDetail">
+        <dc:Bounds x="490" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_AssessJob_di" bpmnElement="ToBe_Task_AssessJob">
+        <dc:Bounds x="610" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Gateway_DoItMyself_di" bpmnElement="ToBe_Gateway_DoItMyself" isMarkerVisible="true">
+        <dc:Bounds x="735" y="265" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="728" y="241" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_ServiceOnFarm_di" bpmnElement="ToBe_Task_ServiceOnFarm">
+        <dc:Bounds x="840" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_SendFlagReasons_di" bpmnElement="ToBe_Task_SendFlagReasons">
+        <dc:Bounds x="710" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_BringMachine_di" bpmnElement="ToBe_Task_BringMachine">
+        <dc:Bounds x="840" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Event_MachineRepaired_di" bpmnElement="ToBe_Event_MachineRepaired">
+        <dc:Bounds x="972" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="963" y="336" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_CollectMachine_di" bpmnElement="ToBe_Task_CollectMachine">
+        <dc:Bounds x="1030" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Gateway_MergeOutcomes_di" bpmnElement="ToBe_Gateway_MergeOutcomes" isMarkerVisible="true">
+        <dc:Bounds x="1055" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09t1y00_di" bpmnElement="Gateway_09t1y00" isMarkerVisible="true">
+        <dc:Bounds x="1055" y="265" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_PlanMachineUse_di" bpmnElement="ToBe_Task_PlanMachineUse">
+        <dc:Bounds x="1120" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_End_UsePlanned_di" bpmnElement="ToBe_End_UsePlanned">
+        <dc:Bounds x="1242" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1229" y="224" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Gateway_AssetStatus_di" bpmnElement="ToBe_Gateway_AssetStatus" isMarkerVisible="true">
+        <dc:Bounds x="425" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="496" y="123" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_CheckFleet_di" bpmnElement="ToBe_Task_CheckFleet">
+        <dc:Bounds x="302" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Start_Morning_di" bpmnElement="ToBe_Start_Morning">
+        <dc:Bounds x="236" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="219" y="222" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Start_ProblemNoticed_di" bpmnElement="ToBe_Start_ProblemNoticed">
+        <dc:Bounds x="236" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214" y="313" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Task_PlanInspection_di" bpmnElement="ToBe_Task_PlanInspection">
+        <dc:Bounds x="490" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="ToBe_Flow_3_di" bpmnElement="ToBe_Flow_3">
+        <di:waypoint x="450" y="225" />
+        <di:waypoint x="450" y="265" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="231" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_7_di" bpmnElement="ToBe_Flow_7">
+        <di:waypoint x="272" y="290" />
+        <di:waypoint x="425" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_8_di" bpmnElement="ToBe_Flow_8">
+        <di:waypoint x="475" y="290" />
+        <di:waypoint x="490" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_9_di" bpmnElement="ToBe_Flow_9">
+        <di:waypoint x="590" y="290" />
+        <di:waypoint x="610" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_10_di" bpmnElement="ToBe_Flow_10">
+        <di:waypoint x="710" y="290" />
+        <di:waypoint x="735" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_11_di" bpmnElement="ToBe_Flow_11">
+        <di:waypoint x="785" y="290" />
+        <di:waypoint x="840" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="785" y="273" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_13_di" bpmnElement="ToBe_Flow_13">
+        <di:waypoint x="760" y="315" />
+        <di:waypoint x="760" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="768" y="324" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lco870_di" bpmnElement="Flow_1lco870">
+        <di:waypoint x="940" y="290" />
+        <di:waypoint x="1055" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_14_di" bpmnElement="ToBe_Flow_14">
+        <di:waypoint x="810" y="390" />
+        <di:waypoint x="840" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_15_di" bpmnElement="ToBe_Flow_15">
+        <di:waypoint x="940" y="390" />
+        <di:waypoint x="972" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_16_di" bpmnElement="ToBe_Flow_16">
+        <di:waypoint x="1008" y="390" />
+        <di:waypoint x="1030" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03vsldc_di" bpmnElement="Flow_03vsldc">
+        <di:waypoint x="1080" y="350" />
+        <di:waypoint x="1080" y="315" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_5_di" bpmnElement="ToBe_Flow_5">
+        <di:waypoint x="590" y="200" />
+        <di:waypoint x="1055" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_6_di" bpmnElement="ToBe_Flow_6">
+        <di:waypoint x="450" y="175" />
+        <di:waypoint x="450" y="100" />
+        <di:waypoint x="1080" y="100" />
+        <di:waypoint x="1080" y="175" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="461" y="81" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bbo0zd_di" bpmnElement="Flow_1bbo0zd">
+        <di:waypoint x="1080" y="265" />
+        <di:waypoint x="1080" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_18_di" bpmnElement="ToBe_Flow_18">
+        <di:waypoint x="1105" y="200" />
+        <di:waypoint x="1120" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_19_di" bpmnElement="ToBe_Flow_19">
+        <di:waypoint x="1220" y="200" />
+        <di:waypoint x="1242" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_4_di" bpmnElement="ToBe_Flow_4">
+        <di:waypoint x="475" y="200" />
+        <di:waypoint x="490" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="458" y="163" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_2_di" bpmnElement="ToBe_Flow_2">
+        <di:waypoint x="402" y="200" />
+        <di:waypoint x="425" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Flow_1_di" bpmnElement="ToBe_Flow_1">
+        <di:waypoint x="272" y="200" />
+        <di:waypoint x="302" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ToBe_Participant_AgriFleet_di" bpmnElement="ToBe_Participant_AgriFleet" isHorizontal="true">
+        <dc:Bounds x="160" y="522" width="1190" height="65" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Participant_Workshop_di" bpmnElement="ToBe_Participant_Workshop" isHorizontal="true">
+        <dc:Bounds x="160" y="605" width="1190" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ToBe_Annotation_Repeat_di" bpmnElement="ToBe_Annotation_Repeat">
+        <dc:Bounds x="362" y="93" width="100" height="57" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="ToBe_Message_1_di" bpmnElement="ToBe_Message_1">
+        <di:waypoint x="352" y="522" />
+        <di:waypoint x="352" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="357" y="400" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Message_2_di" bpmnElement="ToBe_Message_2">
+        <di:waypoint x="540" y="522" />
+        <di:waypoint x="540" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="545" y="390" width="72" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Message_3_di" bpmnElement="ToBe_Message_3">
+        <di:waypoint x="760" y="430" />
+        <di:waypoint x="760" y="605" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="765" y="450" width="72" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Message_4_di" bpmnElement="ToBe_Message_4">
+        <di:waypoint x="990" y="605" />
+        <di:waypoint x="990" y="408" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="996" y="463" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ToBe_Association_1_di" bpmnElement="ToBe_Association_1">
+        <di:waypoint x="438" y="187" />
+        <di:waypoint x="425" y="150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

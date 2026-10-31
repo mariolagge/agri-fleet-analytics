@@ -6,8 +6,8 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 
 ## 1. How to read this map
 
-- **Personas** are the stakeholders in `STAKEHOLDERS.md` §1: the farmer (`STK-FARMER`) and the workshop technician (`STK-WORKSHOP`). The workshop never uses the system; its stories describe what it receives through the farmer.
-- **Epics.** Epics E1–E5 are the activities of the to-be BPMN model in `PROCESS.md` §3. They are grouped by persona: the farmer (E1–E4), then the workshop technician (E5). Within each group, epics follow the order of the to-be process. Each epic names its BPMN element and the decision in REQ-DECISIONS it supports.
+- **Personas** are the stakeholders in `STAKEHOLDERS.md` §1: the farmer (`STK-FARMER`) and the machinery repair shop technician (`STK-WORKSHOP`). The machinery repair shop never uses the system; its stories describe what it receives through the farmer.
+- **Epics.** Epics E1–E5 are the activities of the to-be BPMN model in `PROCESS.md` §3. They are grouped by persona: the farmer (E1–E4), then the machinery repair shop technician (E5). Within each group, epics follow the order of the to-be process. Each epic names its BPMN element and the decision in REQ-DECISIONS it supports.
 - **Numbering.** A story's ID is `US-<epic>.<story>`, so `US-2.1` is the first story of epic E2. Within an epic, stories are ordered by slice (Must, then Should, then Could) and then by the order of the to-be process.
 - **Slices.** *Must* is the implemented release; it supports all three decisions in REQ-DECISIONS. A Must story's slice is the MoSCoW priority of its requirements in `SPEC.md`, and all requirements of one story share the same priority. *Should* and *Could* stories form the backlog: they are not implemented and have no requirements in `SPEC.md` yet, so their slice is set in this map. *Should* makes the system more useful in daily work, but every decision still works without it. *Could* is a nice-to-have. *Won't* marks deliberate scope boundaries, not planned work (§4).
 - **Story points** are relative estimates on the Fibonacci scale 1, 2, 3, 5, 8. Must stories were estimated in retrospect from the implemented scope; backlog stories were estimated up front. Points compare stories with each other; they are not hours.
@@ -33,7 +33,7 @@ This document owns the epics (`E…` IDs), the user stories (`US-…` IDs) and t
 
 The farmer sees the state of the whole fleet in one place every morning.
 
-To-be BPMN: *Check fleet ranking and live telemetry strip* · Decision: 1 Maintenance prioritisation
+To-be BPMN: *Check fleet status* · Decision: 1 Maintenance prioritisation
 
 **US-1.1** As a farmer, I want to see all machines on one screen, so that I do not have to check each machine on its own.
 
@@ -63,7 +63,7 @@ To-be BPMN: *Check fleet ranking and live telemetry strip* · Decision: 1 Mainte
 
 The farmer knows which machine needs attention first and what kind of attention it needs.
 
-To-be BPMN: *Asset status?*, *Plan inspection within the next 15–20 engine hours* · Decision: 1 Maintenance prioritisation
+To-be BPMN: *Asset status?*, *Schedule inspection* · Decision: 1 Maintenance prioritisation
 
 **US-2.1** As a farmer, I want the fleet ranked by urgency, so that I look at the most urgent machine first.
 
@@ -93,7 +93,7 @@ To-be BPMN: *Asset status?*, *Plan inspection within the next 15–20 engine hou
 
 The farmer understands why a machine is flagged and can decide who repairs it.
 
-To-be BPMN: *Open asset detail: flags with reasons, live condition* · Decision: 1 Maintenance prioritisation
+To-be BPMN: *Review asset details* · Decision: 1 Maintenance prioritisation
 
 **US-3.1** As a farmer, I want to open one machine on its own, so that I can read its flags, counters and live condition before deciding who repairs it.
 
@@ -117,7 +117,7 @@ To-be BPMN: *Open asset detail: flags with reasons, live condition* · Decision:
 
 The farmer decides which machines to work today and how hard.
 
-To-be BPMN: *Plan machine use from live condition and 24 h flags* · Decision: 2 Short-term operational risk
+To-be BPMN: *Plan machine use* · Decision: 2 Short-term operational risk
 
 **US-4.1** As a farmer, I want each machine's condition from its latest reading, so that I stop working a machine that is under strain right now.
 
@@ -137,37 +137,37 @@ To-be BPMN: *Plan machine use from live condition and 24 h flags* · Decision: 2
 - Source: NEED-OPERATIONAL-RISK
 - Requirements: not yet specified
 
-### E5 Hand over to the workshop
+### E5 Hand over to the machinery repair shop
 
-The workshop technician receives the facts behind a repair without relying on the farmer's memory.
+The machinery repair shop technician receives the facts behind a repair without relying on the farmer's memory.
 
-To-be BPMN: *Send flag reasons to workshop* · Decision: 1 Maintenance prioritisation
+To-be BPMN: *Send flag reasons* · Decision: 1 Maintenance prioritisation
 
-**US-5.1** As a workshop technician, I want to receive the counter, value and threshold behind each flag, so that I know why the machine was brought in without relying on a verbal description.
+**US-5.1** As a machinery repair shop technician, I want to receive the counter, value and threshold behind each flag, so that I know why the machine was brought in without relying on a verbal description.
 
 - Slice: Must · Points: 1
 - Source: NEED-FLAG-REASON
 - Requirements: REQ-FLAGS, REQ-GOAL-TRACE
 
-**US-5.2** As a workshop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
+**US-5.2** As a machinery repair shop technician, I want a machine's usage recorded automatically hour by hour, so that I can see how it was used without depending on the farmer's memory.
 
 - Slice: Must · Points: 5
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-BUCKETS
 
-**US-5.3** As a workshop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
+**US-5.3** As a machinery repair shop technician, I want to review a machine's usage hour by hour over the past days, so that I understand how it was worked before it came in.
 
 - Slice: Must · Points: 3
 - Source: NEED-HISTORY-REVIEW
 - Requirements: REQ-API-HISTORY
 
-**US-5.4** As a workshop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
+**US-5.4** As a machinery repair shop technician, I want a printable sheet with a machine's flags, values, thresholds and lifetime hours, so that I get the facts on paper when the machine arrives.
 
 - Slice: Should · Points: 2
 - Source: NEED-FLAG-REASON, NEED-LIFETIME-HOURS
 - Requirements: not yet specified
 
-**US-5.5** As a workshop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
+**US-5.5** As a machinery repair shop technician, I want to see which flags were active over the past days, so that I can spot a problem that comes and goes.
 
 - Slice: Could · Points: 5
 - Source: NEED-HISTORY-REVIEW, NEED-FLAG-REASON
@@ -184,7 +184,7 @@ These are deliberate limits of the system, not planned work.
 | Notifications | E1 | The farmer checks the dashboard every morning; the system sends nothing. | `PROCESS.md` §4 |
 | Manufacturer service intervals | E2 | The hour-meter check of the as-is process continues unchanged. | `PROCESS.md` §4 |
 | Maintenance log | — | Usage is recorded; performed maintenance is not. | `PROCESS.md` §4 |
-| Workshop access | E5 | The workshop never uses the system and gets the flag reasons only through the farmer. | `PROCESS.md` §4 |
+| Machinery repair shop access | E5 | The machinery repair shop never uses the system and gets the flag reasons only through the farmer. | `PROCESS.md` §4 |
 | Asset registration | — | The fleet is fixed to four machines. | REQ-GOAL-SCOPE |
 | Write access, authentication | — | The API is read-only and open. | REQ-API-COMMON |
 
