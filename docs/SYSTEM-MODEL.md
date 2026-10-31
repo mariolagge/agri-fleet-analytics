@@ -19,7 +19,7 @@ The system of interest, the machines that feed it telemetry, and the stakeholder
 ```mermaid
 flowchart LR
     farmer["Farmer<br/>(STK-FARMER)"]
-    workshop["Independent workshop technician<br/>(STK-WORKSHOP)"]
+    workshop["Machinery repair shop technician<br/>(STK-WORKSHOP)"]
     machines["Tractor, mower, baler, feed mixer<br/>(telematics simulated by the Simulator module)"]
     system["AgriFleet Analytics<br/>(system of interest)"]
     machines -- "telemetry messages" --> system

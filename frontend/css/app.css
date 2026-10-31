@@ -182,10 +182,10 @@ body::before {
   justify-content: center;
   gap: 6px;
   padding: 6px 12px;
-  font-size: 0.85rem;
+  font-size: 12.75px; /* same as the match-talents concept banner (0.85rem of a 15px root) */
   text-align: center;
   color: var(--watch-text);
-  background: var(--watch-soft);
+  background: rgba(176, 125, 42, 0.12); /* same tint as the match-talents concept banner */
   border-radius: var(--radius-sm);
 }
 
@@ -280,7 +280,9 @@ body::before {
 }
 
 .counter-pair .card-header,
-.dashboard-telemetry .card-header {
+.dashboard-telemetry .card-header,
+.dashboard-asset > aside.card > .card-header,
+.data-section > .card-header {
   border-bottom: none;
 }
 
