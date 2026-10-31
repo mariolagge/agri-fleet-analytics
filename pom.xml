@@ -20,9 +20,9 @@
 	</properties>
 
 	<modules>
-		<module>Simulator</module>
-		<module>TelemetryProcessor</module>
-		<module>OperatorApi</module>
+		<module>simulator</module>
+		<module>telemetryprocessor</module>
+		<module>operatorapi</module>
 	</modules>
 
 	<build>

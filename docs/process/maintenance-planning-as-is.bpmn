@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="AsIs_Definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="AsIs_Collaboration">
+    <bpmn:participant id="AsIs_Participant_Farmer" name="Farmer" processRef="AsIs_Process_MaintenancePlanning" />
+    <bpmn:participant id="AsIs_Participant_Workshop" name="Independent workshop" />
+    <bpmn:messageFlow id="AsIs_Message_1" name="Verbal problem description" sourceRef="AsIs_Task_DescribeProblem" targetRef="AsIs_Participant_Workshop" />
+    <bpmn:messageFlow id="AsIs_Message_2" name="Repair finished" sourceRef="AsIs_Participant_Workshop" targetRef="AsIs_Event_MachineRepaired" />
+  </bpmn:collaboration>
+  <bpmn:process id="AsIs_Process_MaintenancePlanning" isExecutable="false">
+    <bpmn:startEvent id="AsIs_Start_HourMeter" name="Hour meter read during daily use">
+      <bpmn:outgoing>AsIs_Flow_1</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression" />
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:task id="AsIs_Task_CompareInterval" name="Compare hour meter with service interval from memory">
+      <bpmn:incoming>AsIs_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="AsIs_Gateway_ServiceDue" name="Service due?">
+      <bpmn:incoming>AsIs_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>AsIs_Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="AsIs_End_NoService" name="No service needed">
+      <bpmn:incoming>AsIs_Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="AsIs_Start_ProblemNoticed" name="Problem noticed during work">
+      <bpmn:outgoing>AsIs_Flow_5</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression" />
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="AsIs_Gateway_MergeTriggers">
+      <bpmn:incoming>AsIs_Flow_4</bpmn:incoming>
+      <bpmn:incoming>AsIs_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="AsIs_Task_AssessJob" name="Assess job: complexity, tools, time pressure, cost">
+      <bpmn:incoming>AsIs_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="AsIs_Gateway_DoItMyself" name="Do it myself?">
+      <bpmn:incoming>AsIs_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_8</bpmn:outgoing>
+      <bpmn:outgoing>AsIs_Flow_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="AsIs_Task_ServiceOnFarm" name="Service or repair machine on the farm">
+      <bpmn:incoming>AsIs_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="AsIs_Task_DescribeProblem" name="Describe problem to workshop">
+      <bpmn:incoming>AsIs_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="AsIs_Task_BringMachine" name="Bring machine to workshop">
+      <bpmn:incoming>AsIs_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="AsIs_Event_MachineRepaired" name="Machine repaired">
+      <bpmn:incoming>AsIs_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_13</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="AsIs_Task_CollectMachine" name="Collect machine from workshop">
+      <bpmn:incoming>AsIs_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="AsIs_Gateway_MergeOutcomes">
+      <bpmn:incoming>AsIs_Flow_9</bpmn:incoming>
+      <bpmn:incoming>AsIs_Flow_14</bpmn:incoming>
+      <bpmn:outgoing>AsIs_Flow_15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="AsIs_End_MachineInUse" name="Machine back in use">
+      <bpmn:incoming>AsIs_Flow_15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="AsIs_Flow_1" sourceRef="AsIs_Start_HourMeter" targetRef="AsIs_Task_CompareInterval" />
+    <bpmn:sequenceFlow id="AsIs_Flow_2" sourceRef="AsIs_Task_CompareInterval" targetRef="AsIs_Gateway_ServiceDue" />
+    <bpmn:sequenceFlow id="AsIs_Flow_3" name="No" sourceRef="AsIs_Gateway_ServiceDue" targetRef="AsIs_End_NoService" />
+    <bpmn:sequenceFlow id="AsIs_Flow_4" name="Yes" sourceRef="AsIs_Gateway_ServiceDue" targetRef="AsIs_Gateway_MergeTriggers" />
+    <bpmn:sequenceFlow id="AsIs_Flow_5" sourceRef="AsIs_Start_ProblemNoticed" targetRef="AsIs_Gateway_MergeTriggers" />
+    <bpmn:sequenceFlow id="AsIs_Flow_6" sourceRef="AsIs_Gateway_MergeTriggers" targetRef="AsIs_Task_AssessJob" />
+    <bpmn:sequenceFlow id="AsIs_Flow_7" sourceRef="AsIs_Task_AssessJob" targetRef="AsIs_Gateway_DoItMyself" />
+    <bpmn:sequenceFlow id="AsIs_Flow_8" name="Yes" sourceRef="AsIs_Gateway_DoItMyself" targetRef="AsIs_Task_ServiceOnFarm" />
+    <bpmn:sequenceFlow id="AsIs_Flow_9" sourceRef="AsIs_Task_ServiceOnFarm" targetRef="AsIs_Gateway_MergeOutcomes" />
+    <bpmn:sequenceFlow id="AsIs_Flow_10" name="No" sourceRef="AsIs_Gateway_DoItMyself" targetRef="AsIs_Task_DescribeProblem" />
+    <bpmn:sequenceFlow id="AsIs_Flow_11" sourceRef="AsIs_Task_DescribeProblem" targetRef="AsIs_Task_BringMachine" />
+    <bpmn:sequenceFlow id="AsIs_Flow_12" sourceRef="AsIs_Task_BringMachine" targetRef="AsIs_Event_MachineRepaired" />
+    <bpmn:sequenceFlow id="AsIs_Flow_13" sourceRef="AsIs_Event_MachineRepaired" targetRef="AsIs_Task_CollectMachine" />
+    <bpmn:sequenceFlow id="AsIs_Flow_14" sourceRef="AsIs_Task_CollectMachine" targetRef="AsIs_Gateway_MergeOutcomes" />
+    <bpmn:sequenceFlow id="AsIs_Flow_15" sourceRef="AsIs_Gateway_MergeOutcomes" targetRef="AsIs_End_MachineInUse" />
+    <bpmn:textAnnotation id="AsIs_Annotation_NoRecord">
+      <bpmn:text>Nothing is recorded: no usage log, no maintenance log.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="AsIs_Association_1" sourceRef="AsIs_End_MachineInUse" targetRef="AsIs_Annotation_NoRecord" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="AsIs_Diagram">
+    <bpmndi:BPMNPlane id="AsIs_Plane" bpmnElement="AsIs_Collaboration">
+      <bpmndi:BPMNShape id="AsIs_Participant_Farmer_di" bpmnElement="AsIs_Participant_Farmer" isHorizontal="true">
+        <dc:Bounds x="150" y="60" width="1900" height="440" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Participant_Workshop_di" bpmnElement="AsIs_Participant_Workshop" isHorizontal="true">
+        <dc:Bounds x="150" y="560" width="1900" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Start_HourMeter_di" bpmnElement="AsIs_Start_HourMeter">
+        <dc:Bounds x="232" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_CompareInterval_di" bpmnElement="AsIs_Task_CompareInterval">
+        <dc:Bounds x="330" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Gateway_ServiceDue_di" bpmnElement="AsIs_Gateway_ServiceDue" isMarkerVisible="true">
+        <dc:Bounds x="505" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_End_NoService_di" bpmnElement="AsIs_End_NoService">
+        <dc:Bounds x="512" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Start_ProblemNoticed_di" bpmnElement="AsIs_Start_ProblemNoticed">
+        <dc:Bounds x="232" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Gateway_MergeTriggers_di" bpmnElement="AsIs_Gateway_MergeTriggers" isMarkerVisible="true">
+        <dc:Bounds x="655" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_AssessJob_di" bpmnElement="AsIs_Task_AssessJob">
+        <dc:Bounds x="780" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Gateway_DoItMyself_di" bpmnElement="AsIs_Gateway_DoItMyself" isMarkerVisible="true">
+        <dc:Bounds x="955" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_ServiceOnFarm_di" bpmnElement="AsIs_Task_ServiceOnFarm">
+        <dc:Bounds x="1080" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_DescribeProblem_di" bpmnElement="AsIs_Task_DescribeProblem">
+        <dc:Bounds x="1080" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_BringMachine_di" bpmnElement="AsIs_Task_BringMachine">
+        <dc:Bounds x="1230" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Event_MachineRepaired_di" bpmnElement="AsIs_Event_MachineRepaired">
+        <dc:Bounds x="1412" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Task_CollectMachine_di" bpmnElement="AsIs_Task_CollectMachine">
+        <dc:Bounds x="1530" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Gateway_MergeOutcomes_di" bpmnElement="AsIs_Gateway_MergeOutcomes" isMarkerVisible="true">
+        <dc:Bounds x="1705" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_End_MachineInUse_di" bpmnElement="AsIs_End_MachineInUse">
+        <dc:Bounds x="1862" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AsIs_Annotation_NoRecord_di" bpmnElement="AsIs_Annotation_NoRecord">
+        <dc:Bounds x="1830" y="70" width="180" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="AsIs_Flow_1_di" bpmnElement="AsIs_Flow_1">
+        <di:waypoint x="268" y="200" />
+        <di:waypoint x="330" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_2_di" bpmnElement="AsIs_Flow_2">
+        <di:waypoint x="430" y="200" />
+        <di:waypoint x="505" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_3_di" bpmnElement="AsIs_Flow_3">
+        <di:waypoint x="530" y="175" />
+        <di:waypoint x="530" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_4_di" bpmnElement="AsIs_Flow_4">
+        <di:waypoint x="555" y="200" />
+        <di:waypoint x="655" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_5_di" bpmnElement="AsIs_Flow_5">
+        <di:waypoint x="268" y="380" />
+        <di:waypoint x="680" y="380" />
+        <di:waypoint x="680" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_6_di" bpmnElement="AsIs_Flow_6">
+        <di:waypoint x="705" y="200" />
+        <di:waypoint x="780" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_7_di" bpmnElement="AsIs_Flow_7">
+        <di:waypoint x="880" y="200" />
+        <di:waypoint x="955" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_8_di" bpmnElement="AsIs_Flow_8">
+        <di:waypoint x="1005" y="200" />
+        <di:waypoint x="1080" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_9_di" bpmnElement="AsIs_Flow_9">
+        <di:waypoint x="1180" y="200" />
+        <di:waypoint x="1705" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_10_di" bpmnElement="AsIs_Flow_10">
+        <di:waypoint x="980" y="225" />
+        <di:waypoint x="980" y="380" />
+        <di:waypoint x="1080" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_11_di" bpmnElement="AsIs_Flow_11">
+        <di:waypoint x="1180" y="380" />
+        <di:waypoint x="1230" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_12_di" bpmnElement="AsIs_Flow_12">
+        <di:waypoint x="1330" y="380" />
+        <di:waypoint x="1412" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_13_di" bpmnElement="AsIs_Flow_13">
+        <di:waypoint x="1448" y="380" />
+        <di:waypoint x="1530" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_14_di" bpmnElement="AsIs_Flow_14">
+        <di:waypoint x="1630" y="380" />
+        <di:waypoint x="1730" y="380" />
+        <di:waypoint x="1730" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Flow_15_di" bpmnElement="AsIs_Flow_15">
+        <di:waypoint x="1755" y="200" />
+        <di:waypoint x="1862" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Association_1_di" bpmnElement="AsIs_Association_1">
+        <di:waypoint x="1884" y="183" />
+        <di:waypoint x="1905" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Message_1_di" bpmnElement="AsIs_Message_1">
+        <di:waypoint x="1130" y="420" />
+        <di:waypoint x="1130" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="AsIs_Message_2_di" bpmnElement="AsIs_Message_2">
+        <di:waypoint x="1430" y="560" />
+        <di:waypoint x="1430" y="398" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

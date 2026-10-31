@@ -1,0 +1,1049 @@
+/*
+ * Design system carried over unchanged from the previous portfolio project's GUI:
+ * colours, radii, shadows, type scale and spacing are the originals. See CLAUDE.md
+ * "Frontend design system" — new components compose these tokens, they do not add to them.
+ */
+
+:root {
+  /* Warm stone / off-white base */
+  --bg: #f3f0ea;
+  --surface: #fdfcf9;
+  --surface-elevated: #ffffff;
+  --border: rgba(55, 48, 40, 0.08);
+  --border-strong: rgba(55, 48, 40, 0.14);
+
+  /* Warm near-black text hierarchy */
+  --text: #1f1d1a;
+  --text-secondary: #5a554c;
+  --text-tertiary: #8f897e;
+
+  /* Brand accent — warm earth brown */
+  --accent: #6b4f3a;
+  --accent-hover: #5a4030;
+  --accent-deep: #4a3528;   /* gradient partner for --accent, never used alone */
+  --accent-soft: rgba(107, 79, 58, 0.08);
+  --accent-border: rgba(107, 79, 58, 0.22);
+
+  /* The one foreground for text and icons sitting on a saturated fill */
+  --on-color: #f8f7f4;
+
+  /* Status — sophisticated, muted (GLOSSARY §6 status values) */
+  --good: #3f5e49;          /* deep forest green */
+  --good-soft: rgba(63, 94, 73, 0.10);
+  --watch: #b07d2a;         /* warm ochre / amber */
+  --watch-soft: rgba(176, 125, 42, 0.10);
+  --critical: #9b3535;      /* controlled deep red */
+  --critical-soft: rgba(155, 53, 53, 0.09);
+
+  /* Neutral / no-signal */
+  --stale: #8f897e;
+  --stale-soft: rgba(143, 137, 126, 0.10);
+
+  /* Recessed surfaces and the hairline the diagram draws with */
+  --surface-sunken: #ebe8e2;
+  --wash-top: #faf9f6;
+  --wash-bottom: #f5f2ec;
+  --hairline: #d4cfc4;
+
+  /* Per-asset identity colours (GLOSSARY §2) — icon chips only, never status */
+  --asset-tractor: #3d6fa8;
+  --asset-mower: #0d7a75;
+  --asset-baler: #b07d2a;
+  --asset-mixer: #6a5a8a;
+
+  /* Depth — soft, warm-tinted, restrained */
+  --shadow-sm: 0 1px 2px rgba(40, 35, 28, 0.04);
+  --shadow: 0 3px 12px rgba(40, 35, 28, 0.05), 0 1px 3px rgba(40, 35, 28, 0.03);
+  --shadow-lg: 0 10px 32px rgba(40, 35, 28, 0.06), 0 3px 10px rgba(40, 35, 28, 0.04);
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --mono: "SF Mono", "Fira Code", ui-monospace, monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Extremely subtle warm ambient — almost imperceptible */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -15%, rgba(63, 94, 73, 0.035), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 5%, rgba(107, 79, 58, 0.025), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 14px 18px 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 530;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+}
+
+.btn:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.btn:active {
+  transform: translateY(0.5px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--on-color);
+  border: 1px solid transparent;
+  box-shadow: 0 2px 10px rgba(107, 79, 58, 0.22);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 3px 14px rgba(107, 79, 58, 0.28);
+}
+
+.btn-sm {
+  padding: 6px 11px;
+  font-size: 11.5px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn .tabler-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ========== LANGUAGE TOGGLE ========== */
+.lang-toggle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+/* ========== DEMO BANNER (GitHub Pages build only) ========== */
+.demo-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 10px;
+  padding: 8px 13px;
+  font-size: 12.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-sm);
+}
+
+.demo-banner a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ========== MAIN LAYOUT ========== */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard-top {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Phones: the wrapper steps aside and the history moves to the end of the page. */
+.dashboard-left { display: contents; }
+.dashboard-left > .data-section { order: 1; }
+
+.dashboard-asset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Side by side on phones; stacked once the asset column becomes a narrow side column. */
+.counter-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+/*
+ * Layout by screen width. The detail cards get fixed, narrow columns so labels stay
+ * close to their numbers; the fleet diagram column takes whatever width is left.
+ *   phone  (< 760px):   everything stacked, in HTML order
+ *   tablet (>= 760px):  fleet on the left; telemetry, asset detail and counters on the right
+ *   laptop (>= 1200px): telemetry spans the top right; detail and counters get a column each below it
+ * The fleet card spans two rows, so the right-hand cards stack without leaving gaps.
+ */
+@media (min-width: 760px) {
+  .dashboard-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-areas:
+      "fleet telemetry"
+      "fleet asset";
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  /* Fleet card with the hourly history right under it, at the same width. */
+  .dashboard-left {
+    grid-area: fleet;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+  .dashboard-asset { grid-area: asset; }
+  .dashboard-telemetry { grid-area: telemetry; }
+  .counter-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-top {
+    grid-template-columns: minmax(0, 1fr) 300px 250px;
+    grid-template-areas:
+      "fleet telemetry telemetry"
+      "fleet detail    counters";
+  }
+
+  /* The wrapper steps aside so detail and counters become grid cells of their own. */
+  .dashboard-asset { display: contents; }
+  .dashboard-asset > .card { grid-area: detail; }
+  .counter-pair { grid-area: counters; }
+}
+
+.counter-pair .card,
+.dashboard-telemetry {
+  min-width: 0;
+}
+
+.counter-pair .card-header,
+.dashboard-telemetry .card-header {
+  border-bottom: none;
+}
+
+/* ========== CARDS ========== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 15px 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 620;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+}
+
+.card-body-compact {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.section-label-spaced {
+  margin-top: 14px;
+}
+
+.section-loading {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  padding: 6px 4px;
+}
+
+/* ========== SVG VISUALISATION SHELL ========== */
+.viz-card {
+  padding: 0;
+  position: relative;
+  min-width: 0;
+}
+
+.svg-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(63, 94, 73, 0.02), transparent 55%),
+    linear-gradient(180deg, var(--wash-top) 0%, var(--wash-bottom) 100%);
+}
+
+/* Capped so the diagram does not grow taller than the cards beside it on wide screens. */
+.viz-svg {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  display: block;
+}
+
+/* On phones the diagram text is too small to read; the ranking list below shows the same. */
+@media (max-width: 479px) {
+  .svg-wrap { display: none; }
+  .fleet-ranking { border-top: none; }
+}
+
+.node-group {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.node-group:hover .node-bg {
+  filter: brightness(1.02);
+}
+
+.node-icon-bg {
+  stroke: none;
+}
+
+.node-label {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 580;
+  fill: var(--text);
+  text-anchor: start;
+  pointer-events: none;
+}
+
+.node-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 580;
+  fill: var(--text);
+  text-anchor: start;
+  pointer-events: none;
+}
+
+.viz-svg [data-tabler-icon] {
+  pointer-events: none;
+}
+
+/* One machine per row. */
+.component-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+}
+
+.card-meta {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========== STATUS, LIVE CONDITION, FLAGS ========== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 620;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  background: var(--stale-soft);
+  color: var(--stale);
+}
+
+.status-pill .tabler-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.status-good { background: var(--good-soft); color: var(--good); }
+.status-watch { background: var(--watch-soft); color: var(--watch); }
+.status-critical { background: var(--critical-soft); color: var(--critical); }
+
+.live-condition {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 560;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--stale);
+}
+
+.live-normal { background: var(--good); }
+.live-caution { background: var(--watch); }
+.live-alert { background: var(--critical); }
+.live-stale { background: var(--stale); }
+
+.flag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.flag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  font-size: 10px;
+  font-weight: 560;
+  white-space: nowrap;
+  background: var(--watch-soft);
+  color: var(--watch);
+}
+
+.flag-chip .tabler-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.flag-chips-empty {
+  font-size: 10.5px;
+  color: var(--text-tertiary);
+}
+
+/* ========== ASSET IDENTITY CHIP (icon only, never status) ========== */
+.asset-chip {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--stale);
+}
+
+.asset-chip .tabler-icon {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+.asset-chip-tractor { background: var(--asset-tractor); }
+.asset-chip-mower { background: var(--asset-mower); }
+.asset-chip-baler { background: var(--asset-baler); }
+.asset-chip-mixer { background: var(--asset-mixer); }
+
+/* ========== FLEET RANKING LIST ========== */
+.fleet-ranking {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.rank-row:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border);
+}
+
+.rank-row.is-selected {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.rank-badge {
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10.5px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-color);
+  background: var(--stale);
+  flex-shrink: 0;
+}
+
+.rank-badge.status-good { background: var(--good); color: var(--on-color); }
+.rank-badge.status-watch { background: var(--watch); color: var(--on-color); }
+.rank-badge.status-critical { background: var(--critical); color: var(--on-color); }
+
+.rank-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rank-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: 12px;
+  font-weight: 580;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ========== SVG FLEET DIAGRAM ========== */
+/* Identity colour on the icon disc only; status colour on the frame (GLOSSARY §2, §6). */
+.node-tractor .node-icon-bg { fill: var(--asset-tractor); }
+.node-mower .node-icon-bg { fill: var(--asset-mower); }
+.node-baler .node-icon-bg { fill: var(--asset-baler); }
+.node-mixer .node-icon-bg { fill: var(--asset-mixer); }
+
+.node-bg {
+  fill: var(--surface);
+  stroke: var(--stale);
+}
+
+.node-accent,
+.node-rank-bg,
+.node-status {
+  fill: var(--stale);
+}
+
+.node-group.status-good .node-bg { stroke: var(--good); }
+.node-group.status-good .node-accent,
+.node-group.status-good .node-rank-bg,
+.node-group.status-good .node-status { fill: var(--good); }
+
+.node-group.status-watch .node-bg { stroke: var(--watch); }
+.node-group.status-watch .node-accent,
+.node-group.status-watch .node-rank-bg,
+.node-group.status-watch .node-status { fill: var(--watch); }
+
+.node-group.status-critical .node-bg { stroke: var(--critical); }
+.node-group.status-critical .node-accent,
+.node-group.status-critical .node-rank-bg,
+.node-group.status-critical .node-status { fill: var(--critical); }
+
+/* Live condition is its own channel, never merged into status (REQ-LIVE). */
+.node-live-dot { fill: var(--stale); }
+.node-group.live-normal .node-live-dot { fill: var(--good); }
+.node-group.live-caution .node-live-dot { fill: var(--watch); }
+.node-group.live-alert .node-live-dot { fill: var(--critical); }
+.node-group.live-stale .node-live-dot { fill: var(--stale); }
+
+.link-path {
+  fill: none;
+  stroke: var(--hairline);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.node-status {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0.05em;
+  text-anchor: start;
+  pointer-events: none;
+}
+
+.node-rank {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 620;
+  fill: var(--on-color);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.node-group.is-selected .node-bg {
+  stroke-width: 3;
+}
+
+.node-group.is-selected .node-select-ring {
+  opacity: 1;
+}
+
+.node-select-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+/* ========== DETAIL PANELS ========== */
+.card-body {
+  padding: 12px 15px 15px;
+}
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.detail-name {
+  font-size: 14px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-recommendation {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.detail-empty {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  padding: 6px 4px;
+}
+
+.data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+}
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 11.5px;
+}
+
+.data-row dt {
+  color: var(--text-tertiary);
+  font-weight: 540;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-row dd {
+  font-variant-numeric: tabular-nums;
+  font-weight: 560;
+  text-align: right;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.flag-reason-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flag-reason {
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+}
+
+.flag-reason-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.flag-reason-name {
+  font-size: 11.5px;
+  font-weight: 580;
+  color: var(--text);
+}
+
+.flag-reason-evidence {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.flag-reason-scope {
+  color: var(--text-tertiary);
+}
+
+/* ========== LIVE TELEMETRY STRIP ========== */
+.telemetry-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 8px 9px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+}
+
+.telemetry-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.telemetry-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.telemetry-name {
+  font-size: 11.5px;
+  font-weight: 580;
+  color: var(--text);
+}
+
+.telemetry-readings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keep each reading ("Speed 8.2 km/h") on one line. */
+.telemetry-readings > span {
+  white-space: nowrap;
+}
+
+.telemetry-reading-label {
+  color: var(--text-tertiary);
+}
+
+/* ========== FORMS ========== */
+.form-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 7px 9px;
+  font-size: 12px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface-elevated);
+  color: var(--text);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+select.form-input {
+  cursor: pointer;
+}
+
+/* ========== HISTORY CARD ========== */
+.data-section {
+  min-width: 0;
+}
+
+/* ========== HISTORY TABLE ========== */
+.history-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.history-form-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+  align-content: start;
+  gap: 10px 14px;
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Label directly above its input. */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.history-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-table th,
+.history-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-table th {
+  font-size: 10px;
+  font-weight: 620;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  background: var(--bg);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.history-table th:not(:first-child),
+.history-table td:not(:first-child) {
+  text-align: right;
+}
+
+.history-table tbody tr:nth-child(even) td {
+  background: rgba(55, 48, 40, 0.02);
+}
+
+.history-table tbody tr:hover td {
+  background: rgba(63, 94, 73, 0.04);
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.history-empty,
+.history-error {
+  text-align: center !important;
+  color: var(--text-tertiary);
+  padding: 14px !important;
+}
+
+.history-error {
+  color: var(--critical);
+}
+
+/* ========== ALERT BANNER ========== */
+#alert-placeholder {
+  margin-bottom: 6px;
+}
+
+#alert-placeholder .alert {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  word-break: break-word;
+}
+
+#alert-placeholder .alert-danger {
+  background: var(--critical-soft);
+  color: var(--critical);
+  border-color: rgba(155, 53, 53, 0.18);
+}
+
+#alert-placeholder .btn-close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  cursor: pointer;
+  opacity: 0.6;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: inherit;
+}
+
+#alert-placeholder .btn-close .tabler-icon {
+  display: block;
+}
+
+#alert-placeholder .btn-close:hover {
+  opacity: 1;
+}
+
+/* ========== ICONS & TOOLTIP ========== */
+.tabler-icon {
+  vertical-align: middle;
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--text);
+  color: var(--on-color);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 9px;
+  border-radius: 6px;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 100;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+
+.tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== MOBILE ========== */
+@media (max-width: 959px) {
+  .app { padding: 10px 12px 22px; }
+  /* A grid, not a flex column: Chrome sizes the field grid too tall inside a flex column. */
+  .history-form { display: grid; }
+  .history-form .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Laptop and wider: the ranking has room for two machines per row. */
+@media (min-width: 1200px) {
+  .fleet-ranking {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

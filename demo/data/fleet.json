@@ -1,0 +1,143 @@
+{
+  "generatedAt": "2026-10-30T07:06:00Z",
+  "assets": [
+    {
+      "assetId": "TRACTOR",
+      "priorityRank": 1,
+      "status": "CRITICAL",
+      "liveCondition": "CAUTION",
+      "recommendation": "Priority check recommended within the next 5 engine hours.",
+      "flags": [
+        {
+          "flag": "HEAVY_RECENT_USE",
+          "counter": "highLoadHours",
+          "scope": "ROLLING_24H",
+          "value": 13.95,
+          "threshold": 1.5
+        },
+        {
+          "flag": "THERMAL_LOAD",
+          "counter": "tempExcursionHours",
+          "scope": "ROLLING_24H",
+          "value": 1.95,
+          "threshold": 0.8
+        },
+        {
+          "flag": "HIGH_CUMULATIVE_LOAD",
+          "counter": "highLoadHours",
+          "scope": "LIFETIME",
+          "value": 424,
+          "threshold": 400
+        }
+      ],
+      "lifetimeCounters": {
+        "engineHours": 6224,
+        "totalWorkingHours": 3414,
+        "highLoadHours": 424,
+        "tempExcursionHours": 28,
+        "vibrationAlertHours": 58
+      },
+      "rolling24hCounters": {
+        "engineHours": 23.12,
+        "totalWorkingHours": 13.95,
+        "highLoadHours": 13.95,
+        "tempExcursionHours": 1.95,
+        "vibrationAlertHours": 0
+      },
+      "windowCoverageHours": 23.1,
+      "utilizationPercent": 60.39,
+      "productiveSharePercent": 60.35
+    },
+    {
+      "assetId": "BALER",
+      "priorityRank": 2,
+      "status": "WATCH",
+      "liveCondition": "NORMAL",
+      "recommendation": "Plan inspection within the next 15–20 engine hours.",
+      "flags": [
+        {
+          "flag": "HEAVY_RECENT_USE",
+          "counter": "highLoadHours",
+          "scope": "ROLLING_24H",
+          "value": 3,
+          "threshold": 1.5
+        }
+      ],
+      "lifetimeCounters": {
+        "engineHours": 1504,
+        "totalWorkingHours": 1022,
+        "highLoadHours": 243,
+        "tempExcursionHours": 11,
+        "vibrationAlertHours": 46
+      },
+      "rolling24hCounters": {
+        "engineHours": 23.12,
+        "totalWorkingHours": 12,
+        "highLoadHours": 3,
+        "tempExcursionHours": 0,
+        "vibrationAlertHours": 0
+      },
+      "windowCoverageHours": 23.1,
+      "utilizationPercent": 51.95,
+      "productiveSharePercent": 51.91
+    },
+    {
+      "assetId": "MOWER",
+      "priorityRank": 3,
+      "status": "WATCH",
+      "liveCondition": "ALERT",
+      "recommendation": "Plan inspection within the next 15–20 engine hours.",
+      "flags": [
+        {
+          "flag": "MECHANICAL_ATTENTION",
+          "counter": "vibrationAlertHours",
+          "scope": "ROLLING_24H",
+          "value": 1.02,
+          "threshold": 1
+        }
+      ],
+      "lifetimeCounters": {
+        "engineHours": 974,
+        "totalWorkingHours": 652.9,
+        "highLoadHours": 95,
+        "tempExcursionHours": 4,
+        "vibrationAlertHours": 13.02
+      },
+      "rolling24hCounters": {
+        "engineHours": 23.12,
+        "totalWorkingHours": 12.02,
+        "highLoadHours": 0,
+        "tempExcursionHours": 0,
+        "vibrationAlertHours": 1.02
+      },
+      "windowCoverageHours": 23.1,
+      "utilizationPercent": 52.02,
+      "productiveSharePercent": 51.98
+    },
+    {
+      "assetId": "MIXER",
+      "priorityRank": 4,
+      "status": "GOOD",
+      "liveCondition": "NORMAL",
+      "recommendation": "No inspection recommended at this time.",
+      "flags": [],
+      "lifetimeCounters": {
+        "engineHours": 1144,
+        "totalWorkingHours": 868,
+        "highLoadHours": 130,
+        "tempExcursionHours": 7,
+        "vibrationAlertHours": 19
+      },
+      "rolling24hCounters": {
+        "engineHours": 23.12,
+        "totalWorkingHours": 8,
+        "highLoadHours": 0,
+        "tempExcursionHours": 0,
+        "vibrationAlertHours": 0
+      },
+      "windowCoverageHours": 23.1,
+      "utilizationPercent": 34.63,
+      "productiveSharePercent": 34.61
+    }
+  ]
+}

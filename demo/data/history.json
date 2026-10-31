@@ -1,0 +1,868 @@
+{
+  "rows": [
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T07:00:00Z",
+      "engineHours": 0.88,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T07:00:00Z",
+      "engineHours": 0.88,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T07:00:00Z",
+      "engineHours": 0.88,
+      "totalWorkingHours": 0.88,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T07:00:00Z",
+      "engineHours": 0.88,
+      "totalWorkingHours": 0.05,
+      "highLoadHours": 0.05,
+      "tempExcursionHours": 0.05,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T08:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T08:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T08:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T08:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T09:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T09:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T09:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T09:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T10:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T10:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T10:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.3,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0.3
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T10:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T11:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T11:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T11:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T11:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T12:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T12:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T12:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T12:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T13:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T13:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T13:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T13:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T14:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T14:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T14:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T14:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T15:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T15:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T15:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T15:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T16:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T16:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T16:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T16:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T17:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T17:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T17:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.3,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0.3
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T17:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T18:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T18:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T18:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T18:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T19:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T19:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T19:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T19:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T20:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T20:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T20:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T20:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T21:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T21:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T21:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T21:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T22:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T22:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T22:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T22:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-29T23:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-29T23:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-29T23:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-29T23:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T00:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T00:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T00:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.3,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0.3
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T00:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T01:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T01:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T01:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T01:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T02:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T02:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T02:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T02:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T03:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T03:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T03:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T03:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T04:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T04:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T04:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T04:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T05:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T05:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T05:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T05:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.17,
+      "highLoadHours": 0.17,
+      "tempExcursionHours": 0.17,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "BALER",
+      "hourStart": "2026-10-30T06:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0.25,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MIXER",
+      "hourStart": "2026-10-30T06:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 0.67,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "MOWER",
+      "hourStart": "2026-10-30T06:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 0,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    },
+    {
+      "assetId": "TRACTOR",
+      "hourStart": "2026-10-30T06:00:00Z",
+      "engineHours": 1,
+      "totalWorkingHours": 1,
+      "highLoadHours": 1,
+      "tempExcursionHours": 0,
+      "vibrationAlertHours": 0
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # docs\GLOSSARY.md
 
-Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol). This document owns **naming only**: which identifiers exist and what they are called. Conditions, thresholds and behaviour live in `SPEC.md`; structure lives in `ARCHITECTURE.md`. The one-line meanings below are non-normative glosses — where a gloss and a rule appear to disagree, the rule wins.
+This document owns **naming only**: which identifiers exist and what they are called. Conditions, thresholds and behaviour live in `SPEC.md`; structure lives in `ARCHITECTURE.md`. The one-line meanings below are non-normative glosses — where a gloss and a rule appear to disagree, the rule wins.
 
 ---
 
@@ -13,10 +13,15 @@ Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol
 | Java types | `PascalCase` | `TelemetryProcessorApplication` |
 | Database columns | `snake_case` | `vibration_alert_hours` |
 | Java packages | all lowercase, words concatenated, no underscores | `com.mariolagger.telemetryprocessor` |
+| Requirement IDs | `REQ-` plus uppercase words separated by hyphens. Each ID is declared once, on its shall in `SPEC.md`, and is not listed in this file | `REQ-` plus words |
+| Stakeholder IDs | `STK-` plus one uppercase word. Each ID is declared once, in `STAKEHOLDERS.md`, and is not listed in this file | `STK-FARMER` |
+| Stakeholder need IDs | `NEED-` plus uppercase words separated by hyphens. Each ID is declared once, in `STAKEHOLDERS.md`, and is not listed in this file | `NEED-FLAG-REASON` |
+| Epic IDs | `E` plus the epic number. Each ID is declared once, in `USER-STORY-MAP.md`, and is not listed in this file | `E2` |
+| User story IDs | `US-` plus the epic number, a dot and the story number within the epic. Each ID is declared once, in `USER-STORY-MAP.md`, and is not listed in this file | `US-2.1` |
 
 Enum values are never localised or prettified in the API; display text is the frontend's job, using the display names below. Table names are in `ARCHITECTURE.md` §4.
 
-A module's package is `com.mariolagger.` plus its module name lowercased, so `TelemetryProcessor` lives in `com.mariolagger.telemetryprocessor`. Module directories and Maven artifactIds keep their `PascalCase` form and are listed in `ARCHITECTURE.md` §2; only the package segment is lowercased, because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules.
+A module's name is `PascalCase` and is carried by its Maven `artifactId` and `<name>`; the modules are listed in `ARCHITECTURE.md` §2. Its package and its directory are that name lowercased, words concatenated, so `TelemetryProcessor` lives in the `telemetryprocessor/` directory under the package `com.mariolagger.telemetryprocessor`. The package segment is lowercased because a package name that looks like a type name runs into the JLS §6.4.2 obscuring rules; the directory follows it so that one lowercase spelling works on a case-sensitive filesystem. `frontend/` is a static asset directory rather than a module and is lowercase for the same reason.
 
 ---
 
@@ -48,15 +53,6 @@ Rules: `SPEC.md` §3.
 | `loadFactor` | Current load as a fraction of capacity. |
 | `temperatureC` | Operating temperature in degrees Celsius. |
 | `vibrationLevel` | Vibration state of the machine. |
-| `workingStatus` | Operating mode the simulator reports. |
-
-### `workingStatus`
-
-| Value | Display name | Gloss |
-|-------|--------------|-------|
-| `WORKING` | Working | Doing productive field work. |
-| `TRANSPORT` | Transport | Moving between locations. |
-| `IDLE` | Idle | Powered on but neither working nor travelling. |
 
 ### `vibrationLevel`
 
@@ -78,9 +74,6 @@ All counters are named `…Hours` and hold hours as a decimal number.
 |---------|-------|
 | `engineHours` | Time the machine was switched on and reporting. |
 | `totalWorkingHours` | Time spent in productive work. |
-| `transportHours` | Time spent travelling rather than working. |
-| `idleHours` | Time powered on without working or travelling. |
-| `loadedHours` | Working time under meaningful load. |
 | `highLoadHours` | Working time under heavy load. |
 | `tempExcursionHours` | Time above the temperature limit. |
 | `vibrationAlertHours` | Time at elevated **or** high vibration. The name says "alert", not "elevated", because both levels count. |
@@ -92,7 +85,7 @@ All counters are named `…Hours` and hold hours as a decimal number.
 | Lifetime | `lifetimeCounters` | Seeded service history plus everything since startup. |
 | Rolling 24 h | `rolling24hCounters` | The recent window. |
 
-Counter names are identical in both scopes; the container distinguishes them. In prose, write `highLoadHours` (24 h) or `loadedHours` (lifetime).
+Counter names are identical in both scopes; the container distinguishes them. In prose, write `highLoadHours` (24 h) or `highLoadHours` (lifetime).
 
 ### Derived figures
 
@@ -113,27 +106,19 @@ Rules: `SPEC.md` §5.1.
 | `HEAVY_RECENT_USE` | Heavy recent use | Sustained heavy load in the recent window. |
 | `THERMAL_LOAD` | Thermal load | Repeated or prolonged overheating. |
 | `MECHANICAL_ATTENTION` | Mechanical attention | Sustained abnormal vibration. |
-| `HIGH_CUMULATIVE_LOAD` | High cumulative load | A long working life under load. |
+| `HIGH_CUMULATIVE_LOAD` | High cumulative load | A long working life under heavy load. |
 
-### Severity
-
-| Value | Display name |
-|-------|--------------|
-| `MODERATE` | Moderate |
-| `SEVERE` | Severe |
-
-A flag that is not active is absent from the response; there is no `INACTIVE` value.
+A flag is either active or absent from the response; there is no severity and no `INACTIVE` value.
 
 ### Flag reason fields
 
 | Field | Gloss |
 |-------|-------|
 | `flag` | Which flag. |
-| `severity` | How severe it currently is. |
 | `counter` | The counter that triggered it. |
 | `scope` | `LIFETIME` or `ROLLING_24H`. |
 | `value` | The counter's value at evaluation time. |
-| `threshold` | The threshold that value crossed. |
+| `threshold` | The threshold that value reached. |
 
 ---
 
@@ -197,6 +182,6 @@ Rules: `SPEC.md` §6. Structure: `ARCHITECTURE.md` §6.
 | **Fleet ranking** | The ordered list of all four assets with status and flags. |
 | **Asset detail** | The single-machine view with counters and flag reasons. |
 | **Live telemetry strip** | The polled row of current readings per asset. |
-| **History chart** | The hourly-aggregate view over a chosen period. |
+| **Hourly history** | The hourly-aggregate table over a chosen period. |
 
-Names retired with the AI layer (`SPEC.md` §8): *AI Strategy card*, *AI Insights cards*, *Native chat*, *Telemetry-strip explanation*. Do not reintroduce them without a SPEC change.
+Names retired with the AI layer: *AI Strategy card*, *AI Insights cards*, *Native chat*, *Telemetry-strip explanation*. Do not reintroduce them without a SPEC change.

@@ -1,6 +1,6 @@
 # docs\ARCHITECTURE.md
 
-Governed by `SPEC.md` §0 (document hierarchy, anti-duplication, change protocol). This document owns structure, modules, messaging, persistence, ports and technical boundaries — and nothing else. Product rules live in `SPEC.md`, names in `GLOSSARY.md`.
+This document owns structure, modules, messaging, persistence, ports and technical boundaries — and nothing else. Product rules live in `SPEC.md`, names in `GLOSSARY.md`.
 
 ---
 
@@ -52,20 +52,22 @@ PostgreSQL database `agri-fleet-analytics-db` (user/password `admin`/`admin`). S
 
 | Table | Written by | Read by | Contents |
 |-------|------------|---------|----------|
-| `asset_state` | `TelemetryProcessor` | `OperatorApi` | One row per asset: the eight counters in both scopes, the four flags each with the severity, triggering counter, scope, value and threshold behind it, the derived figures of `SPEC.md` §4.5, status, recommendation, live condition, priority rank, and the most recent telemetry message. |
-| `hourly_aggregate` | `TelemetryProcessor` | `OperatorApi` | One row per asset per completed hour: the eight counters' per-hour deltas, keyed by asset and hour start. |
+| `asset_state` | `TelemetryProcessor` | `OperatorApi` | One row per asset: the five counters in both scopes, the four flags each with the value and threshold behind it (both NULL when the flag is inactive), the derived figures of `SPEC.md` §4.5, status, recommendation, live condition, priority rank, and the most recent telemetry message. |
+| `hourly_aggregate` | `TelemetryProcessor` | `OperatorApi` | One row per asset per completed hour: the five counters' per-hour deltas, keyed by asset and hour start. |
 
 Raw telemetry is not persisted; only the latest message per asset survives, inside `asset_state`.
 
 `asset_state` carries every value the `SPEC.md` §6.1 response needs, including the reason behind each active flag. This is what keeps `OperatorApi` free of product rules: it never re-derives a threshold, a percentage or a recommendation, it only reads them.
 
-**Write cadence.** `asset_state` is upserted on every processed message, and refreshed on a fixed interval as well. The interval is required because three groups of values move with wall-clock time rather than with message arrival — the rolling window edge (`SPEC.md` §4.3), window coverage and the utilization percentages (§4.5), and staleness of the live condition (§5.3) — and an asset that stops reporting would otherwise stay frozen at its last message forever.
+**Write cadence.** `asset_state` is upserted on every processed message that is roughly current, and refreshed on a fixed interval as well. The interval is required because three groups of values move with wall-clock time rather than with message arrival — the rolling window edge (`SPEC.md` §4.3), window coverage and the utilization percentages (§4.5), and staleness of the live condition (§5.3) — and an asset that stops reporting would otherwise stay frozen at its last message forever.
 
-Priority rank is a cross-asset value, so all four rows are rewritten in one transaction; upserting a single asset's rank on its own would transiently leave two rows claiming the same rank.
+**Catch-up.** A message whose timestamp is well behind wall-clock is accumulated into the in-memory buckets but triggers no write; the fixed-interval refresh then publishes the result. The rule is general, not a special case for the `SPEC.md` §3.2 startup burst, and it is what keeps that burst from turning thousands of messages into thousands of four-row transactions before the API can answer at all. Nothing is lost by skipping the write, because the refresh publishes whatever the accumulators hold.
 
-**Startup reset.** `TelemetryProcessor` clears `asset_state` and `hourly_aggregate` before consuming anything, then writes the `SPEC.md` §4.4 baselines. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run.
+Priority rank is a cross-asset value, so all four `asset_state` rows are written by a single `saveAll`, which is atomic on its own; upserting a single asset's rank would transiently leave two rows claiming the same rank. The sealed hours reach `hourly_aggregate` in a second, separate write — `asset_state` and `hourly_aggregate` are two transactions, never one spanning both tables — and an hour is marked flushed only after its write returns, so a failed write leaves the hour unsealed for the next cycle to retry.
 
-Counter columns store hours as `numeric`. The hourly buckets themselves live in `TelemetryProcessor`'s memory while their hour is still open — they are derived state, rebuilt from the stream — and reach the database only once the hour completes.
+**Startup reset.** `TelemetryProcessor` clears `asset_state` and `hourly_aggregate` before consuming anything, then writes the `SPEC.md` §4.4 baselines. Lifetime counters and history are therefore never carried across a restart, and a stale Postgres volume cannot leak state into a new run. The clear and the first write are separate transactions, so `asset_state` is briefly empty and the API answers `SPEC.md` §6.1's `503` until that write returns.
+
+Counter columns store hours as `numeric`. The hourly buckets themselves live in `TelemetryProcessor`'s memory while their hour is still open — they are derived state, rebuilt from the stream — and reach the database once **that asset's own stream** has moved past the hour, not once wall-clock has: a bucket is written when a message for a later hour has been processed, which `SPEC.md` §4.2 makes final. An asset that stops reporting therefore leaves its last hour open rather than sealing it on the clock.
 
 ---
 
@@ -94,4 +96,4 @@ The `/api/` prefix is passed through unchanged, so `OperatorApi` maps the full `
 | Frontend | HTML + CSS + vanilla JavaScript |
 | Orchestration | Docker Compose (infrastructure only) |
 
-No AI runtime is part of the system; see `SPEC.md` §8.
+No AI runtime is part of the system.
