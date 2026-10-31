@@ -47,10 +47,10 @@
   --hairline: #d4cfc4;
 
   /* Per-asset identity colours (GLOSSARY §2) — icon chips only, never status */
-  --asset-tractor: #3d6fa8;
-  --asset-mower: #0d7a75;
-  --asset-baler: #b07d2a;
-  --asset-mixer: #6a5a8a;
+  --asset-tractor: #4e6478;
+  --asset-mower: #4d6d6b;
+  --asset-baler: #7d5d6a;
+  --asset-mixer: #5a5684;
 
   /* Depth — soft, warm-tinted, restrained */
   --shadow-sm: 0 1px 2px rgba(40, 35, 28, 0.04);
@@ -304,10 +304,10 @@ body::before {
 .card-title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 620;
-  color: var(--text-tertiary);
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--text-secondary);
 }
 
 .card-body-compact {

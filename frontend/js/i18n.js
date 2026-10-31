@@ -32,11 +32,11 @@ const TRANSLATIONS = {
     'scope.LIFETIME': 'lifetime',
     'scope.ROLLING_24H': '24 h',
 
-    'counter.engineHours': 'Engine',
-    'counter.totalWorkingHours': 'Working',
+    'counter.engineHours': 'Engine hours',
+    'counter.totalWorkingHours': 'PTO hours',
     'counter.highLoadHours': 'High load',
     'counter.tempExcursionHours': 'Temp excursion',
-    'counter.vibrationAlertHours': 'Vibration alert',
+    'counter.vibrationAlertHours': 'High vibration',
 
     'vibration.NORMAL': 'Normal',
     'vibration.ELEVATED': 'Elevated',
@@ -122,11 +122,11 @@ const TRANSLATIONS = {
     'scope.LIFETIME': 'gesamt',
     'scope.ROLLING_24H': '24 h',
 
-    'counter.engineHours': 'Motor',
-    'counter.totalWorkingHours': 'Arbeit',
-    'counter.highLoadHours': 'Hohe Last',
+    'counter.engineHours': 'Betriebsstunden',
+    'counter.totalWorkingHours': 'Zapfwellenstunden',
+    'counter.highLoadHours': 'Starke Belastung',
     'counter.tempExcursionHours': 'Übertemperatur',
-    'counter.vibrationAlertHours': 'Vibrationsalarm',
+    'counter.vibrationAlertHours': 'Starke Vibration',
 
     'vibration.NORMAL': 'Normal',
     'vibration.ELEVATED': 'Erhöht',
