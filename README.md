@@ -20,6 +20,8 @@ condition, and usage is recorded automatically hour by hour. Every number the sy
 is traceable to a counter, and every counter to a telemetry message. There is no hidden
 scoring, no machine learning and no opaque weighting.
 
+**[Live demo](https://mariolagge.github.io/agri-fleet-analytics/)** — runs on sample data, no backend.
+
 ![AgriFleet Analytics dashboard](docs/images/dashboard.png)
 
 ## System context

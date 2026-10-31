@@ -88,6 +88,9 @@ const TRANSLATIONS = {
     'history.empty': 'No hourly data for this period.',
     'history.error.fromBeforeTo': 'from must be before to',
     'history.error.rangeTooLong': 'the requested range must not exceed 7 days',
+
+    'demo.banner': 'Demo: sample data derived from the simulator, no backend running.',
+    'demo.sourceLink': 'View source on GitHub',
   },
 
   de: {
@@ -175,6 +178,9 @@ const TRANSLATIONS = {
     'history.empty': 'Keine Stundendaten für diesen Zeitraum.',
     'history.error.fromBeforeTo': '„Von“ muss vor „Bis“ liegen.',
     'history.error.rangeTooLong': 'Der Zeitraum darf höchstens 7 Tage umfassen.',
+
+    'demo.banner': 'Demo: Beispieldaten aus dem Simulator, kein Backend aktiv.',
+    'demo.sourceLink': 'Quellcode auf GitHub',
   },
 };
 

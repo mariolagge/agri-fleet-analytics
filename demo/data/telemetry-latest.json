@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-10-30T07:06:00Z",
+  "assets": [
+    {
+      "assetId": "BALER",
+      "liveCondition": "NORMAL",
+      "telemetry": {
+        "assetId": "BALER",
+        "timestamp": "2026-10-30T07:06:00Z",
+        "ptoEngaged": false,
+        "groundSpeedKmh": 20,
+        "loadFactor": 0.25,
+        "temperatureC": 65,
+        "vibrationLevel": "NORMAL"
+      }
+    },
+    {
+      "assetId": "MIXER",
+      "liveCondition": "NORMAL",
+      "telemetry": {
+        "assetId": "MIXER",
+        "timestamp": "2026-10-30T07:06:00Z",
+        "ptoEngaged": false,
+        "groundSpeedKmh": 0,
+        "loadFactor": 0.1,
+        "temperatureC": 50,
+        "vibrationLevel": "NORMAL"
+      }
+    },
+    {
+      "assetId": "MOWER",
+      "liveCondition": "ALERT",
+      "telemetry": {
+        "assetId": "MOWER",
+        "timestamp": "2026-10-30T07:06:00Z",
+        "ptoEngaged": true,
+        "groundSpeedKmh": 11,
+        "loadFactor": 0.6,
+        "temperatureC": 80,
+        "vibrationLevel": "HIGH"
+      }
+    },
+    {
+      "assetId": "TRACTOR",
+      "liveCondition": "CAUTION",
+      "telemetry": {
+        "assetId": "TRACTOR",
+        "timestamp": "2026-10-30T07:06:00Z",
+        "ptoEngaged": true,
+        "groundSpeedKmh": 10,
+        "loadFactor": 0.8,
+        "temperatureC": 94,
+        "vibrationLevel": "NORMAL"
+      }
+    }
+  ]
+}
