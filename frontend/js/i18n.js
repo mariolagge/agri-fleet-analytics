@@ -186,14 +186,15 @@ const TRANSLATIONS = {
 
 const SUPPORTED_LANGUAGES = ['en', 'de'];
 const LANGUAGE_STORAGE_KEY = 'agrifleet-language';
+const DEFAULT_LANGUAGE = 'de';
 
-// Storage can be blocked (private window, cleared site data); the page then starts in English.
+// Storage can be blocked (private window, cleared site data); the page then starts in German.
 function loadSavedLanguage() {
   try {
     const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    return SUPPORTED_LANGUAGES.includes(saved) ? saved : 'en';
+    return SUPPORTED_LANGUAGES.includes(saved) ? saved : DEFAULT_LANGUAGE;
   } catch (ignored) {
-    return 'en';
+    return DEFAULT_LANGUAGE;
   }
 }
 
