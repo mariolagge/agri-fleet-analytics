@@ -82,8 +82,9 @@ function addDemoBanner() {
   const banner = document.createElement('div');
   banner.className = 'demo-banner';
   banner.innerHTML = `
-    <span data-i18n="demo.banner"></span>
-    <a href="${REPOSITORY_URL}" target="_blank" rel="noopener" data-i18n="demo.sourceLink"></a>`;
+    ${tablerIcon('info-circle', { size: 14 })}
+    <span><strong data-i18n="demo.banner"></strong>
+    <a href="${REPOSITORY_URL}" target="_blank" rel="noopener" data-i18n="demo.sourceLink"></a></span>`;
   const topBar = document.querySelector('.top-bar');
   topBar.insertBefore(banner, topBar.firstChild);
 }
