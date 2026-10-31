@@ -32,6 +32,7 @@
   --good-soft: rgba(63, 94, 73, 0.10);
   --watch: #b07d2a;         /* warm ochre / amber */
   --watch-soft: rgba(176, 125, 42, 0.10);
+  --watch-text: #85591a;    /* darker amber for small text on --watch-soft */
   --critical: #9b3535;      /* controlled deep red */
   --critical-soft: rgba(155, 53, 53, 0.09);
 
@@ -46,10 +47,10 @@
   --hairline: #d4cfc4;
 
   /* Per-asset identity colours (GLOSSARY §2) — icon chips only, never status */
-  --asset-tractor: #3d6fa8;
-  --asset-mower: #0d7a75;
-  --asset-baler: #b07d2a;
-  --asset-mixer: #6a5a8a;
+  --asset-tractor: #4e6478;
+  --asset-mower: #4d6d6b;
+  --asset-baler: #7d5d6a;
+  --asset-mixer: #5a5684;
 
   /* Depth — soft, warm-tinted, restrained */
   --shadow-sm: 0 1px 2px rgba(40, 35, 28, 0.04);
@@ -157,30 +158,39 @@ body::before {
   display: block;
 }
 
+/* ========== TOP BAR (demo banner + language toggle) ========== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 /* ========== LANGUAGE TOGGLE ========== */
 .lang-toggle {
   display: flex;
-  justify-content: flex-end;
+  flex-shrink: 0;
   gap: 6px;
-  margin-bottom: 10px;
 }
 
 /* ========== DEMO BANNER (GitHub Pages build only) ========== */
 .demo-banner {
+  flex: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-bottom: 10px;
-  padding: 8px 13px;
-  font-size: 12.5px;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--watch-text);
+  background: var(--watch-soft);
   border-radius: var(--radius-sm);
 }
 
 .demo-banner a {
-  color: var(--accent);
+  color: inherit;
   font-weight: 600;
 }
 
@@ -294,12 +304,10 @@ body::before {
 .card-title {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 620;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-tertiary);
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--text-secondary);
 }
 
 .card-body-compact {

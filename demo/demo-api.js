@@ -76,16 +76,17 @@ async function fetchHistory(fromInstant, toInstant, assetId) {
   return { from: fromInstant, to: toInstant, rows };
 }
 
-// A one-line notice above the dashboard. Its texts are translated by i18n.js like any
-// other static markup, because the elements carry data-i18n.
+// A one-line notice in the top bar, left of the language toggle. Its texts are translated
+// by i18n.js like any other static markup, because the elements carry data-i18n.
 function addDemoBanner() {
   const banner = document.createElement('div');
   banner.className = 'demo-banner';
   banner.innerHTML = `
-    <span data-i18n="demo.banner"></span>
-    <a href="${REPOSITORY_URL}" target="_blank" rel="noopener" data-i18n="demo.sourceLink"></a>`;
-  const app = document.querySelector('.app');
-  app.insertBefore(banner, app.firstChild);
+    ${tablerIcon('info-circle', { size: 14 })}
+    <span><strong data-i18n="demo.banner"></strong>
+    <a href="${REPOSITORY_URL}" target="_blank" rel="noopener" data-i18n="demo.sourceLink"></a></span>`;
+  const topBar = document.querySelector('.top-bar');
+  topBar.insertBefore(banner, topBar.firstChild);
 }
 
 addDemoBanner();

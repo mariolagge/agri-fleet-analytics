@@ -32,11 +32,11 @@ const TRANSLATIONS = {
     'scope.LIFETIME': 'lifetime',
     'scope.ROLLING_24H': '24 h',
 
-    'counter.engineHours': 'Engine',
-    'counter.totalWorkingHours': 'Working',
+    'counter.engineHours': 'Engine hours',
+    'counter.totalWorkingHours': 'PTO hours',
     'counter.highLoadHours': 'High load',
     'counter.tempExcursionHours': 'Temp excursion',
-    'counter.vibrationAlertHours': 'Vibration alert',
+    'counter.vibrationAlertHours': 'High vibration',
 
     'vibration.NORMAL': 'Normal',
     'vibration.ELEVATED': 'Elevated',
@@ -104,9 +104,9 @@ const TRANSLATIONS = {
     'status.WATCH': 'Beobachten',
     'status.CRITICAL': 'Kritisch',
 
-    'recommendation.GOOD': 'Derzeit keine Inspektion empfohlen.',
-    'recommendation.WATCH': 'Inspektion innerhalb der nächsten 15–20 Motorstunden einplanen.',
-    'recommendation.CRITICAL': 'Vorrangige Prüfung innerhalb der nächsten 5 Motorstunden empfohlen.',
+    'recommendation.GOOD': 'Derzeit keine Wartung empfohlen.',
+    'recommendation.WATCH': 'Wartung innerhalb der nächsten 15–20 Betriebsstunden einplanen.',
+    'recommendation.CRITICAL': 'Vorrangige Prüfung innerhalb der nächsten 5 Betriebsstunden empfohlen.',
 
     'live.NORMAL': 'Normal',
     'live.CAUTION': 'Vorsicht',
@@ -122,11 +122,11 @@ const TRANSLATIONS = {
     'scope.LIFETIME': 'gesamt',
     'scope.ROLLING_24H': '24 h',
 
-    'counter.engineHours': 'Motor',
-    'counter.totalWorkingHours': 'Arbeit',
-    'counter.highLoadHours': 'Hohe Last',
+    'counter.engineHours': 'Betriebsstunden',
+    'counter.totalWorkingHours': 'Zapfwellenstunden',
+    'counter.highLoadHours': 'Starke Belastung',
     'counter.tempExcursionHours': 'Übertemperatur',
-    'counter.vibrationAlertHours': 'Vibrationsalarm',
+    'counter.vibrationAlertHours': 'Starke Vibration',
 
     'vibration.NORMAL': 'Normal',
     'vibration.ELEVATED': 'Erhöht',
@@ -186,14 +186,15 @@ const TRANSLATIONS = {
 
 const SUPPORTED_LANGUAGES = ['en', 'de'];
 const LANGUAGE_STORAGE_KEY = 'agrifleet-language';
+const DEFAULT_LANGUAGE = 'de';
 
-// Storage can be blocked (private window, cleared site data); the page then starts in English.
+// Storage can be blocked (private window, cleared site data); the page then starts in German.
 function loadSavedLanguage() {
   try {
     const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    return SUPPORTED_LANGUAGES.includes(saved) ? saved : 'en';
+    return SUPPORTED_LANGUAGES.includes(saved) ? saved : DEFAULT_LANGUAGE;
   } catch (ignored) {
-    return 'en';
+    return DEFAULT_LANGUAGE;
   }
 }
 
