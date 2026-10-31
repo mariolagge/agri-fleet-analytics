@@ -104,9 +104,9 @@ const TRANSLATIONS = {
     'status.WATCH': 'Beobachten',
     'status.CRITICAL': 'Kritisch',
 
-    'recommendation.GOOD': 'Derzeit keine Inspektion empfohlen.',
-    'recommendation.WATCH': 'Inspektion innerhalb der nächsten 15–20 Motorstunden einplanen.',
-    'recommendation.CRITICAL': 'Vorrangige Prüfung innerhalb der nächsten 5 Motorstunden empfohlen.',
+    'recommendation.GOOD': 'Derzeit keine Wartung empfohlen.',
+    'recommendation.WATCH': 'Wartung innerhalb der nächsten 15–20 Betriebsstunden einplanen.',
+    'recommendation.CRITICAL': 'Vorrangige Prüfung innerhalb der nächsten 5 Betriebsstunden empfohlen.',
 
     'live.NORMAL': 'Normal',
     'live.CAUTION': 'Vorsicht',
